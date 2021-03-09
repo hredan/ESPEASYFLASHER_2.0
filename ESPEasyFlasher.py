@@ -27,6 +27,7 @@ import sys
 import threading
 import re
 import json
+import glob
 
 import tkinter as tk
 from tkinter import ttk
@@ -50,22 +51,36 @@ class StdoutRedirector(IORedirector):
     '''A class for redirecting stdout to this Text widget.'''
     
     def write(self, input):
-        mObj = re.match("^(\d+ \(\d+ %\)).*", input)
-        if(mObj):
-            numG1 = len(mObj.group(1))
-            reProgress = re.match("^\d+ \((\d+) %\)", mObj.group(1))
+        mObjRead = re.match("^(\d+ \(\d+ %\)).*", input)
+        mObjWrite = re.match("^(Writing .+\((\d+) %\)).*", input)
+        if(mObjRead):
+            numG1 = len(mObjRead.group(1))
+            reProgress = re.match("^\d+ \((\d+) %\)", mObjRead.group(1))
             if(reProgress):
                 flashProgress = reProgress.group(1)
                 self.progressBar["value"] = int(flashProgress)
 
-            last_insert = self.text_area.tag_ranges("tag_procent")
+            last_insert = self.text_area.tag_ranges("tag_read_procent")
             if (len(last_insert) > 1):
                 self.text_area.delete(last_insert[0], last_insert[1])
 
-            self.text_area.insert(tk.END, f"{mObj.group(1)}\n", "tag_procent")
+            self.text_area.insert(tk.END, f"{mObjRead.group(1)}\n", "tag_read_procent")
 
             # just for testing
             # self.text_area.insert(tk.END, f"{numG1}:{mObj.group(1)} {numG2}\n")
+            self.text_area.see(tk.END)
+        elif(mObjWrite):
+            flashProgress = mObjWrite.group(2)
+            text = mObjWrite.group(1)
+            
+            self.progressBar["value"] = int(flashProgress)
+            
+            last_insert = self.text_area.tag_ranges("tag_write_procent")
+            if (len(last_insert) > 1):
+                self.text_area.delete(last_insert[0], last_insert[1])
+                self.text_area.delete("end-1c", tk.END)
+
+            self.text_area.insert(tk.END, text, "tag_write_procent")
             self.text_area.see(tk.END)
         else:
             self.text_area.insert(tk.END, input)
@@ -119,12 +134,13 @@ class App:
         self.labelWriteBin = tk.Label(self.writeGroup, text="bin file: ")
         self.labelWriteBin.grid(column=0, row=rowPosWrite, sticky="W")
 
+       
         self.comboWriteBin = ttk.Combobox(self.writeGroup)
+        self.setFileListComboWrite()
         self.comboWriteBin.grid(column=1, row=rowPosWrite, sticky="EW", padx=3, pady=3)
         
         rowPosWrite += 1
-        self.button = tk.Button(self.writeGroup, 
-                            text="WriteFlash")
+        self.button = tk.Button(self.writeGroup, text="WriteFlash", command=self.writeFlash)
         self.button.grid(column=0, row=rowPosWrite, columnspan = 2, sticky="EW", padx=3, pady=3)
    
         tk.Grid.columnconfigure(self.writeGroup, 0, weight=1)
@@ -200,6 +216,20 @@ class App:
             x = threading.Thread(target=EsptoolCom.esptoolEraseFlash, args=(comPort,))
             x.start()
 
+    def writeFlash(self):
+        self.progress["value"] = 0
+        self.progress["maximum"] = 100
+        print("### Write Flash")
+        comPort = self.comboComPort.get()
+        filename = self.comboWriteBin.get()
+        if (comPort == ""):
+            print("Error: select a Serial Com Port before you can start read flash!")
+        elif (filename == ""):
+            print("Error: before you can write to flash, select a firmware.bin file")
+        else:
+            x = threading.Thread(target=EsptoolCom.esptoolWriteFlash, args=(comPort, filename,))
+            x.start()
+
     def readFlash(self):
         self.progress["value"] = 0
         self.progress["maximum"] = 100
@@ -212,9 +242,19 @@ class App:
         elif (filename == ""):
             print("Error: before you can read flash, define a filename")
         else:
+            filename = filename + ".bin"
             x = threading.Thread(target=EsptoolCom.esptoolReadFlash, args=(comPort, filename,))
             x.start()
-            
+
+    def getFileListBin(self):
+        fileList = glob.glob("*.bin")
+        return fileList
+
+    def setFileListComboWrite(self):
+        fileList = self.getFileListBin()
+        self.comboWriteBin["values"] = fileList
+        if(len(fileList) > 0):
+            self.comboWriteBin.current(0)
 
     def comScan(self):
         comInfo = self.getComInfo()

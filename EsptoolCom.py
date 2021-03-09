@@ -42,3 +42,4 @@ def esptoolEraseFlash(comPort):
 def startEsptool(command):
     print('Using command %s' % ' '.join(command))
     esptool.main(command)
+    
