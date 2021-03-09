@@ -96,7 +96,7 @@ class StdoutRedirector(IORedirector):
 class App:
     def __init__(self, master):
         self.developerMode = True
-        
+        self.withLogo = True
         # read config from json file
         configStr = self.readConfig()
 
@@ -108,7 +108,15 @@ class App:
         
         rowPosFrame = 0
         self.comGroup = tk.LabelFrame(frame, text='Serial Com Port')
-        self.comGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+        
+
+        if (self.withLogo):
+            self.comGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+            self.logo = tk.PhotoImage(file="./LogoEasyFlash_no.ppm")
+            self.labelLogo = tk.Label(frame, image=self.logo)
+            self.labelLogo.grid(column=1, row=rowPosFrame, columnspan = 2, sticky="EW")
+        else:
+            self.comGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
 
         # Com Port
         rowPosCom = 0
@@ -116,11 +124,11 @@ class App:
         self.labelComPort.grid(column=0, row=rowPosCom, sticky="W")
 
         self.comboComPort = ttk.Combobox(self.comGroup)
-        self.comboComPort.grid(column=1, row=rowPosCom, sticky="EW", padx=3, pady=3)
+        self.comboComPort.grid(column=1, row=rowPosCom, sticky="WE", padx=3, pady=3)
 
         rowPosCom += 1
         self.comRefreshBtn = tk.Button(self.comGroup, text="Scan", command=self.comScan)
-        self.comRefreshBtn.grid(column=0, row=rowPosCom, columnspan = 2, sticky="EW", padx=3, pady=3)
+        self.comRefreshBtn.grid(column=0, row=rowPosCom, columnspan = 2, sticky="WE", padx=3, pady=3)
         
         tk.Grid.columnconfigure(self.comGroup, 0, weight=1)
         tk.Grid.columnconfigure(self.comGroup, 1, weight=2)
@@ -128,7 +136,7 @@ class App:
         # write Group
         rowPosFrame += 1
         self.writeGroup = tk.LabelFrame(frame, text='WriteFlash')
-        self.writeGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+        self.writeGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
 
         rowPosWrite = 0
         self.labelWriteBin = tk.Label(self.writeGroup, text="bin file: ")
@@ -150,7 +158,7 @@ class App:
         if (self.developerMode):
             rowPosFrame += 1
             self.readGroup = tk.LabelFrame(frame, text='ReadFlash')
-            self.readGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+            self.readGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
 
             rowPosRead = 0
             self.labelReadBin = tk.Label(self.readGroup, text="Flash write to: ")
@@ -173,7 +181,7 @@ class App:
 
             rowPosFrame += 1
             self.eraseGroup = tk.LabelFrame(frame, text='EraseFlash')
-            self.eraseGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+            self.eraseGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
 
             rowPosErase = 0
             self.readBtn = tk.Button(self.eraseGroup, text="EraseFlash", command=self.eraseFlash)
@@ -184,11 +192,11 @@ class App:
         # Textbox Logging
         rowPosFrame += 1
         self.text_box = tk.Text(frame, wrap='word', height = 11, width=80)
-        self.text_box.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+        self.text_box.grid(column=0, row=rowPosFrame, columnspan = 2, sticky="EW", padx=5, pady=5)
         
 
         scrollb = ttk.Scrollbar(frame, command=self.text_box.yview)
-        scrollb.grid(row=rowPosFrame, column=1, sticky='nsew')
+        scrollb.grid(row=rowPosFrame, column=2, sticky='nsew')
         self.text_box['yscrollcommand'] = scrollb.set
 
         
