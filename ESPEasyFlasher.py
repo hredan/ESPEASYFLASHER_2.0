@@ -1,3 +1,4 @@
+
 '''
   ESPEasyFlasher.py is a Simple GUI for esptool.py by espressif
   (https://github.com/espressif/esptool)
@@ -24,6 +25,7 @@
 '''
 
 import sys
+import os
 import threading
 import re
 import json
@@ -112,7 +114,14 @@ class App:
 
         if (self.withLogo):
             self.comGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
-            self.logo = tk.PhotoImage(file="./LogoEasyFlash_no.ppm")
+            logoFilename = "./LogoEasyFlash.png"
+            if (os.path.exists(logoFilename)):
+                self.logo = tk.PhotoImage(file=logoFilename)
+            else:
+                # embeded file by pyinstaller
+                imagePath = self.resource_path(logoFilename)
+                self.logo = tk.PhotoImage(file=imagePath)
+                
             self.labelLogo = tk.Label(frame, image=self.logo)
             self.labelLogo.grid(column=1, row=rowPosFrame, columnspan = 2, sticky="EW")
         else:
@@ -307,6 +316,9 @@ class App:
             with open('ESPEasyFlasherConfig.json') as json_file:
                 data = json.load(json_file)
                 
+                self.withLogo = data['logo']
+                strIo.writelines(f"enable logo: {data['logo']}\n")
+
                 self.developerMode = data['devMode']
                 strIo.writelines(f"dev mode is: {data['devMode']}\n")
                 
@@ -326,6 +338,16 @@ class App:
             strIo.writelines(f"Error could not read config, default values will be used: {err}\n")
         
         return strIo.getvalue()
+
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
 if __name__ == "__main__":
 
