@@ -16,6 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import esptool
+import sys
 
 # Config variables can be changed by EspEasyFlasherConfig.json
 baudRate = '460800'
@@ -27,12 +28,19 @@ writeStart = '0x00000'
 
 def esptoolReadFlash(comPort, filename):
     #for testing a short byte array
-    command = ['--port', comPort, '--baud', baudRate, 'read_flash', readStart, readSize, filename]
+    if (sys.platform == "win32"):
+        command = ['--port', comPort, '--baud', baudRate, 'read_flash', readStart, readSize, filename]
+    else:
+        command = ['--port', comPort, 'read_flash', readStart, readSize, filename]
     #command = ['--port', comPort, '--baud', '460800', 'read_flash', '0', '0x400000', 'flash_contents.bin']      
     startEsptool(command)
 
 def esptoolWriteFlash(comPort, filename):
-    command = ['--port', comPort, '--baud', baudRate, 'write_flash', writeStart, filename]
+    if (sys.platform == "win32"):
+        command = ['--port', comPort, '--baud', baudRate, 'write_flash', writeStart, filename]
+    else:
+        command = ['--port', comPort, 'write_flash', writeStart, filename]
+
     startEsptool(command)
 
 def esptoolEraseFlash(comPort):

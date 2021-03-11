@@ -314,9 +314,9 @@ class App:
         for com in comlist:
             # print(com.name)
             print("*" + com.description)
-            clist.append(com.name)
-            if(com.description.lower().find("usb-serial") != -1 ):
-                defaultCom = com.name
+            clist.append(com.device)
+            if(com.description.lower().find("usb") != -1 ):
+                defaultCom = com.device
                 print("Found: "+defaultCom)
                 isFundUsbSerial = True
 
