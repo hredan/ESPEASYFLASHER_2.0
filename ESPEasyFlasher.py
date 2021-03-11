@@ -96,11 +96,31 @@ class StdoutRedirector(IORedirector):
         return False
 
 class App:
+    def logoFileExists(self):
+        returnValue = False
+        filename = "./LogoEasyFlash.png"
+        if (os.path.exists(filename)):
+            self.logoFilename = filename
+            returnValue = True
+        elif (self.checkMAIPASS()):
+            self.logoFilename = os.path.join(self.basePath, filename)
+            returnValue = True
+        else:
+            returnValue = False
+            self.strIo.write(f"Warning: Could not find '{filename}', using layout without logo!\n")
+
+        return returnValue
+
+    def gridWithoutLogo(self):
+        self.comGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
+
     def __init__(self, master):
         self.developerMode = True
         self.withLogo = True
+        self.strIo = StringIO()
+        
         # read config from json file
-        configStr = self.readConfig()
+        self.readConfig()
 
         master.title("ESPEasyFlasher2.0")
         master.resizable(0, 0)        
@@ -113,19 +133,15 @@ class App:
         
 
         if (self.withLogo):
-            self.comGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
-            logoFilename = "./LogoEasyFlash.png"
-            if (os.path.exists(logoFilename)):
-                self.logo = tk.PhotoImage(file=logoFilename)
+            if (self.logoFileExists()):
+                self.comGroup.grid(column=0, row=rowPosFrame, sticky="EW", padx=5, pady=5)
+                self.logo = tk.PhotoImage(file=self.logoFilename)
+                self.labelLogo = tk.Label(frame, image=self.logo)
+                self.labelLogo.grid(column=1, row=rowPosFrame, columnspan = 2, sticky="EW")
             else:
-                # embeded file by pyinstaller
-                imagePath = self.resource_path(logoFilename)
-                self.logo = tk.PhotoImage(file=imagePath)
-                
-            self.labelLogo = tk.Label(frame, image=self.logo)
-            self.labelLogo.grid(column=1, row=rowPosFrame, columnspan = 2, sticky="EW")
+                self.gridWithoutLogo()
         else:
-            self.comGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
+            self.gridWithoutLogo()
 
         # Com Port
         rowPosCom = 0
@@ -219,7 +235,7 @@ class App:
         sys.stdout = StdoutRedirector(self.text_box, self.progress)
 
         # write config string
-        self.text_box.insert(tk.END, configStr)
+        self.text_box.insert(tk.END, self.strIo.getvalue())
         
         # scan com ports
         self.comScan()
@@ -310,44 +326,44 @@ class App:
         return {"comlist": clist, "defaultCom": defaultCom}
 
     def readConfig(self):
-        strIo = StringIO()
-        strIo.write("### Read Config ###\n")
+        self.strIo.write("### Read Config ###\n")
         try:
             with open('ESPEasyFlasherConfig.json') as json_file:
                 data = json.load(json_file)
                 
                 self.withLogo = data['logo']
-                strIo.writelines(f"enable logo: {data['logo']}\n")
+                self.strIo.writelines(f"enable logo: {data['logo']}\n")
 
                 self.developerMode = data['devMode']
-                strIo.writelines(f"dev mode is: {data['devMode']}\n")
+                self.strIo.writelines(f"dev mode is: {data['devMode']}\n")
                 
                 EsptoolCom.baudRate = data['baudRate']
-                strIo.write(f"set baud rate to: {data['baudRate']}\n")
+                self.strIo.write(f"set baud rate to: {data['baudRate']}\n")
                 
                 EsptoolCom.readStart = data['readStart']
-                strIo.write(f"set read start to: {data['readStart']}\n")
+                self.strIo.write(f"set read start to: {data['readStart']}\n")
                 
                 EsptoolCom.readSize = data['readSize']
-                strIo.write(f"set read size to: {data['readSize']}\n")
+                self.strIo.write(f"set read size to: {data['readSize']}\n")
                 
                 EsptoolCom.writeStart = data['writeStart']
-                strIo.write(f"set write start to: {data['writeStart']}\n")
+                self.strIo.write(f"set write start to: {data['writeStart']}\n")
 
         except EnvironmentError as err:
-            strIo.writelines(f"Error could not read config, default values will be used: {err}\n")
-        
-        return strIo.getvalue()
+            self.strIo.writelines(f"Error could not read config, default values will be used: {err}\n")
 
-    def resource_path(self, relative_path):
+    def checkMAIPASS(self):
         """ Get absolute path to resource, works for dev and for PyInstaller """
+        returnValue = False
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS
+            self.basePath = sys._MEIPASS
+            returnValue = True
         except Exception:
-            base_path = os.path.abspath(".")
+            self.basePath = os.path.abspath(".")
+            returnValue = False
 
-        return os.path.join(base_path, relative_path)
+        return returnValue
 
 if __name__ == "__main__":
 
