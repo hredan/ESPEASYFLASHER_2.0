@@ -14,9 +14,17 @@ With the json file ESPEasyFlasherConfig.json you can change the layout and behav
 
 ## Developer Layout, to create firmware files
 
+![Screenshot Developer Layout](https://user-images.githubusercontent.com/48091357/111000133-c8558600-8381-11eb-866d-20fa82e392fa.png)
 
 ## User Layout, to share a ESP firmware in a simple way
-This is the simple layout to share your firmware with people who are not able to compile your Arduino source code but they want build a DIY-Project based on ESP Controller.
+This is the simple layout to share your firmware with people, who are not able to compile your Arduino source code but they want build a DIY-Project based on ESP Controller.
+
+![User Layout](https://user-images.githubusercontent.com/48091357/111000159-d4d9de80-8381-11eb-87df-9ecdb45841cb.png)
+
+Here you can select the binary which are located in the same directory of the ESPEasyFlasher.py or the executable of ESPEasyFlasher.
+And you can select the usb serial device. If a usb-serial device is detected, it should be the default value of com port.
+
+To flash the firmware, you have only push the button write_flash, it is very easy.
 
 ## The SleepUINO Pre-Development logo can be disabled or replaced by your logo
 To disable/enable the logo, change the entry "logo" in ESPEasyFlasherConfig.json:
