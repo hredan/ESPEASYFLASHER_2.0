@@ -119,6 +119,15 @@ class App:
         self.withLogo = True
         self.strIo = StringIO()
         
+        self.strIo.write(f"os: {sys.platform}\n")
+        if ((sys.platform != "win32") and (self.checkMAIPASS())):
+            path = os.path.sep.join(sys.argv[0].split(os.path.sep))
+            dirname = os.path.dirname(path)
+            os.chdir(dirname)
+            self.strIo.write(f"{dirname}\n")
+        
+        self.strIo.write(f"CWD: {os.getcwd()}\n")
+        
         # read config from json file
         self.readConfig()
 
@@ -308,7 +317,7 @@ class App:
         comlist = comports()
         print("Number of Com Ports: " + str(len(comlist)))
         if (len(comlist) > 0):
-            defaultCom = comlist[0].name
+            defaultCom = comlist[0].device
 
         isFundUsbSerial = False
         for com in comlist:
