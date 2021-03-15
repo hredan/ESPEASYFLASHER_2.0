@@ -1,7 +1,9 @@
+![SleepUINO_Logo_PreDev](https://user-images.githubusercontent.com/48091357/111156537-25298a00-8596-11eb-8726-1fe5cd7bed93.png)
+
 # ESPEasyFlasher_2.0 is a GUI written in python for the command line tool esptool
 
 ## Why I have implemented ESPEasyFlasher_2.0
-I was searching for a simple tool to share firmware binaries for the DIY-Project SleepUINO. The [SleepUINO](https://github.com/hredan/SleepUino) is a alarm clock with a web interface based on a ESP8266.
+I was searching for a simple tool to share firmware binaries for the DIY-Project SleepUINO. The [SleepUINO](https://github.com/hredan/SleepUino) is a alarm clock with a web interface based on an ESP8266.
 
 What I have found was the command line tool [esptool.py](https://github.com/espressif/esptool) from espressif. It can be used to flash all ESP micro controller, it is a good base and the community is working on it. It is alive! And I have found some different GUIs. Some GUIs try to contain the whole functionality of the esptool and are very complex. I want a simple tool to share my firmware without any frills, like the [ESPEASYFLASHER](https://github.com/BattloXX/ESPEasyFlasher) from BattloXX. But this GUI is only usable on Windows. I want a GUI that is platform independently. So I have got ideas but I have not found a satisfactory solution.
 
@@ -45,7 +47,7 @@ If you want your own logo. Put the logo as png under the name "LogoEasyFlash.png
 ## Use ESPEasyFlasher_2.0 as python script
 Requirements:
 1. [python3](https://www.python.org/downloads/) has to be installed on your system
-1. [esptool](https://pypi.org/project/esptool/) has to be installed as module. Under the [link]((https://pypi.org/project/esptool/)) you can find a description how you install the esptool in python. Short: ´pip install esptool´  
+1. [esptool](https://pypi.org/project/esptool/) has to be installed as module. Under the [link]((https://pypi.org/project/esptool/)) you can find a description how you install the esptool in python. Short: `pip install esptool`  
 
 start the GUI as python script
 1. python ESPEasyFlasher.py
