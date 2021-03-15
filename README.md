@@ -1,7 +1,7 @@
 # ESPEasyFlasher_2.0 is a GUI written in python for the command line tool esptool
 
 ## Why I have implemented ESPEasyFlasher_2.0
-I was searching for a simple tool to share firmware binaries for the DIY-Project SleepUINO. The SleepUINO is a alarm clock with a web interface based on a ESP8266. Currently the SleepUINO code is not public, but you can find some information in German on www.sleepuino.info
+I was searching for a simple tool to share firmware binaries for the DIY-Project SleepUINO. The [SleepUINO](https://github.com/hredan/SleepUino) is a alarm clock with a web interface based on a ESP8266.
 
 What I have found was the command line tool [esptool.py](https://github.com/espressif/esptool) from espressif. It can be used to flash all ESP micro controller, it is a good base and the community is working on it. It is alive! And I have found some different GUIs. Some GUIs try to contain the whole functionality of the esptool and are very complex. I want a simple tool to share my firmware without any frills, like the [ESPEASYFLASHER](https://github.com/BattloXX/ESPEasyFlasher) from BattloXX. But this GUI is only usable on Windows. I want a GUI that is platform independently. So I have got ideas but I have not found a satisfactory solution.
 
