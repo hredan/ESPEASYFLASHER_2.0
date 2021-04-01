@@ -27,7 +27,7 @@ readSize = '0x400000'
 writeStart = '0x00000'
 
 def esptoolWriteEEF(comPort, writeParameter):
-    command = ['--port', comPort, '--baud', baudRate] + writeParameter
+    command = ['--port', comPort] + writeParameter
     startEsptool(command)
 
 def esptoolReadFlash(comPort, filename):
