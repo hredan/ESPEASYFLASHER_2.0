@@ -26,6 +26,10 @@ readSize = '0x400000'
 
 writeStart = '0x00000'
 
+def esptoolWriteEEF(comPort, writeParameter):
+    command = ['--port', comPort, '--baud', baudRate] + writeParameter
+    startEsptool(command)
+
 def esptoolReadFlash(comPort, filename):
     #for testing a short byte array
     if (sys.platform == "win32"):
