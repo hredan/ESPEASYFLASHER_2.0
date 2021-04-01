@@ -258,6 +258,18 @@ class App:
             x = threading.Thread(target=EsptoolCom.esptoolEraseFlash, args=(comPort,))
             x.start()
 
+    def readEEF(self, filename):
+        self.strIo.write("### read eef file ###\n")
+        returnValue = ""
+        try:
+            with open(filename) as json_file:
+                data = json.load(json_file)
+                returnValue = data['command']
+
+        except EnvironmentError as err:
+            self.strIo.writelines(f"Error could not read eef file {filename}: {err}\n")
+        return returnValue
+
     def writeFlash(self):
         self.progress["value"] = 0
         self.progress["maximum"] = 100
@@ -269,7 +281,12 @@ class App:
         elif (filename == ""):
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
-            x = threading.Thread(target=EsptoolCom.esptoolWriteFlash, args=(comPort, filename,))
+            file_name, file_extension = os.path.splitext(filename)
+            if (file_extension == ".eef"):
+                command = self.readEEF(filename)
+                x = threading.Thread(target=EsptoolCom.esptoolWriteEEF, args=(comPort, command,))
+            else:
+                x = threading.Thread(target=EsptoolCom.esptoolWriteFlash, args=(comPort, filename,))
             x.start()
 
     def readFlash(self):
@@ -289,7 +306,9 @@ class App:
             x.start()
 
     def getFileListBin(self):
-        fileList = glob.glob("*.bin")
+        fileList = glob.glob("*.eef")
+        if (len(fileList) == 0):
+            fileList = glob.glob("*.bin")
         return fileList
 
     def setFileListComboWrite(self):

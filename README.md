@@ -11,6 +11,19 @@ What I have found was the command line tool [esptool.py](https://github.com/espr
 I liked the simple usability of ESPEasyFlasher from BattloXX but I could not understand why it is implemented in C#. The esptool is not only a command line tool, it has also a python interface. Python itself is platform independently and contains tkinter, [a Python binding to the Tk GUI toolkit](https://en.wikipedia.org/wiki/Tkinter), as standard library. And the icing on the cake, with [pyinstaller](https://www.pyinstaller.org/) it is possible to generate executables for different os platforms. So why not implementing all things in Python and bring the idea of ESPEasyFlasher to the next level 2.0.
 
 # Functionality of ESPEasyFlasher_2.0
+##  Individual parameter set for esptool by EEF files
+The eef file is a json file. Is an eef file in the root directory available, the eef files will be listed instead the bin files.
+An eef file can be used to set parameter of the esptool. In the following example you can see a possible content of an eef file. The bin files, used in the eef, have to be available in the root directory of ESPEasyFlasher_2.0 tool. The firmware.bin is the esp firmware and has to be written to the address 0x0 in the flash. Littlefs.bin contains data of the esp filesystem and has to be written to address 0x200000. 
+
+```json
+{
+    "command": ["--baud", "460800", "write_flash", "0x0", "firmware.bin", "0x200000", "littlefs.bin"]
+}
+```
+
+**The comport parameter *--port* should not be defined in the eef file, this parameter will be set by ESPEasyFlasher_2.0.**
+
+
 ## Configuration by Json file
 With the json file ESPEasyFlasherConfig.json you can change the layout and behavior of esptool. You can switch between a developer layout, there you can readout the flash in a file. And you can erase the flash. It is also very simple and you can change some behavior of esptool parameter, this is for people who have experience with the esptool.py self.
 
