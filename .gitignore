@@ -25,6 +25,10 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.eef
+*.bin
+*.png
+*.exe
 MANIFEST
 
 # PyInstaller
