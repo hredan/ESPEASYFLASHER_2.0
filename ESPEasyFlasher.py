@@ -37,6 +37,7 @@ from tkinter import ttk
 from serial.tools.list_ports import comports
 
 import EsptoolCom
+import SerialMonitor as sm
 
 from io import StringIO
 
@@ -117,7 +118,10 @@ class App:
     def __init__(self, master):
         self.developerMode = True
         self.withLogo = True
+        self.withSerialMonitor = True
         self.strIo = StringIO()
+
+        self.serialMonitor = None
         
         self.strIo.write(f"os: {sys.platform}\n")
         if ((sys.platform != "win32") and (self.checkMAIPASS())):
@@ -222,6 +226,22 @@ class App:
             self.readBtn.grid(column=0, row=rowPosRead, sticky="EW", padx=3, pady=3)
 
             tk.Grid.columnconfigure(self.eraseGroup, 0, weight=1)
+        # Serial Monitor
+        if (self.withSerialMonitor):
+            rowPosFrame += 1
+            self.statusSerialMonitor = False
+            self.serialMonitorFrame = tk.Frame(frame)
+            self.serialMonitorFrame.grid(column=0, row=rowPosFrame, columnspan = 2, sticky="EW")
+            
+            self.labelSerialM = tk.Label(self.serialMonitorFrame, text="Serial Monitor: ")
+            self.labelSerialM.grid(column=0, row=0, sticky="W")
+            
+            self.serialMonitorBtn = tk.Button(self.serialMonitorFrame, text="On", command=self.serialMonitorSwitch)
+            self.serialMonitorBtn.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
+
+            self.rts = tk.IntVar()
+            self.checkBoxRTS = tk.Checkbutton(self.serialMonitorFrame, text="RTS", variable=self.rts)
+            self.checkBoxRTS.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
 
         # Textbox Logging
         rowPosFrame += 1
@@ -233,7 +253,8 @@ class App:
         scrollb.grid(row=rowPosFrame, column=2, sticky='nsew')
         self.text_box['yscrollcommand'] = scrollb.set
 
-        
+        if (self.withSerialMonitor):
+            self.serialMonitor = sm.SerialMonitor(self.text_box)
 
         # Progressbar
         rowPosFrame += 1
@@ -248,6 +269,19 @@ class App:
         
         # scan com ports
         self.comScan()
+
+    def serialMonitorSwitch(self):
+        comPort = self.comboComPort.get()
+        if (self.statusSerialMonitor):
+            self.statusSerialMonitor = False
+            self.serialMonitorBtn.config(text = "On", bg = "grey")
+            if (self.serialMonitor):
+                self.serialMonitor.StopThread()        
+        else:
+            self.statusSerialMonitor = True
+            self.serialMonitorBtn.config(text = "Off", bg = "green")
+            if (self.serialMonitor):
+                self.serialMonitor.StartThread(comPort)
 
     def eraseFlash(self):
         print("### Erase Flash ###")
