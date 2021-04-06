@@ -21,6 +21,7 @@
 
 import serial
 import threading
+import time
 
 import tkinter as tk
 
@@ -53,11 +54,23 @@ class SerialMonitor:
 
         self.text_area = text_area
 
+    def espReset(self):
+        if (self.serial.rts and self.serial.dtr):
+            self.serial.rts = False
+            self.serial.dtr = False
+            time.sleep(0.1)
+            self.serial.rts = True
+            self.serial.dtr = True
+        else:
+            self.serial.rts = True
+            self.serial.dtr = True
+
     def StartThread(self, comport):
         """Start the receiver thread"""
         try:
             self.serial.port = comport
             self.serial.open()
+           
         except serial.SerialException as e:
             self.text_area.insert(tk.END, f"Error open serial connection: {e}")
         else:

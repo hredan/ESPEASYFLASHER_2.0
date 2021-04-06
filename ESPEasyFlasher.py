@@ -239,9 +239,9 @@ class App:
             self.serialMonitorBtn = tk.Button(self.serialMonitorFrame, text="On", command=self.serialMonitorSwitch)
             self.serialMonitorBtn.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
 
-            self.rts = tk.IntVar()
-            self.checkBoxRTS = tk.Checkbutton(self.serialMonitorFrame, text="RTS", variable=self.rts)
-            self.checkBoxRTS.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
+            self.espResetBtn = tk.Button(self.serialMonitorFrame, text="ESP Reset", state=tk.DISABLED, command=self.espReset)
+            self.espResetBtn.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
+            
 
         # Textbox Logging
         rowPosFrame += 1
@@ -270,16 +270,22 @@ class App:
         # scan com ports
         self.comScan()
 
+    def espReset(self):
+        if (self.statusSerialMonitor and self.serialMonitor):
+            self.serialMonitor.espReset()
+
     def serialMonitorSwitch(self):
         comPort = self.comboComPort.get()
         if (self.statusSerialMonitor):
             self.statusSerialMonitor = False
             self.serialMonitorBtn.config(text = "On", bg = "grey")
+            self.espResetBtn.config(state=tk.DISABLED)
             if (self.serialMonitor):
                 self.serialMonitor.StopThread()        
         else:
             self.statusSerialMonitor = True
             self.serialMonitorBtn.config(text = "Off", bg = "green")
+            self.espResetBtn.config(state=tk.NORMAL)
             if (self.serialMonitor):
                 self.serialMonitor.StartThread(comPort)
 
@@ -399,6 +405,9 @@ class App:
                 self.developerMode = data['devMode']
                 self.strIo.writelines(f"dev mode is: {data['devMode']}\n")
                 
+                self.withSerialMonitor = data['serialMonitor']
+                self.strIo.writelines(f"serial monitor: {data['serialMonitor']}\n")
+
                 EsptoolCom.baudRate = data['baudRate']
                 self.strIo.write(f"set baud rate to: {data['baudRate']}\n")
                 

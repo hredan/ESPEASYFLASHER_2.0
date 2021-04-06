@@ -1,6 +1,7 @@
 {
     "logo": true,
-    "devMode": true, 
+    "devMode": false,
+    "serialMonitor" : true,
     "baudRate": "460800",
     "readStart": "0x00000", 
     "readSize": "0x400000", 
