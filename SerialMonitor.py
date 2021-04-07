@@ -54,6 +54,11 @@ class SerialMonitor:
 
         self.text_area = text_area
 
+    def writeText(self, text):
+        if (self.text_area):
+            self.text_area.insert(tk.END, text)
+            self.text_area.see(tk.END)
+
     def espReset(self):
         if (self.serial.rts and self.serial.dtr):
             self.serial.rts = False
@@ -72,10 +77,9 @@ class SerialMonitor:
             self.serial.open()
            
         except serial.SerialException as e:
-            self.text_area.insert(tk.END, f"Error open serial connection: {e}")
+            self.writeText(f"Error open serial connection: {e}\n")
         else:
-            self.text_area.insert(tk.END, "### open serial connection ###\n")
-            
+            self.writeText("### open serial connection ###\n")
             self.thread = threading.Thread(target=self.ComPortThread)
             self.thread.setDaemon(1)
             self.alive.set()
@@ -90,7 +94,7 @@ class SerialMonitor:
             self.thread.join()          # wait until thread has finished
             self.thread = None
             self.serial.close()
-            self.text_area.insert(tk.END, "### close serial connection ###\n")
+            self.writeText("### close serial connection ###\n")
 
     def ComPortThread(self):
         """\
@@ -107,5 +111,4 @@ class SerialMonitor:
                     pass
                 elif self.settings.newline == NEWLINE_CRLF:
                     b = b.replace(b'\r\n', b'\n')
-                self.text_area.insert(tk.END, b)
-                self.text_area.see(tk.END)
+                self.writeText(b)

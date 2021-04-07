@@ -41,6 +41,24 @@ And you can select the usb serial device. If a usb-serial device is detected, it
 
 To flash the firmware, you have only push the button write_flash, it is very easy.
 
+## Integrated Serial Monitor
+In the ESPEasyFlasherConfig.json you can enable/disable the Serial Monitor Panel:
+* Enable:
+
+```json
+"serialMonitor": true
+```
+
+* Disable: 
+
+```json
+"serialMonitor": false
+```
+
+![ESP Serial Monitor Panel](https://user-images.githubusercontent.com/48091357/113831900-61f93300-9788-11eb-859a-b778f7564ff5.png)
+
+The ESP has to be connected with the PC or Notebook. The com port has to be the right, if you are not sure it should be the default com port if it is connected before you have started the ESPEasyFlasher Tool. With the On/Off switch you can enable or disable the serial connection. The received data will be shown in the textbox below the Serial Monitor Panel. With the ESP Reset Button you can do a hard reset of the ESP micro controller. This makes sense if the ESP is in a housing and the reset button on the board is not reachable. The serial connection will be disabled, if you read or write data from the flash memory.
+
 ## The SleepUINO Pre-Development logo can be disabled or replaced by your logo
 To disable/enable the logo, change the entry "logo" in ESPEasyFlasherConfig.json:
 * Enable:

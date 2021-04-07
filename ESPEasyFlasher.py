@@ -272,6 +272,7 @@ class App:
 
     def espReset(self):
         if (self.statusSerialMonitor and self.serialMonitor):
+            print("### Hard Reset via RTS pin ###")
             self.serialMonitor.espReset()
 
     def serialMonitorSwitch(self):
@@ -290,6 +291,10 @@ class App:
                 self.serialMonitor.StartThread(comPort)
 
     def eraseFlash(self):
+        #Disable Serial Monitor if enabled
+        if (self.statusSerialMonitor):
+            self.serialMonitorSwitch()
+        
         print("### Erase Flash ###")
         comPort = self.comboComPort.get()
         if (comPort == ""):
@@ -311,6 +316,10 @@ class App:
         return returnValue
 
     def writeFlash(self):
+        #Disable Serial Monitor if enabled
+        if (self.statusSerialMonitor):
+            self.serialMonitorSwitch()
+
         self.progress["value"] = 0
         self.progress["maximum"] = 100
         print("### Write Flash")
@@ -330,6 +339,10 @@ class App:
             x.start()
 
     def readFlash(self):
+        #Disable Serial Monitor if enabled
+        if (self.statusSerialMonitor):
+            self.serialMonitorSwitch()
+
         self.progress["value"] = 0
         self.progress["maximum"] = 100
 
