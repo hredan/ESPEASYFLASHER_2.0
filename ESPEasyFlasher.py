@@ -124,12 +124,17 @@ class App:
         self.serialMonitor = None
         
         self.strIo.write(f"os: {sys.platform}\n")
-        if ((sys.platform != "win32") and (self.checkMAIPASS())):
-            path = os.path.sep.join(sys.argv[0].split(os.path.sep))
-            dirname = os.path.dirname(path)
-            os.chdir(dirname)
-            self.strIo.write(f"{dirname}\n")
-        
+        if (self.checkMAIPASS()) :
+            if (sys.platform != "win32"):
+                path = os.path.sep.join(sys.argv[0].split(os.path.sep))
+                dirname = os.path.dirname(path)
+                os.chdir(dirname)
+                self.strIo.write(f"{dirname}\n")
+            else:
+                iconFile = "./icon_256x256.png"
+                iconPath = os.path.join(self.basePath, iconFile)
+                root.iconphoto(False, tk.PhotoImage(file=iconPath))
+
         self.strIo.write(f"CWD: {os.getcwd()}\n")
         
         # read config from json file
