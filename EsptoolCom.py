@@ -43,9 +43,10 @@ def esptoolEraseFlash(comPort):
     command = ['--port', comPort, 'erase_flash']
     startEsptool(command)
 
-def esptoolEspInfo(comPort):
+def esptoolEspInfo(comPort, callback):
     command = ['--port', comPort, 'flash_id']
     startEsptool(command)
+    callback()
 
 def startEsptool(command):
     print('Using command %s' % ' '.join(command))

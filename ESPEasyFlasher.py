@@ -43,19 +43,29 @@ from io import StringIO
 
 # With Flag developerMode you can expand the use cases in the GUI with read and erase flash
 
-
+'''A general class for redirecting I/O to this Text widget.'''
 class IORedirector(object):
-    '''A general class for redirecting I/O to this Text widget.'''
+    
     def __init__(self,text_area, progressBar):
         self.text_area = text_area
         self.progressBar = progressBar
 
+'''A class for redirecting stdout to this Text widget.'''
 class StdoutRedirector(IORedirector):
-    '''A class for redirecting stdout to this Text widget.'''
-    
+    espType = None
+    espFlashSize = None
+
+    def normalOutput(self, input):
+        self.text_area.insert(tk.END, input)
+        self.text_area.see(tk.END)
+
     def write(self, input):
         mObjRead = re.match("^(\d+ \(\d+ %\)).*", input)
         mObjWrite = re.match("^(Writing .+\((\d+) %\)).*", input)
+
+        mObjESPType = re.match(".*(ESP\d+).*", input)
+        mObjFlashSize = re.match(".*(\d+MB).*", input)
+
         if(mObjRead):
             numG1 = len(mObjRead.group(1))
             reProgress = re.match("^\d+ \((\d+) %\)", mObjRead.group(1))
@@ -85,9 +95,15 @@ class StdoutRedirector(IORedirector):
 
             self.text_area.insert(tk.END, text, "tag_write_procent")
             self.text_area.see(tk.END)
+        elif(mObjESPType):
+            # input contains only part of string e.g. ' ESP32' or 'ESP32-D0WDQ6 (revision 1)'
+            self.espType = mObjESPType.group(1)
+            self.normalOutput(input)
+        elif(mObjFlashSize):
+            self.espFlashSize = mObjFlashSize.group(1)
+            self.normalOutput(input)
         else:
-            self.text_area.insert(tk.END, input)
-            self.text_area.see(tk.END)
+            self.normalOutput(input)
 
 
     def flush(self):
@@ -280,7 +296,8 @@ class App:
                                         length=200, mode="determinate")
         self.progress.grid(column=0, row=rowPosFrame, columnspan = 2, sticky="EW", padx=5, pady=5)
 
-        sys.stdout = StdoutRedirector(self.text_box, self.progress)
+        self.stdoutRedirector = StdoutRedirector(self.text_box, self.progress)
+        sys.stdout = self.stdoutRedirector
 
         # write config string
         self.text_box.insert(tk.END, self.strIo.getvalue())
@@ -327,9 +344,15 @@ class App:
                 x = threading.Thread(target=targetMethod, args=(comPort,))
             x.start()
 
+    def espInfoCallback(self):
+        if (self.stdoutRedirector.espType and self.stdoutRedirector.espFlashSize):
+            print(f"Detected ESP of type: {self.stdoutRedirector.espType}, with Flash Size of: {self.stdoutRedirector.espFlashSize}")
+
     def getEspInfo(self):
-        self.baseThread(EsptoolCom.esptoolEspInfo ,"### ESP INFO ###")
-        
+        self.stdoutRedirector.espType = None
+        self.stdoutRedirector.espFlashSize = None
+        self.baseThread(EsptoolCom.esptoolEspInfo ,"### ESP INFO ###", False, self.espInfoCallback)
+
     def eraseFlash(self):
         self.baseThread(EsptoolCom.esptoolEraseFlash ,"### Erase Flash ###")
 
