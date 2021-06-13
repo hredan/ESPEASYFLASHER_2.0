@@ -308,31 +308,31 @@ class App:
             if (self.serialMonitor):
                 self.serialMonitor.StartThread(comPort)
 
+    def baseThread(self, targetMethod, infoText, setProgressbar = False, secondArg = None):
+        if (setProgressbar):
+            self.progress["value"] = 0
+            self.progress["maximum"] = 100
+
+        #Disable Serial Monitor if enabled
+        if (self.statusSerialMonitor):
+            self.serialMonitorSwitch()
+        print(infoText)
+        comPort = self.comboComPort.get()
+        if (comPort == ""):
+            print("Error: select a Serial Com Port before you can start read flash!")
+        else:
+            if (secondArg):
+                x = threading.Thread(target=targetMethod, args=(comPort, secondArg, ))
+            else:
+                x = threading.Thread(target=targetMethod, args=(comPort,))
+            x.start()
+
     def getEspInfo(self):
-        #Disable Serial Monitor if enabled
-        if (self.statusSerialMonitor):
-            self.serialMonitorSwitch()
-        print("### ESP INFO ###")
-        comPort = self.comboComPort.get()
-        if (comPort == ""):
-            print("Error: select a Serial Com Port before you can start read flash!")
-        else:
-            x = threading.Thread(target=EsptoolCom.esptoolEspInfo, args=(comPort,))
-            x.start()
-
-    def eraseFlash(self):
-        #Disable Serial Monitor if enabled
-        if (self.statusSerialMonitor):
-            self.serialMonitorSwitch()
+        self.baseThread(EsptoolCom.esptoolEspInfo ,"### ESP INFO ###")
         
-        print("### Erase Flash ###")
-        comPort = self.comboComPort.get()
-        if (comPort == ""):
-            print("Error: select a Serial Com Port before you can start read flash!")
-        else:
-            x = threading.Thread(target=EsptoolCom.esptoolEraseFlash, args=(comPort,))
-            x.start()
-
+    def eraseFlash(self):
+        self.baseThread(EsptoolCom.esptoolEraseFlash ,"### Erase Flash ###")
+        
     def readEEF(self, filename):
         self.strIo.write("### read eef file ###\n")
         returnValue = ""
@@ -346,48 +346,25 @@ class App:
         return returnValue
 
     def writeFlash(self):
-        #Disable Serial Monitor if enabled
-        if (self.statusSerialMonitor):
-            self.serialMonitorSwitch()
-
-        self.progress["value"] = 0
-        self.progress["maximum"] = 100
-        print("### Write Flash")
-        comPort = self.comboComPort.get()
         filename = self.comboWriteBin.get()
-        if (comPort == ""):
-            print("Error: select a Serial Com Port before you can start read flash!")
-        elif (filename == ""):
+        if (filename == ""):
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
             file_name, file_extension = os.path.splitext(filename)
             if (file_extension == ".eef"):
                 command = self.readEEF(filename)
-                x = threading.Thread(target=EsptoolCom.esptoolWriteEEF, args=(comPort, command,))
+                self.baseThread(EsptoolCom.esptoolWriteEEF, "### Write Flash ###", True, command)             
             else:
-                x = threading.Thread(target=EsptoolCom.esptoolWriteFlash, args=(comPort, filename,))
-            x.start()
+                self.baseThread(EsptoolCom.esptoolWriteFlash, "### Write Flash ###", True, filename)                        
 
-    def readFlash(self):
-        #Disable Serial Monitor if enabled
-        if (self.statusSerialMonitor):
-            self.serialMonitorSwitch()
-
-        self.progress["value"] = 0
-        self.progress["maximum"] = 100
-
-        print("### Read Flash ###")
-        comPort = self.comboComPort.get()
+    def readFlash(self):           
         filename = self.entryFileName.get()
-        if (comPort == ""):
-            print("Error: select a Serial Com Port before you can start read flash!")
-        elif (filename == ""):
+        if (filename == ""):
             print("Error: before you can read flash, define a filename")
         else:
             filename = filename + ".bin"
-            x = threading.Thread(target=EsptoolCom.esptoolReadFlash, args=(comPort, filename,))
-            x.start()
-
+            self.baseThread(EsptoolCom.esptoolReadFlash, "### Read Flash ###", True, filename) 
+            
     def getFileListBin(self):
         fileList = glob.glob("*.eef")
         if (len(fileList) == 0):
@@ -483,7 +460,6 @@ class App:
         return returnValue
 
 if __name__ == "__main__":
-
     root = tk.Tk()
     app = App(root)
     root.mainloop()
