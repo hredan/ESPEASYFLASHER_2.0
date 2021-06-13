@@ -31,24 +31,20 @@ def esptoolWriteEEF(comPort, writeParameter):
     startEsptool(command)
 
 def esptoolReadFlash(comPort, filename):
-    #for testing a short byte array
-    if (sys.platform == "win32"):
-        command = ['--port', comPort, '--baud', baudRate, 'read_flash', readStart, readSize, filename]
-    else:
-        command = ['--port', comPort, 'read_flash', readStart, readSize, filename]
-    #command = ['--port', comPort, '--baud', '460800', 'read_flash', '0', '0x400000', 'flash_contents.bin']      
+    command = ['--port', comPort, '--baud', baudRate, 'read_flash', readStart, readSize, filename]
     startEsptool(command)
 
 def esptoolWriteFlash(comPort, filename):
-    if (sys.platform == "win32"):
-        command = ['--port', comPort, '--baud', baudRate, 'write_flash', writeStart, filename]
-    else:
-        command = ['--port', comPort, 'write_flash', writeStart, filename]
+    command = ['--port', comPort, '--baud', baudRate, 'write_flash', writeStart, filename]
 
     startEsptool(command)
 
 def esptoolEraseFlash(comPort):
     command = ['--port', comPort, 'erase_flash']
+    startEsptool(command)
+
+def esptoolEspInfo(comPort):
+    command = ['--port', comPort, 'flash_id']
     startEsptool(command)
 
 def startEsptool(command):
