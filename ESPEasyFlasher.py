@@ -332,18 +332,6 @@ class App:
         
     def eraseFlash(self):
         self.baseThread(EsptoolCom.esptoolEraseFlash ,"### Erase Flash ###")
-        
-    def readEEF(self, filename):
-        self.strIo.write("### read eef file ###\n")
-        returnValue = ""
-        try:
-            with open(filename) as json_file:
-                data = json.load(json_file)
-                returnValue = data['command']
-
-        except EnvironmentError as err:
-            self.strIo.writelines(f"Error could not read eef file {filename}: {err}\n")
-        return returnValue
 
     def writeFlash(self):
         filename = self.comboWriteBin.get()
@@ -364,7 +352,19 @@ class App:
         else:
             filename = filename + ".bin"
             self.baseThread(EsptoolCom.esptoolReadFlash, "### Read Flash ###", True, filename) 
-            
+    
+    def readEEF(self, filename):
+        self.strIo.write("### read eef file ###\n")
+        returnValue = ""
+        try:
+            with open(filename) as json_file:
+                data = json.load(json_file)
+                returnValue = data['command']
+
+        except EnvironmentError as err:
+            self.strIo.writelines(f"Error could not read eef file {filename}: {err}\n")
+        return returnValue
+
     def getFileListBin(self):
         fileList = glob.glob("*.eef")
         if (len(fileList) == 0):
