@@ -135,6 +135,7 @@ class App:
         self.developerMode = True
         self.withLogo = True
         self.withSerialMonitor = True
+        self.fileList = []
         self.strIo = StringIO()
 
         self.serialMonitor = None
@@ -216,7 +217,8 @@ class App:
 
        
         self.comboWriteBin = ttk.Combobox(self.writeGroup)
-        self.setFileListComboWrite()
+        self.fileList = self.getFileList()
+        self.setFileListComboWrite(self.fileList)
         self.comboWriteBin.grid(column=1, row=rowPosWrite, sticky="EW", padx=3, pady=3)
         
         rowPosWrite += 1
@@ -345,13 +347,22 @@ class App:
             x.start()
 
     def espInfoCallback(self):
-        if (self.stdoutRedirector.espType and self.stdoutRedirector.espFlashSize):
-            print(f"Detected ESP of type: {self.stdoutRedirector.espType}, with Flash Size of: {self.stdoutRedirector.espFlashSize}")
+        print(f"Detected ESP of type: {self.stdoutRedirector.espType}, with Flash Size of: {self.stdoutRedirector.espFlashSize}")
+        fileList = []
+        if (self.stdoutRedirector.espType):
+
+            for entry in self.fileList:
+                if (re.match(f"^{self.stdoutRedirector.espType}", entry)):
+                    fileList.append(entry)
+            
+            if (len(fileList) > 0):
+                self.setFileListComboWrite(fileList)
+                print(f"Filter {self.stdoutRedirector.espType} files")
 
     def getEspInfo(self):
         self.stdoutRedirector.espType = None
         self.stdoutRedirector.espFlashSize = None
-        self.baseThread(EsptoolCom.esptoolEspInfo ,"### ESP INFO ###", False, self.espInfoCallback)
+        self.baseThread(EsptoolCom.esptoolEspInfo ,"### ESP INFO ###", False, self.espInfoCallback)        
 
     def eraseFlash(self):
         self.baseThread(EsptoolCom.esptoolEraseFlash ,"### Erase Flash ###")
@@ -388,14 +399,13 @@ class App:
             self.strIo.writelines(f"Error could not read eef file {filename}: {err}\n")
         return returnValue
 
-    def getFileListBin(self):
+    def getFileList(self):
         fileList = glob.glob("*.eef")
         if (len(fileList) == 0):
             fileList = glob.glob("*.bin")
         return fileList
 
-    def setFileListComboWrite(self):
-        fileList = self.getFileListBin()
+    def setFileListComboWrite(self, fileList):
         self.comboWriteBin["values"] = fileList
         if(len(fileList) > 0):
             self.comboWriteBin.current(0)
