@@ -133,3 +133,6 @@ dmypy.json
 .pyre/
 /TestScripts
 .vscode/arduino.json
+*.ico
+*.zip
+*.icns
