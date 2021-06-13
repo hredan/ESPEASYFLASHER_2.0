@@ -112,7 +112,7 @@ class App:
 
         return returnValue
 
-    def gridWithoutLogo(self):
+    def gridWithoutLogo(self, rowPosFrame):
         self.comGroup.grid(column=0, row=rowPosFrame, columnspan = 3, sticky="EW", padx=5, pady=5)
 
     def __init__(self, master):
@@ -157,9 +157,9 @@ class App:
                 self.labelLogo = tk.Label(frame, image=self.logo)
                 self.labelLogo.grid(column=1, row=rowPosFrame, columnspan = 2, sticky="EW")
             else:
-                self.gridWithoutLogo()
+                self.gridWithoutLogo(rowPosFrame)
         else:
-            self.gridWithoutLogo()
+            self.gridWithoutLogo(rowPosFrame)
 
         # Com Port
         rowPosCom = 0
@@ -170,11 +170,24 @@ class App:
         self.comboComPort.grid(column=1, row=rowPosCom, sticky="WE", padx=3, pady=3)
 
         rowPosCom += 1
-        self.comRefreshBtn = tk.Button(self.comGroup, text="Scan", command=self.comScan)
-        self.comRefreshBtn.grid(column=0, row=rowPosCom, columnspan = 2, sticky="WE", padx=3, pady=3)
+        self.comBtnFrame = tk.Frame(self.comGroup)
+        self.comBtnFrame.grid(column=0, row=rowPosCom, columnspan = 2, sticky="EW")
+
+        if (self.espInfo):
+            self.comRefreshBtn = tk.Button( self.comBtnFrame, text="Scan", command=self.comScan)
+            self.comRefreshBtn.grid(column=0, row=0, sticky="EW", padx=3, pady=3)
+
+            self.espInfo = tk.Button( self.comBtnFrame, text="ESP Info", command=self.getEspInfo)
+            self.espInfo.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
+        else:
+            self.comRefreshBtn = tk.Button( self.comBtnFrame, text="Scan", command=self.comScan)
+            self.comRefreshBtn.grid(column=0, row=0, columnspan = 2, sticky="EW", padx=3, pady=3)
         
         tk.Grid.columnconfigure(self.comGroup, 0, weight=1)
         tk.Grid.columnconfigure(self.comGroup, 1, weight=2)
+
+        tk.Grid.columnconfigure(self.comBtnFrame, 0, weight=1)
+        tk.Grid.columnconfigure(self.comBtnFrame, 1, weight=1)
 
         # write Group
         rowPosFrame += 1
@@ -294,6 +307,18 @@ class App:
             self.espResetBtn.config(state=tk.NORMAL)
             if (self.serialMonitor):
                 self.serialMonitor.StartThread(comPort)
+
+    def getEspInfo(self):
+        #Disable Serial Monitor if enabled
+        if (self.statusSerialMonitor):
+            self.serialMonitorSwitch()
+        print("### ESP INFO ###")
+        comPort = self.comboComPort.get()
+        if (comPort == ""):
+            print("Error: select a Serial Com Port before you can start read flash!")
+        else:
+            x = threading.Thread(target=EsptoolCom.esptoolEspInfo, args=(comPort,))
+            x.start()
 
     def eraseFlash(self):
         #Disable Serial Monitor if enabled
@@ -425,6 +450,9 @@ class App:
                 
                 self.withSerialMonitor = data['serialMonitor']
                 self.strIo.writelines(f"serial monitor: {data['serialMonitor']}\n")
+
+                self.espInfo = data['espInfo']
+                self.strIo.writelines(f"esp info: {self.espInfo}\n")
 
                 EsptoolCom.baudRate = data['baudRate']
                 self.strIo.write(f"set baud rate to: {data['baudRate']}\n")
