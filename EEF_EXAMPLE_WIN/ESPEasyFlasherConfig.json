@@ -1,9 +1,0 @@
-{
-    "logo": false,
-    "devMode": true,
-    "serialMonitor" : true,
-    "baudRate": "460800",
-    "readStart": "0x00000", 
-    "readSize": "0x400000", 
-    "writeStart": "0x00000"
-}
