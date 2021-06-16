@@ -358,6 +358,9 @@ class App:
             if (len(fileList) > 0):
                 self.setFileListComboWrite(fileList)
                 print(f"Filter {self.stdoutRedirector.espType} files")
+            else:
+                print(f"[War] Could not find entries for {self.stdoutRedirector.espType}")
+                self.setFileListComboWrite(self.fileList)
 
     def getEspInfo(self):
         self.stdoutRedirector.espType = None
