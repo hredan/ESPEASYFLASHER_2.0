@@ -14,7 +14,7 @@ What I have found was the command line tool [esptool.py](https://github.com/espr
 I liked the simple usability of ESPEasyFlasher from BattloXX but I could not understand why it is implemented in C#. The esptool is not only a command line tool, it has also a python interface. Python itself is platform independently and contains tkinter, [a Python binding to the Tk GUI toolkit](https://en.wikipedia.org/wiki/Tkinter), as standard library. And the icing on the cake, with [pyinstaller](https://www.pyinstaller.org/) it is possible to generate executables for different os platforms. So why not implementing all things in Python and bring the idea of ESPEasyFlasher to the next level 2.0?
 
 # Features of EEF
-For more information about the ESPEasyFlasher_2.0 have a look in the [EEF Wiki](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki). All functions are descripted there.
+For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki). All functions are descripted there.
 
 * EEF is a cross-platform software, because it is implemented as python script
 * Customization without source code changes over an json file
