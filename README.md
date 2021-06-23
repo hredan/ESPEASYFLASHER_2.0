@@ -28,7 +28,7 @@ For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](
 It is very simple, what you need is an ESP8266 or ESP32. [Download the zip file for you specific platform](https://github.com/hredan/ESPEASYFLASHER_2.0/releases/latest). Unzip the file an start the executable.
 The zip files contains 2 examples for an ESP8266 and the same 2 example for an ESP32
 1. Blinking LED on ESP board
-1. jQuery Web Interface to switch on/off the LED on the ESP board
+1. [jQuery Web Interface to switch on/off the LED on the ESP board](https://github.com/hredan/ESP_jQuery_Mobile_Interface)
 
 # Disclaimer
 All this code is released under the GPL, and all of it is to be used at your own risk. If you find any bugs, please let me know via the GitHub issue tracker or drop me an email ([hredan@sleepuino.info](mailto:hredan@sleepuino.info)).
