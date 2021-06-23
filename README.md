@@ -3,7 +3,7 @@
 # Simple way to share your ESP ideas with a cross software GUI named ESPEasyFlahser_2.0 (EEF)
 ![EEF_CrossSoftware_3000ms](https://user-images.githubusercontent.com/48091357/123086748-1881c100-d424-11eb-9189-bef6e9a8bbd9.gif)
 
-# ESPEasyFlasher_2.0 is a GUI written in python for the command line tool esptool
+# EEF is a GUI written in python for the command line tool esptool
 
 ## Why I have implemented ESPEasyFlasher_2.0
 I was searching for a simple tool to share firmware binaries for the DIY-Project SleepUINO. The [SleepUINO](https://github.com/hredan/SleepUino) is a alarm clock with a web interface based on an ESP8266.
