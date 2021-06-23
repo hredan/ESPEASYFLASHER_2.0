@@ -1,6 +1,6 @@
 ![SleepUINO_Logo_PreDev](https://user-images.githubusercontent.com/48091357/111156537-25298a00-8596-11eb-8726-1fe5cd7bed93.png)
 
-# Simple way to share your ESP ideas with a cross software GUI named ESPEasyFlahser_2.0
+# Simple way to share your ESP ideas with a cross software GUI named ESPEasyFlahser_2.0 (EEF)
 ![EEF_CrossSoftware_3000ms](https://user-images.githubusercontent.com/48091357/123086748-1881c100-d424-11eb-9189-bef6e9a8bbd9.gif)
 
 # ESPEasyFlasher_2.0 is a GUI written in python for the command line tool esptool
