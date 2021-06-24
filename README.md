@@ -17,18 +17,17 @@ I liked the simple usability of ESPEasyFlasher from BattloXX but I could not und
 For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki). All functions are descripted there.
 
 * EEF is a cross-platform software, because it is implemented as python script
-* Customization without source code changes over an json file
+* [Customization without source code changes over an json file](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Customization-of-EEF)
 * Using your own logo to share your ESP ideas 
-* easy configuration of esptool parameter by eef files
+* [easy configuration of esptool parameter by eef files](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/EEF-files)
 * [Integrated Serial Monitor](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Serial-Monitor)
 * [Reset via RTS pins](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Serial-Monitor#hard-resetting-of-the-esp-via-rts-pin)
-* EEF Releases contains executable binaries for different platforms as examples, created with pyinstaller. You can take this examples with you own ESP binaries, customizing it, and share it with you Customers/Followers.
+* [EEF Releases contains executable binaries for different platforms as examples](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Executable-example-for-different-os-systems,-try-it-out!), created with pyinstaller. You can take this examples with you own ESP binaries, customizing it, and share it with you Customers/Followers.
 
-# Try it out!
-It is very simple, what you need is an ESP8266 or ESP32. [Download the zip file for you specific platform](https://github.com/hredan/ESPEASYFLASHER_2.0/releases/latest). Unzip the file an start the executable.
+## Try it!
+It is very simple, what you need is an ESP8266 or ESP32. [Download the zip file for you specific platform](https://github.com/hredan/ESPEASYFLASHER_2.0/releases/latest). Unzip the file an start the executable. For more details have a look to the wiki page [Executable example](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Executable-example-for-different-os-systems,-try-it!)
 The zip files contains 2 examples for an ESP8266 and the same 2 example for an ESP32
 1. Blinking LED on ESP board
-1. [jQuery Web Interface to switch on/off the LED on the ESP board](https://github.com/hredan/ESP_jQuery_Mobile_Interface)
-
+1. jQuery Web Interface to switch on/off the LED on the ESP board
 # Disclaimer
 All this code is released under the GPL, and all of it is to be used at your own risk. If you find any bugs, please let me know via the GitHub issue tracker or drop me an email ([hredan@sleepuino.info](mailto:hredan@sleepuino.info)).
