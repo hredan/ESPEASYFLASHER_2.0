@@ -25,7 +25,8 @@ For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](
 * [EEF Releases contains executable binaries for different platforms as examples](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Executable-example-for-different-os-systems,-try-it-out!), created with pyinstaller. You can take this examples with you own ESP binaries, customizing it, and share it with you Customers/Followers.
 
 ## Try it!
-It is very simple, what you need is an ESP8266 or ESP32. [Download the zip file for you specific platform](https://github.com/hredan/ESPEASYFLASHER_2.0/releases/latest). Unzip the file an start the executable. For more details have a look to the wiki page [Executable example](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Executable-example-for-different-os-systems,-try-it!)
+It is very simple, what you need is an ESP8266 or ESP32. [Download the zip file for you specific platform](https://github.com/hredan/ESPEASYFLASHER_2.0/releases/latest). Unzip the file an start the executable. For more details have a look to the wiki page [Executable example](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Executable-example-for-different-os-systems,-try-it!).
+
 The zip files contains 2 examples for an ESP8266 and the same 2 example for an ESP32
 1. Blinking LED on ESP board
 1. jQuery Web Interface to switch on/off the LED on the ESP board
