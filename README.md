@@ -10,7 +10,7 @@ I was searching for a simple tool to share firmware binaries for the DIY-Project
 
 What I have found was the command line tool [esptool.py](https://github.com/espressif/esptool) from espressif. It can be used to flash all ESP micro controller, it is a good base and the community is working on it. It is alive! And I have found some different GUIs. Some GUIs try to contain the whole functionality of the esptool and are very complex. I want a simple tool to share my firmware without any frills, like the [ESPEASYFLASHER](https://github.com/BattloXX/ESPEasyFlasher) from BattloXX. But this GUI is only usable on Windows. I want a GUI that is platform independently. So I have got ideas but I have not found a satisfactory solution.
 
-## Build my own GUI based on esptool and tkinter called ESPEasyFlasher_2.0
+## A GUI based on esptool and tkinter called ESPEasyFlasher_2.0
 I liked the simple usability of ESPEasyFlasher from BattloXX but I could not understand why it is implemented in C#. The esptool is not only a command line tool, it has also a python interface. Python itself is platform independently and contains tkinter, [a Python binding to the Tk GUI toolkit](https://en.wikipedia.org/wiki/Tkinter), as standard library. And the icing on the cake, with [pyinstaller](https://www.pyinstaller.org/) it is possible to generate executables for different os platforms. So why not implementing all things in Python and bring the idea of ESPEasyFlasher to the next level 2.0?
 
 # Features of EEF
