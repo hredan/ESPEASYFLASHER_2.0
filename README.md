@@ -17,7 +17,7 @@ I liked the simple usability of ESPEasyFlasher from BattloXX but I could not und
 For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki). All functions are descripted there.
 
 * EEF is a cross-platform software, because it is implemented as python script
-* [Customization without source code changes over an json file](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Customization-of-EEF)
+* [Customization without source code changes over ESPEasyFlasherConfig.json](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Customization-of-EEF)
 * Using your own logo to share your ESP ideas 
 * [easy configuration of esptool parameter by eef files](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/EEF-files)
 * [Integrated Serial Monitor](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Serial-Monitor)
