@@ -18,7 +18,7 @@ For more information about the ESPEasyFlasher_2.0 have a look to the [EEF Wiki](
 
 * EEF is a cross-platform software, because it is implemented as python script
 * [Customization without source code changes over ESPEasyFlasherConfig.json](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Customization-of-EEF)
-* Using your own logo to share your ESP ideas 
+* [Using your own logo to share your ESP ideas](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/own-logo) 
 * [easy configuration of esptool parameter by eef files](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/EEF-files)
 * [Integrated Serial Monitor](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Serial-Monitor)
 * [Reset via RTS pins](https://github.com/hredan/ESPEASYFLASHER_2.0/wiki/Serial-Monitor#hard-resetting-of-the-esp-via-rts-pin)
