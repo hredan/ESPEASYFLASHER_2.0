@@ -49,6 +49,19 @@ class IORedirector(object):
     def __init__(self,text_area, progressBar):
         self.text_area = text_area
         self.progressBar = progressBar
+        self.text_area.tag_config("error", foreground="red")
+
+'''A class for redirecting stderr to this Text widget.'''
+class StderrRedirector(IORedirector):
+    def write(self, input):
+        self.text_area.insert(tk.END, input, "error")
+        self.text_area.see(tk.END)
+    
+    def flush(self):
+        pass
+    
+    def isatty(self):
+        return False
 
 '''A class for redirecting stdout to this Text widget.'''
 class StdoutRedirector(IORedirector):
@@ -299,7 +312,9 @@ class App:
         self.progress.grid(column=0, row=rowPosFrame, columnspan = 2, sticky="EW", padx=5, pady=5)
 
         self.stdoutRedirector = StdoutRedirector(self.text_box, self.progress)
+        self.stderrRedirector = StderrRedirector(self.text_box, self.progress)
         sys.stdout = self.stdoutRedirector
+        sys.stderr = self.stderrRedirector
 
         # write config string
         self.text_box.insert(tk.END, self.strIo.getvalue())
