@@ -166,6 +166,8 @@ class App:
                 root.iconphoto(False, tk.PhotoImage(file=iconPath))
 
         self.strIo.write(f"CWD: {os.getcwd()}\n")
+        self.rootDir = os.getcwd()
+        EsptoolCom.rootDir = self.rootDir
         
         # read config from json file
         self.readConfig()
@@ -343,6 +345,8 @@ class App:
                 self.serialMonitor.StartThread(comPort)
 
     def baseThread(self, targetMethod, infoText, setProgressbar = False, secondArg = None):
+        os.chdir(self.rootDir)
+        print(f"Info: CWD {os.getcwd()}")
         if (setProgressbar):
             self.progress["value"] = 0
             self.progress["maximum"] = 100
@@ -392,7 +396,9 @@ class App:
         else:
             file_name, file_extension = os.path.splitext(filename)
             if (file_extension == ".eef"):
-                command = self.readEEF(filename)
+                eef_path = f"{self.rootDir}/ESP_Packages/{filename}"
+                print(f"Info: eef file path: {eef_path}")
+                command = self.readEEF(eef_path)
                 self.baseThread(EsptoolCom.esptoolWriteEEF, "### Write Flash ###", True, command)             
             else:
                 self.baseThread(EsptoolCom.esptoolWriteFlash, "### Write Flash ###", True, filename)                        
@@ -418,9 +424,9 @@ class App:
         return returnValue
 
     def getFileList(self):
-        fileList = glob.glob("*.eef")
+        fileList = glob.glob("*.eef", root_dir="./ESP_Packages")
         if (len(fileList) == 0):
-            fileList = glob.glob("*.bin")
+            fileList = glob.glob("*.bin", root_dir="./ESP_Packages")
         return fileList
 
     def setFileListComboWrite(self, fileList):

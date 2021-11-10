@@ -17,6 +17,7 @@
 '''
 import esptool
 import sys
+import os
 
 # Config variables can be changed by EspEasyFlasherConfig.json
 baudRate = '460800'
@@ -25,6 +26,8 @@ readStart = '0'
 readSize = '0x400000'
 
 writeStart = '0x00000'
+
+rootDir = ''
 
 def esptoolWriteEEF(comPort, writeParameter):
     command = ['--port', comPort] + writeParameter
@@ -50,5 +53,6 @@ def esptoolEspInfo(comPort, callback):
 
 def startEsptool(command):
     print('Using command %s' % ' '.join(command))
+    os.chdir("./ESP_Packages")
     esptool.main(command)
-    
+    os.chdir(rootDir)
