@@ -1,6 +1,6 @@
 {
     "logo": true,
-    "devMode": false,
+    "devMode": true,
     "serialMonitor" : true,
     "espInfo" : true,
     "baudRate": "460800",

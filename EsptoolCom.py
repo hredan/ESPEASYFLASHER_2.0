@@ -29,9 +29,9 @@ writeStart = '0x00000'
 
 rootDir = ''
 
-def esptoolWriteEEF(comPort, writeParameter):
+def esptoolWriteEEF(comPort, writeParameter, content_path):
     command = ['--port', comPort] + writeParameter
-    startEsptool(command)
+    startEsptool(command, content_path)
 
 def esptoolReadFlash(comPort, filename):
     command = ['--port', comPort, '--baud', baudRate, 'read_flash', readStart, readSize, filename]
@@ -51,8 +51,8 @@ def esptoolEspInfo(comPort, callback):
     startEsptool(command)
     callback()
 
-def startEsptool(command):
+def startEsptool(command, content_path="./ESP_Packages"):
     print('Using command %s' % ' '.join(command))
-    os.chdir("./ESP_Packages")
+    os.chdir(content_path)
     esptool.main(command)
     os.chdir(rootDir)
