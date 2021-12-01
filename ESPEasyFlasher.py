@@ -25,7 +25,8 @@
 '''
 
 import sys
-import os
+import os, shutil
+import zipfile
 import threading
 import re
 import json
@@ -344,7 +345,7 @@ class App:
             if (self.serialMonitor):
                 self.serialMonitor.StartThread(comPort)
 
-    def baseThread(self, targetMethod, infoText, setProgressbar = False, secondArg = None):
+    def baseThread(self, targetMethod, infoText, setProgressbar = False, secondArg = None, thirdArg = None):
         os.chdir(self.rootDir)
         print(f"Info: CWD {os.getcwd()}")
         if (setProgressbar):
@@ -359,7 +360,9 @@ class App:
         if (comPort == ""):
             print("Error: select a Serial Com Port before you can start read flash!")
         else:
-            if (secondArg):
+            if (thirdArg):
+                x = threading.Thread(target=targetMethod, args=(comPort, secondArg, thirdArg, ))
+            elif (secondArg):
                 x = threading.Thread(target=targetMethod, args=(comPort, secondArg, ))
             else:
                 x = threading.Thread(target=targetMethod, args=(comPort,))
@@ -371,7 +374,7 @@ class App:
         if (self.stdoutRedirector.espType):
 
             for entry in self.fileList:
-                if (re.match(f"^{self.stdoutRedirector.espType}", entry)):
+                if (re.match(f"^{self.stdoutRedirector.espType}", entry, re.IGNORECASE)):
                     fileList.append(entry)
             
             if (len(fileList) > 0):
@@ -396,10 +399,29 @@ class App:
         else:
             file_name, file_extension = os.path.splitext(filename)
             if (file_extension == ".eef"):
-                eef_path = f"{self.rootDir}/ESP_Packages/{filename}"
+                content_path=f"{self.rootDir}/ESP_Packages"
+                eef_path = f"{content_path}/{filename}"
                 print(f"Info: eef file path: {eef_path}")
                 command = self.readEEF(eef_path)
-                self.baseThread(EsptoolCom.esptoolWriteEEF, "### Write Flash ###", True, command)             
+                self.baseThread(EsptoolCom.esptoolWriteEEF, "### Write Flash ###", True, command, content_path)
+            elif (file_extension == ".zip"):
+                extract_path = f"{self.rootDir}/ESP_Packages/Extracted"
+                zip_path = f"{self.rootDir}/ESP_Packages/{filename}"
+                eef_path = f"{self.rootDir}/ESP_Packages/Extracted/{file_name}.eef"
+                # make dir, if exist clear content of dir
+                if os.path.exists(extract_path):
+                    shutil.rmtree(extract_path)
+                else:
+                    os.mkdir(extract_path)
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(extract_path)
+                if os.path.exists(eef_path):
+                    print(f"Info: eef file path: {eef_path}")
+                    command = self.readEEF(eef_path)
+                    self.baseThread(EsptoolCom.esptoolWriteEEF, "### Write Flash ###", True, command, extract_path)
+                else:
+                    print(f"Error: WriteFlash->could not find eef file, expected {eef_path}")
+                
             else:
                 self.baseThread(EsptoolCom.esptoolWriteFlash, "### Write Flash ###", True, filename)                        
 
@@ -424,9 +446,11 @@ class App:
         return returnValue
 
     def getFileList(self):
-        fileList = glob.glob("*.eef", root_dir="./ESP_Packages")
+        fileList = glob.glob("*.zip", root_dir="./ESP_Packages")
         if (len(fileList) == 0):
-            fileList = glob.glob("*.bin", root_dir="./ESP_Packages")
+            fileList = glob.glob("*.eef", root_dir="./ESP_Packages")
+            if (len(fileList) == 0):
+                fileList = glob.glob("*.bin", root_dir="./ESP_Packages")
         return fileList
 
     def setFileListComboWrite(self, fileList):
