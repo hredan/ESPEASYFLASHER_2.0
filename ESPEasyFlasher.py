@@ -41,7 +41,7 @@ from serial.tools.list_ports import comports
 from io import StringIO
 
 from esptool_com import EsptoolCom
-import SerialMonitor as sm
+import serial_monitor as sm
 
 
 # With Flag developerMode you can expand the use cases in the GUI with read and erase flash
@@ -367,7 +367,7 @@ class App:
     def espReset(self):
         if (self.statusSerialMonitor and self.serialMonitor):
             print("### Hard Reset via RTS pin ###")
-            self.serialMonitor.espReset()
+            self.serialMonitor.esp_reset()
 
     def serialMonitorSwitch(self):
         comPort = self.comboComPort.get()
@@ -376,13 +376,13 @@ class App:
             self.serialMonitorBtn.config(text="On", bg="grey")
             self.espResetBtn.config(state=tk.DISABLED)
             if (self.serialMonitor):
-                self.serialMonitor.StopThread()
+                self.serialMonitor.stop_thread()
         else:
             self.statusSerialMonitor = True
             self.serialMonitorBtn.config(text="Off", bg="green")
             self.espResetBtn.config(state=tk.NORMAL)
             if (self.serialMonitor):
-                self.serialMonitor.StartThread(comPort)
+                self.serialMonitor.start_thread(comPort)
 
     def baseThread(self, targetMethod, infoText, setProgressbar=False, secondArg=None, thirdArg=None):
         os.chdir(self.rootDir)
