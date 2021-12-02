@@ -43,98 +43,8 @@ from io import StringIO
 from esptool_com import EsptoolCom
 import serial_monitor as sm
 
-
-# With Flag developerMode you can expand the use cases in the GUI with read and erase flash
-
-'''A general class for redirecting I/O to this Text widget.'''
-
-
-class IORedirector(object):
-
-    def __init__(self, text_area, progressBar):
-        self.text_area = text_area
-        self.progressBar = progressBar
-        self.text_area.tag_config("error", foreground="red")
-
-
-'''A class for redirecting stderr to this Text widget.'''
-
-
-class StderrRedirector(IORedirector):
-    def write(self, input):
-        self.text_area.insert(tk.END, input, "error")
-        self.text_area.see(tk.END)
-
-    def flush(self):
-        pass
-
-    def isatty(self):
-        return False
-
-
-'''A class for redirecting stdout to this Text widget.'''
-
-
-class StdoutRedirector(IORedirector):
-    espType = None
-    espFlashSize = None
-
-    def normalOutput(self, input):
-        self.text_area.insert(tk.END, input)
-        self.text_area.see(tk.END)
-
-    def write(self, input):
-        mObjRead = re.match("^(\d+ \(\d+ %\)).*", input)
-        mObjWrite = re.match("^(Writing .+\((\d+) %\)).*", input)
-
-        mObjESPType = re.match(".*(ESP\d+).*", input)
-        mObjFlashSize = re.match(".*(\d+MB).*", input)
-
-        if(mObjRead):
-            numG1 = len(mObjRead.group(1))
-            reProgress = re.match("^\d+ \((\d+) %\)", mObjRead.group(1))
-            if(reProgress):
-                flashProgress = reProgress.group(1)
-                self.progressBar["value"] = int(flashProgress)
-
-            last_insert = self.text_area.tag_ranges("tag_read_procent")
-            if (len(last_insert) > 1):
-                self.text_area.delete(last_insert[0], last_insert[1])
-
-            self.text_area.insert(
-                tk.END, f"{mObjRead.group(1)}\n", "tag_read_procent")
-
-            # just for testing
-            # self.text_area.insert(tk.END, f"{numG1}:{mObj.group(1)} {numG2}\n")
-            self.text_area.see(tk.END)
-        elif(mObjWrite):
-            flashProgress = mObjWrite.group(2)
-            text = mObjWrite.group(1)
-
-            self.progressBar["value"] = int(flashProgress)
-
-            last_insert = self.text_area.tag_ranges("tag_write_procent")
-            if (len(last_insert) > 1):
-                self.text_area.delete(last_insert[0], last_insert[1])
-                self.text_area.delete("end-1c", tk.END)
-
-            self.text_area.insert(tk.END, text, "tag_write_procent")
-            self.text_area.see(tk.END)
-        elif(mObjESPType):
-            # input contains only part of string e.g. ' ESP32' or 'ESP32-D0WDQ6 (revision 1)'
-            self.espType = mObjESPType.group(1)
-            self.normalOutput(input)
-        elif(mObjFlashSize):
-            self.espFlashSize = mObjFlashSize.group(1)
-            self.normalOutput(input)
-        else:
-            self.normalOutput(input)
-
-    def flush(self):
-        pass
-
-    def isatty(self):
-        return False
+from io_redirection import StderrRedirection
+from io_redirection import StdoutRedirection
 
 
 class App:
@@ -353,8 +263,8 @@ class App:
         self.progress.grid(column=0, row=rowPosFrame,
                            columnspan=2, sticky="EW", padx=5, pady=5)
 
-        self.stdoutRedirector = StdoutRedirector(self.text_box, self.progress)
-        self.stderrRedirector = StderrRedirector(self.text_box, self.progress)
+        self.stdoutRedirector = StdoutRedirection(self.text_box, self.progress)
+        self.stderrRedirector = StderrRedirection(self.text_box, self.progress)
         sys.stdout = self.stdoutRedirector
         sys.stderr = self.stderrRedirector
 
@@ -411,25 +321,25 @@ class App:
 
     def espInfoCallback(self):
         print(
-            f"Detected ESP of type: {self.stdoutRedirector.espType}, with Flash Size of: {self.stdoutRedirector.espFlashSize}")
+            f"Detected ESP of type: {self.stdoutRedirector.esp_type}, with Flash Size of: {self.stdoutRedirector.esp_flash_size}")
         fileList = []
-        if (self.stdoutRedirector.espType):
+        if (self.stdoutRedirector.esp_type):
 
             for entry in self.fileList:
-                if (re.match(f"^{self.stdoutRedirector.espType}", entry, re.IGNORECASE)):
+                if (re.match(f"^{self.stdoutRedirector.esp_type}", entry, re.IGNORECASE)):
                     fileList.append(entry)
 
             if (len(fileList) > 0):
                 self.setFileListComboWrite(fileList)
-                print(f"Filter {self.stdoutRedirector.espType} files")
+                print(f"Filter {self.stdoutRedirector.esp_type} files")
             else:
                 print(
-                    f"[War] Could not find entries for {self.stdoutRedirector.espType}")
+                    f"[War] Could not find entries for {self.stdoutRedirector.esp_type}")
                 self.setFileListComboWrite(self.fileList)
 
     def getEspInfo(self):
-        self.stdoutRedirector.espType = None
-        self.stdoutRedirector.espFlashSize = None
+        self.stdoutRedirector.esp_type = None
+        self.stdoutRedirector.esp_flash_size = None
         self.baseThread(self.esp.esptool_esp_info,
                         "### ESP INFO ###", False, self.espInfoCallback)
 
