@@ -25,7 +25,7 @@ class EsptoolCom:
     readStart = '0'
     readSize = '0x400000'
     writeStart = '0x00000'
-    rootDir = ''
+    root_dir = ''
 
     def esptool_write_eef(self, com_port, write_parameter, content_path):
         """write firmware to flash, with parameter from eef file
@@ -91,4 +91,4 @@ class EsptoolCom:
         print(f'Using command {command}')
         os.chdir(content_path)
         esptool.main(command)
-        os.chdir(self.rootDir)
+        os.chdir(self.root_dir)

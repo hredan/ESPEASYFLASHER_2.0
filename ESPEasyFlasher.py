@@ -32,70 +32,69 @@ import threading
 import re
 import json
 import glob
-
+from io import StringIO
 import tkinter as tk
 from tkinter import ttk
-
 from serial.tools.list_ports import comports
-
-from io import StringIO
-
 from esptool_com import EsptoolCom
 import serial_monitor as sm
-
 from io_redirection import StderrRedirection
 from io_redirection import StdoutRedirection
 
 
-class App:
-    def logoFileExists(self):
-        returnValue = False
+class EspEasyFlasher:
+    """TkInter App class EspEasyFlasher"""
+
+    def logo_file_exists(self):
+        """check if logo file exists"""
+        return_value = False
         filename = "./LogoEasyFlash.png"
-        if (os.path.exists(filename)):
-            self.logoFilename = filename
-            returnValue = True
-        elif (self.checkMAIPASS()):
-            self.logoFilename = os.path.join(self.basePath, filename)
-            returnValue = True
+        if os.path.exists(filename):
+            self.logo_file_path = filename
+            return_value = True
+        elif self.check_meipass():
+            self.logo_file_path = os.path.join(self.base_path, filename)
+            return_value = True
         else:
-            returnValue = False
-            self.strIo.write(
+            return_value = False
+            self.str_io.write(
                 f"Warning: Could not find '{filename}', using layout without logo!\n")
 
-        return returnValue
+        return return_value
 
-    def gridWithoutLogo(self, rowPosFrame):
-        self.comGroup.grid(column=0, row=rowPosFrame,
-                           columnspan=3, sticky="EW", padx=5, pady=5)
+    def grid_without_logo(self, row_pos_frame):
+        """set gird columnspan to 3 means without logo"""
+        self.com_group.grid(column=0, row=row_pos_frame,
+                            columnspan=3, sticky="EW", padx=5, pady=5)
 
     def __init__(self, master):
-        self.developerMode = True
-        self.withLogo = True
-        self.withSerialMonitor = True
-        self.fileList = []
-        self.strIo = StringIO()
+        self.developer_mode = True
+        self.with_logo = True
+        self.with_serial_monitor = True
+        self.file_list = []
+        self.str_io = StringIO()
         self.esp = EsptoolCom()
 
-        self.serialMonitor = None
+        self.serial_monitor = None
 
-        self.strIo.write(f"os: {sys.platform}\n")
-        if (self.checkMAIPASS()):
-            if (sys.platform != "win32"):
+        self.str_io.write(f"os: {sys.platform}\n")
+        if self.check_meipass():
+            if sys.platform != "win32":
                 path = os.path.sep.join(sys.argv[0].split(os.path.sep))
                 dirname = os.path.dirname(path)
                 os.chdir(dirname)
-                self.strIo.write(f"{dirname}\n")
+                self.str_io.write(f"{dirname}\n")
             else:
-                iconFile = "./icon_256x256.png"
-                iconPath = os.path.join(self.basePath, iconFile)
-                root.iconphoto(False, tk.PhotoImage(file=iconPath))
+                icon_file = "./icon_256x256.png"
+                icon_path = os.path.join(self.base_path, icon_file)
+                root.iconphoto(False, tk.PhotoImage(file=icon_path))
 
-        self.strIo.write(f"CWD: {os.getcwd()}\n")
-        self.rootDir = os.getcwd()
-        self.esp.rootDir = self.rootDir
+        self.str_io.write(f"CWD: {os.getcwd()}\n")
+        self.root_dir = os.getcwd()
+        self.esp.root_dir = self.root_dir
 
         # read config from json file
-        self.readConfig()
+        self.read_config()
 
         master.title("ESPEasyFlasher2.0")
         master.resizable(0, 0)
@@ -103,266 +102,274 @@ class App:
         frame = ttk.Frame(master)
         frame.pack()
 
-        rowPosFrame = 0
-        self.comGroup = tk.LabelFrame(frame, text='Serial Com Port')
+        row_pos_frame = 0
+        self.com_group = tk.LabelFrame(frame, text='Serial Com Port')
 
-        if (self.withLogo):
-            if (self.logoFileExists()):
-                self.comGroup.grid(column=0, row=rowPosFrame,
-                                   sticky="EW", padx=5, pady=5)
-                self.logo = tk.PhotoImage(file=self.logoFilename)
-                self.labelLogo = tk.Label(frame, image=self.logo)
-                self.labelLogo.grid(column=1, row=rowPosFrame,
+        if self.with_logo:
+            if self.logo_file_exists():
+                self.com_group.grid(column=0, row=row_pos_frame,
+                                    sticky="EW", padx=5, pady=5)
+                self.logo = tk.PhotoImage(file=self.logo_file_path)
+                self.label_logo = tk.Label(frame, image=self.logo)
+                self.label_logo.grid(column=1, row=row_pos_frame,
                                     columnspan=2, sticky="EW")
             else:
-                self.gridWithoutLogo(rowPosFrame)
+                self.grid_without_logo(row_pos_frame)
         else:
-            self.gridWithoutLogo(rowPosFrame)
+            self.grid_without_logo(row_pos_frame)
 
         # Com Port
-        rowPosCom = 0
-        self.labelComPort = tk.Label(self.comGroup, text="Com Port: ")
-        self.labelComPort.grid(column=0, row=rowPosCom, sticky="W")
+        row_pos_com = 0
+        self.label_com_port = tk.Label(self.com_group, text="Com Port: ")
+        self.label_com_port.grid(column=0, row=row_pos_com, sticky="W")
 
-        self.comboComPort = ttk.Combobox(self.comGroup)
-        self.comboComPort.grid(column=1, row=rowPosCom,
+        self.combo_com_port = ttk.Combobox(self.com_group)
+        self.combo_com_port.grid(column=1, row=row_pos_com,
                                sticky="WE", padx=3, pady=3)
 
-        rowPosCom += 1
-        self.comBtnFrame = tk.Frame(self.comGroup)
-        self.comBtnFrame.grid(column=0, row=rowPosCom,
+        row_pos_com += 1
+        self.com_btn_frame = tk.Frame(self.com_group)
+        self.com_btn_frame.grid(column=0, row=row_pos_com,
                               columnspan=2, sticky="EW")
 
-        if (self.espInfo):
-            self.comRefreshBtn = tk.Button(
-                self.comBtnFrame, text="Scan", command=self.comScan)
-            self.comRefreshBtn.grid(
+        if self.esp_info:
+            self.com_refresh_btn = tk.Button(
+                self.com_btn_frame, text="Scan", command=self.com_port_scan)
+            self.com_refresh_btn.grid(
                 column=0, row=0, sticky="EW", padx=3, pady=3)
 
-            self.espInfo = tk.Button(
-                self.comBtnFrame, text="ESP Info", command=self.getEspInfo)
-            self.espInfo.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
+            self.esp_info = tk.Button(
+                self.com_btn_frame, text="ESP Info", command=self.get_esp_info)
+            self.esp_info.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
         else:
-            self.comRefreshBtn = tk.Button(
-                self.comBtnFrame, text="Scan", command=self.comScan)
-            self.comRefreshBtn.grid(
+            self.com_refresh_btn = tk.Button(
+                self.com_btn_frame, text="Scan", command=self.com_port_scan)
+            self.com_refresh_btn.grid(
                 column=0, row=0, columnspan=2, sticky="EW", padx=3, pady=3)
 
-        tk.Grid.columnconfigure(self.comGroup, 0, weight=1)
-        tk.Grid.columnconfigure(self.comGroup, 1, weight=2)
+        tk.Grid.columnconfigure(self.com_group, 0, weight=1)
+        tk.Grid.columnconfigure(self.com_group, 1, weight=2)
 
-        tk.Grid.columnconfigure(self.comBtnFrame, 0, weight=1)
-        tk.Grid.columnconfigure(self.comBtnFrame, 1, weight=1)
+        tk.Grid.columnconfigure(self.com_btn_frame, 0, weight=1)
+        tk.Grid.columnconfigure(self.com_btn_frame, 1, weight=1)
 
         # write Group
-        rowPosFrame += 1
-        self.writeGroup = tk.LabelFrame(frame, text='WriteFlash')
-        self.writeGroup.grid(column=0, row=rowPosFrame,
+        row_pos_frame += 1
+        self.write_group = tk.LabelFrame(frame, text='WriteFlash')
+        self.write_group.grid(column=0, row=row_pos_frame,
                              columnspan=3, sticky="EW", padx=5, pady=5)
 
-        rowPosWrite = 0
-        self.labelWriteBin = tk.Label(self.writeGroup, text="bin file: ")
-        self.labelWriteBin.grid(column=0, row=rowPosWrite, sticky="W")
+        row_pos_write = 0
+        self.label_write_flash = tk.Label(self.write_group, text="bin file: ")
+        self.label_write_flash.grid(column=0, row=row_pos_write, sticky="W")
 
-        self.comboWriteBin = ttk.Combobox(self.writeGroup)
-        self.fileList = self.getFileList()
-        self.setFileListComboWrite(self.fileList)
-        self.comboWriteBin.grid(column=1, row=rowPosWrite,
+        self.combo_write_flash = ttk.Combobox(self.write_group)
+        self.file_list = self.get_file_list()
+        self.set_file_list_combo_write(self.file_list)
+        self.combo_write_flash.grid(column=1, row=row_pos_write,
                                 sticky="EW", padx=3, pady=3)
 
-        rowPosWrite += 1
+        row_pos_write += 1
         self.button = tk.Button(
-            self.writeGroup, text="WriteFlash", command=self.writeFlash)
-        self.button.grid(column=0, row=rowPosWrite,
+            self.write_group, text="WriteFlash", command=self.write_flash)
+        self.button.grid(column=0, row=row_pos_write,
                          columnspan=2, sticky="EW", padx=3, pady=3)
 
-        tk.Grid.columnconfigure(self.writeGroup, 0, weight=1)
-        tk.Grid.columnconfigure(self.writeGroup, 1, weight=2)
+        tk.Grid.columnconfigure(self.write_group, 0, weight=1)
+        tk.Grid.columnconfigure(self.write_group, 1, weight=2)
 
         # read Group
-        if (self.developerMode):
-            rowPosFrame += 1
-            self.readGroup = tk.LabelFrame(frame, text='ReadFlash')
-            self.readGroup.grid(column=0, row=rowPosFrame,
+        if self.developer_mode:
+            row_pos_frame += 1
+            self.read_group = tk.LabelFrame(frame, text='ReadFlash')
+            self.read_group.grid(column=0, row=row_pos_frame,
                                 columnspan=3, sticky="EW", padx=5, pady=5)
 
-            rowPosRead = 0
-            self.labelReadBin = tk.Label(
-                self.readGroup, text="Flash write to: ")
-            self.labelReadBin.grid(column=0, row=rowPosRead, sticky="W")
+            row_pos_read = 0
+            self.label_read_flash = tk.Label(
+                self.read_group, text="Flash write to: ")
+            self.label_read_flash.grid(column=0, row=row_pos_read, sticky="W")
 
-            defaultText = tk.StringVar(
-                self.readGroup, value="filename_read_flash")
-            self.entryFileName = tk.Entry(
-                self.readGroup, width=20, textvariable=defaultText)
-            self.entryFileName.grid(column=1, row=rowPosRead, sticky="EW")
+            default_text = tk.StringVar(
+                self.read_group, value="filename_read_flash")
+            self.entry_file_name = tk.Entry(
+                self.read_group, width=20, textvariable=default_text)
+            self.entry_file_name.grid(column=1, row=row_pos_read, sticky="EW")
 
-            self.fileExtension = tk.Label(self.readGroup, text=".bin")
-            self.fileExtension.grid(column=2, row=rowPosRead, sticky="W")
+            self.file_extension = tk.Label(self.read_group, text=".bin")
+            self.file_extension.grid(column=2, row=row_pos_read, sticky="W")
 
-            rowPosRead += 1
-            self.readBtn = tk.Button(
-                self.readGroup, text="ReadFlash", command=self.readFlash)
-            self.readBtn.grid(column=0, row=rowPosRead,
+            row_pos_read += 1
+            self.read_btn = tk.Button(
+                self.read_group, text="ReadFlash", command=self.read_flash)
+            self.read_btn.grid(column=0, row=row_pos_read,
                               columnspan=3, sticky="EW", padx=3, pady=3)
 
-            tk.Grid.columnconfigure(self.readGroup, 0, weight=1)
-            tk.Grid.columnconfigure(self.readGroup, 1, weight=2)
-            tk.Grid.columnconfigure(self.readGroup, 2, weight=1)
+            tk.Grid.columnconfigure(self.read_group, 0, weight=1)
+            tk.Grid.columnconfigure(self.read_group, 1, weight=2)
+            tk.Grid.columnconfigure(self.read_group, 2, weight=1)
 
-            rowPosFrame += 1
-            self.eraseGroup = tk.LabelFrame(frame, text='EraseFlash')
-            self.eraseGroup.grid(column=0, row=rowPosFrame,
+            row_pos_frame += 1
+            self.erase_group = tk.LabelFrame(frame, text='EraseFlash')
+            self.erase_group.grid(column=0, row=row_pos_frame,
                                  columnspan=3, sticky="EW", padx=5, pady=5)
 
-            rowPosErase = 0
-            self.readBtn = tk.Button(
-                self.eraseGroup, text="EraseFlash", command=self.eraseFlash)
-            self.readBtn.grid(column=0, row=rowPosRead,
+            row_pos_erase = 0
+            self.read_btn = tk.Button(
+                self.erase_group, text="EraseFlash", command=self.erase_flash)
+            self.read_btn.grid(column=0, row=row_pos_erase,
                               sticky="EW", padx=3, pady=3)
 
-            tk.Grid.columnconfigure(self.eraseGroup, 0, weight=1)
+            tk.Grid.columnconfigure(self.erase_group, 0, weight=1)
         # Serial Monitor
-        if (self.withSerialMonitor):
-            rowPosFrame += 1
-            self.statusSerialMonitor = False
-            self.serialMonitorFrame = tk.Frame(frame)
-            self.serialMonitorFrame.grid(
-                column=0, row=rowPosFrame, columnspan=2, sticky="EW")
+        if self.with_serial_monitor:
+            row_pos_frame += 1
+            self.status_serial_monitor = False
+            self.serial_monitor_frame = tk.Frame(frame)
+            self.serial_monitor_frame.grid(
+                column=0, row=row_pos_frame, columnspan=2, sticky="EW")
 
-            self.labelSerialM = tk.Label(
-                self.serialMonitorFrame, text="Serial Monitor: ")
-            self.labelSerialM.grid(column=0, row=0, sticky="W")
+            self.label_serial_monitor = tk.Label(
+                self.serial_monitor_frame, text="Serial Monitor: ")
+            self.label_serial_monitor.grid(column=0, row=0, sticky="W")
 
-            self.serialMonitorBtn = tk.Button(
-                self.serialMonitorFrame, text="On", command=self.serialMonitorSwitch)
-            self.serialMonitorBtn.grid(
+            self.serial_monitor_btn_on_off = tk.Button(
+                self.serial_monitor_frame, text="On", command=self.serial_monitor_switch)
+            self.serial_monitor_btn_on_off.grid(
                 column=1, row=0, sticky="EW", padx=3, pady=3)
 
-            self.espResetBtn = tk.Button(
-                self.serialMonitorFrame, text="ESP Reset", state=tk.DISABLED, command=self.espReset)
-            self.espResetBtn.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
+            self.esp_reset_btn = tk.Button(self.serial_monitor_frame,
+                        text="ESP Reset", state=tk.DISABLED, command=self.esp_reset)
+            self.esp_reset_btn.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
 
         # Textbox Logging
-        rowPosFrame += 1
+        row_pos_frame += 1
         self.text_box = tk.Text(frame, wrap='word', height=11, width=80)
-        self.text_box.grid(column=0, row=rowPosFrame,
+        self.text_box.grid(column=0, row=row_pos_frame,
                            columnspan=2, sticky="EW", padx=5, pady=5)
 
-        scrollb = ttk.Scrollbar(frame, command=self.text_box.yview)
-        scrollb.grid(row=rowPosFrame, column=2, sticky='nsew')
-        self.text_box['yscrollcommand'] = scrollb.set
+        scrollbar = ttk.Scrollbar(frame, command=self.text_box.yview)
+        scrollbar.grid(row=row_pos_frame, column=2, sticky='nsew')
+        self.text_box['yscrollcommand'] = scrollbar.set
 
-        if (self.withSerialMonitor):
-            self.serialMonitor = sm.SerialMonitor(self.text_box)
+        if self.with_serial_monitor:
+            self.serial_monitor = sm.SerialMonitor(self.text_box)
 
         # Progressbar
-        rowPosFrame += 1
+        row_pos_frame += 1
         self.progress = ttk.Progressbar(frame, orient="horizontal",
                                         length=200, mode="determinate")
-        self.progress.grid(column=0, row=rowPosFrame,
+        self.progress.grid(column=0, row=row_pos_frame,
                            columnspan=2, sticky="EW", padx=5, pady=5)
 
-        self.stdoutRedirector = StdoutRedirection(self.text_box, self.progress)
-        self.stderrRedirector = StderrRedirection(self.text_box, self.progress)
-        sys.stdout = self.stdoutRedirector
-        sys.stderr = self.stderrRedirector
+        self.stdout_redirection = StdoutRedirection(self.text_box, self.progress)
+        self.stderr_redirection = StderrRedirection(self.text_box, self.progress)
+        sys.stdout = self.stdout_redirection
+        sys.stderr = self.stderr_redirection
 
         # write config string
-        self.text_box.insert(tk.END, self.strIo.getvalue())
+        self.text_box.insert(tk.END, self.str_io.getvalue())
 
         # scan com ports
-        self.comScan()
+        self.com_port_scan()
 
-    def espReset(self):
-        if (self.statusSerialMonitor and self.serialMonitor):
+    def esp_reset(self):
+        """ trigger esp reset via RTS pins"""
+        if (self.status_serial_monitor and self.serial_monitor):
             print("### Hard Reset via RTS pin ###")
-            self.serialMonitor.esp_reset()
+            self.serial_monitor.esp_reset()
 
-    def serialMonitorSwitch(self):
-        comPort = self.comboComPort.get()
-        if (self.statusSerialMonitor):
-            self.statusSerialMonitor = False
-            self.serialMonitorBtn.config(text="On", bg="grey")
-            self.espResetBtn.config(state=tk.DISABLED)
-            if (self.serialMonitor):
-                self.serialMonitor.stop_thread()
+    def serial_monitor_switch(self):
+        """ enable/disable Serial Monitor"""
+        com_port = self.combo_com_port.get()
+        if self.status_serial_monitor:
+            self.status_serial_monitor = False
+            self.serial_monitor_btn_on_off.config(text="On", bg="grey")
+            self.esp_reset_btn.config(state=tk.DISABLED)
+            if self.serial_monitor:
+                self.serial_monitor.stop_thread()
         else:
-            self.statusSerialMonitor = True
-            self.serialMonitorBtn.config(text="Off", bg="green")
-            self.espResetBtn.config(state=tk.NORMAL)
-            if (self.serialMonitor):
-                self.serialMonitor.start_thread(comPort)
+            self.status_serial_monitor = True
+            self.serial_monitor_btn_on_off.config(text="Off", bg="green")
+            self.esp_reset_btn.config(state=tk.NORMAL)
+            if self.serial_monitor:
+                self.serial_monitor.start_thread(com_port)
 
-    def baseThread(self, targetMethod, infoText, setProgressbar=False, secondArg=None, thirdArg=None):
-        os.chdir(self.rootDir)
+    def base_thread(self, target_method, info_text, set_progressbar=False,
+                   second_arg=None, third_arg=None):
+        """base thread"""
+        os.chdir(self.root_dir)
         print(f"Info: CWD {os.getcwd()}")
-        if (setProgressbar):
+        if set_progressbar:
             self.progress["value"] = 0
             self.progress["maximum"] = 100
 
         # Disable Serial Monitor if enabled
-        if (self.statusSerialMonitor):
-            self.serialMonitorSwitch()
-        print(infoText)
-        comPort = self.comboComPort.get()
-        if (comPort == ""):
+        if self.status_serial_monitor:
+            self.serial_monitor_switch()
+        print(info_text)
+        com_port = self.combo_com_port.get()
+        if com_port == "":
             print("Error: select a Serial Com Port before you can start read flash!")
         else:
-            if (thirdArg):
-                x = threading.Thread(target=targetMethod, args=(
-                    comPort, secondArg, thirdArg, ))
-            elif (secondArg):
-                x = threading.Thread(target=targetMethod,
-                                     args=(comPort, secondArg, ))
+            if third_arg:
+                thread = threading.Thread(target=target_method, args=(
+                    com_port, second_arg, third_arg, ))
+            elif second_arg:
+                thread = threading.Thread(target=target_method,
+                                     args=(com_port, second_arg, ))
             else:
-                x = threading.Thread(target=targetMethod, args=(comPort,))
-            x.start()
+                thread = threading.Thread(target=target_method, args=(com_port,))
+            thread.start()
 
-    def espInfoCallback(self):
-        print(
-            f"Detected ESP of type: {self.stdoutRedirector.esp_type}, with Flash Size of: {self.stdoutRedirector.esp_flash_size}")
-        fileList = []
-        if (self.stdoutRedirector.esp_type):
+    def esp_info_callback(self):
+        """ Callback function for esp threads"""
+        print(f"Detected ESP of type: {self.stdout_redirection.esp_type}, " +
+              f"with Flash Size of: {self.stdout_redirection.esp_flash_size}")
+        file_list = []
+        if self.stdout_redirection.esp_type:
 
-            for entry in self.fileList:
-                if (re.match(f"^{self.stdoutRedirector.esp_type}", entry, re.IGNORECASE)):
-                    fileList.append(entry)
+            for entry in self.file_list:
+                if re.match(f"^{self.stdout_redirection.esp_type}", entry, re.IGNORECASE):
+                    file_list.append(entry)
 
-            if (len(fileList) > 0):
-                self.setFileListComboWrite(fileList)
-                print(f"Filter {self.stdoutRedirector.esp_type} files")
+            if len(file_list) > 0:
+                self.set_file_list_combo_write(file_list)
+                print(f"Filter {self.stdout_redirection.esp_type} files")
             else:
                 print(
-                    f"[War] Could not find entries for {self.stdoutRedirector.esp_type}")
-                self.setFileListComboWrite(self.fileList)
+                    f"[War] Could not find entries for {self.stdout_redirection.esp_type}")
+                self.set_file_list_combo_write(self.file_list)
 
-    def getEspInfo(self):
-        self.stdoutRedirector.esp_type = None
-        self.stdoutRedirector.esp_flash_size = None
-        self.baseThread(self.esp.esptool_esp_info,
-                        "### ESP INFO ###", False, self.espInfoCallback)
+    def get_esp_info(self):
+        """ESP Info request"""
+        self.stdout_redirection.esp_type = None
+        self.stdout_redirection.esp_flash_size = None
+        self.base_thread(self.esp.esptool_esp_info,
+                        "### ESP INFO ###", False, self.esp_info_callback)
 
-    def eraseFlash(self):
-        self.baseThread(self.esp.esptool_erase_flash, "### Erase Flash ###")
+    def erase_flash(self):
+        """erase ESP flash"""
+        self.base_thread(self.esp.esptool_erase_flash, "### Erase Flash ###")
 
-    def writeFlash(self):
-        filename = self.comboWriteBin.get()
-        if (filename == ""):
+    def write_flash(self):
+        """ write data to ESP flash"""
+        filename = self.combo_write_flash.get()
+        if filename == "":
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
             file_name, file_extension = os.path.splitext(filename)
-            if (file_extension == ".eef"):
-                content_path = f"{self.rootDir}/ESP_Packages"
+            if file_extension == ".eef":
+                content_path = f"{self.root_dir}/ESP_Packages"
                 eef_path = f"{content_path}/{filename}"
                 print(f"Info: eef file path: {eef_path}")
-                command = self.readEEF(eef_path)
-                self.baseThread(self.esp.esptool_write_eef,
+                command = self.read_eef_file(eef_path)
+                self.base_thread(self.esp.esptool_write_eef,
                                 "### Write Flash ###", True, command, content_path)
-            elif (file_extension == ".zip"):
-                extract_path = f"{self.rootDir}/ESP_Packages/Extracted"
-                zip_path = f"{self.rootDir}/ESP_Packages/{filename}"
-                eef_path = f"{self.rootDir}/ESP_Packages/Extracted/{file_name}.eef"
+            elif file_extension == ".zip":
+                extract_path = f"{self.root_dir}/ESP_Packages/Extracted"
+                zip_path = f"{self.root_dir}/ESP_Packages/{filename}"
+                eef_path = f"{self.root_dir}/ESP_Packages/Extracted/{file_name}.eef"
                 # make dir, if exist clear content of dir
                 if os.path.exists(extract_path):
                     shutil.rmtree(extract_path)
@@ -372,139 +379,152 @@ class App:
                     zip_ref.extractall(extract_path)
                 if os.path.exists(eef_path):
                     print(f"Info: eef file path: {eef_path}")
-                    command = self.readEEF(eef_path)
-                    self.baseThread(
-                        self.esp.esptool_write_eef, "### Write Flash ###", True, command, extract_path)
+                    command = self.read_eef_file(eef_path)
+                    self.base_thread(
+                        self.esp.esptool_write_eef, "### Write Flash ###",
+                        True, command, extract_path)
                 else:
                     print(
                         f"Error: WriteFlash->could not find eef file, expected {eef_path}")
 
             else:
-                self.baseThread(self.esp.esptool_write_flash,
+                self.base_thread(self.esp.esptool_write_flash,
                                 "### Write Flash ###", True, filename)
 
-    def readFlash(self):
-        filename = self.entryFileName.get()
-        if (filename == ""):
+    def read_flash(self):
+        """ read ESP flash"""
+        filename = self.entry_file_name.get()
+        if filename == "":
             print("Error: before you can read flash, define a filename")
         else:
             filename = filename + ".bin"
-            self.baseThread(self.esp.esptool_read_flash,
+            self.base_thread(self.esp.esptool_read_flash,
                             "### Read Flash ###", True, filename)
 
-    def readEEF(self, filename):
-        self.strIo.write("### read eef file ###\n")
-        returnValue = ""
+    def read_eef_file(self, filename):
+        """read esptool parameter settings from eef file"""
+        self.str_io.write("### read eef file ###\n")
+        return_value = ""
         try:
             with open(filename) as json_file:
                 data = json.load(json_file)
-                returnValue = data['command']
+                return_value = data['command']
 
         except EnvironmentError as err:
-            self.strIo.writelines(
+            self.str_io.writelines(
                 f"Error could not read eef file {filename}: {err}\n")
-        return returnValue
+        return return_value
 
-    def getFileList(self):
-        fileList = glob.glob("*.zip", root_dir="./ESP_Packages")
-        if (len(fileList) == 0):
-            fileList = glob.glob("*.eef", root_dir="./ESP_Packages")
-            if (len(fileList) == 0):
-                fileList = glob.glob("*.bin", root_dir="./ESP_Packages")
-        return fileList
+    def get_file_list(self):
+        """get file list for write combobox, depends on file extension,
+        can be zip (ESPEasyFlasher Package)
+        eef files with required bin files
+        or only a bin for a ESP8266"""
+        file_list = glob.glob("*.zip", root_dir="./ESP_Packages")
+        if len(file_list) == 0:
+            file_list = glob.glob("*.eef", root_dir="./ESP_Packages")
+            if len(file_list) == 0:
+                file_list = glob.glob("*.bin", root_dir="./ESP_Packages")
+        return file_list
 
-    def setFileListComboWrite(self, fileList):
-        self.comboWriteBin["values"] = fileList
-        if(len(fileList) > 0):
-            self.comboWriteBin.current(0)
+    def set_file_list_combo_write(self, file_list):
+        """set file list for combobox write flash"""
+        self.combo_write_flash["values"] = file_list
+        if len(file_list) > 0:
+            self.combo_write_flash.current(0)
 
-    def comScan(self):
-        comInfo = self.getComInfo()
-        if (len(comInfo["comlist"]) > 0):
-            self.comboComPort["values"] = comInfo["comlist"]
+    def com_port_scan(self):
+        """scan for serial usb com port"""
+        com_info = self.get_com_info()
+        if len(com_info["comlist"]) > 0:
+            self.combo_com_port["values"] = com_info["comlist"]
 
-            if(comInfo["defaultCom"] != ""):
-                self.comboComPort.current(
-                    comInfo["comlist"].index(comInfo["defaultCom"]))
+            if com_info["defaultCom"] != "":
+                self.combo_com_port.current(
+                    com_info["comlist"].index(com_info["defaultCom"]))
             else:
-                self.comboComPort.current(0)
+                self.combo_com_port.current(0)
 
-    def getComInfo(self):
+    def get_com_info(self):
+        """ get comports by serial.tools.list_ports
+            and returns a list of usb com ports and the first usb com port as default
+        """
         print("### Com Port Scan ###")
-        clist = []
-        defaultCom = ""
+        usb_com_list = []
+        default_com = ""
 
-        comlist = comports()
-        print("Number of Com Ports: " + str(len(comlist)))
-        if (len(comlist) > 0):
-            defaultCom = comlist[0].device
+        com_ports = comports()
+        print("Number of Com Ports: " + str(len(com_ports)))
+        if len(com_ports) > 0:
+            default_com = com_ports[0].device
 
-        isFundUsbSerial = False
-        for com in comlist:
+        is_found_usb_serial_com_port = False
+        for com in com_ports:
             # print(com.name)
             print("*" + com.description)
-            clist.append(com.device)
-            if(com.description.lower().find("usb") != -1):
-                defaultCom = com.device
-                print("Found: "+defaultCom)
-                isFundUsbSerial = True
+            usb_com_list.append(com.device)
+            if com.description.lower().find("usb") != -1:
+                default_com = com.device
+                print("Found: "+default_com)
+                is_found_usb_serial_com_port = True
 
-        if (isFundUsbSerial != True):
+        if not is_found_usb_serial_com_port:
             print(
                 "Warning: could not find a usb-serial device, connect your device and scan again!")
 
-        return {"comlist": clist, "defaultCom": defaultCom}
+        return {"comlist": usb_com_list, "defaultCom": default_com}
 
-    def readConfig(self):
-        self.strIo.write("### Read Config ###\n")
+    def read_config(self):
+        self.str_io.write("### Read Config ###\n")
         try:
             with open('ESPEasyFlasherConfig.json') as json_file:
                 data = json.load(json_file)
 
-                self.withLogo = data['logo']
-                self.strIo.writelines(f"enable logo: {data['logo']}\n")
+                self.with_logo = data['logo']
+                self.str_io.writelines(f"enable logo: {data['logo']}\n")
 
-                self.developerMode = data['devMode']
-                self.strIo.writelines(f"dev mode is: {data['devMode']}\n")
+                self.developer_mode = data['devMode']
+                self.str_io.writelines(f"dev mode is: {data['devMode']}\n")
 
-                self.withSerialMonitor = data['serialMonitor']
-                self.strIo.writelines(
+                self.with_serial_monitor = data['serialMonitor']
+                self.str_io.writelines(
                     f"serial monitor: {data['serialMonitor']}\n")
 
-                self.espInfo = data['espInfo']
-                self.strIo.writelines(f"esp info: {self.espInfo}\n")
+                self.esp_info = data['espInfo']
+                self.str_io.writelines(f"esp info: {self.esp_info}\n")
 
                 self.esp.baudRate = data['baudRate']
-                self.strIo.write(f"set baud rate to: {data['baudRate']}\n")
+                self.str_io.write(f"set baud rate to: {data['baudRate']}\n")
 
                 self.esp.readStart = data['readStart']
-                self.strIo.write(f"set read start to: {data['readStart']}\n")
+                self.str_io.write(f"set read start to: {data['readStart']}\n")
 
                 self.esp.readSize = data['readSize']
-                self.strIo.write(f"set read size to: {data['readSize']}\n")
+                self.str_io.write(f"set read size to: {data['readSize']}\n")
 
                 self.esp.writeStart = data['writeStart']
-                self.strIo.write(f"set write start to: {data['writeStart']}\n")
+                self.str_io.write(
+                    f"set write start to: {data['writeStart']}\n")
 
         except EnvironmentError as err:
-            self.strIo.writelines(
+            self.str_io.writelines(
                 f"Error could not read config, default values will be used: {err}\n")
 
-    def checkMAIPASS(self):
+    def check_meipass(self):
         """ Get absolute path to resource, works for dev and for PyInstaller """
-        returnValue = False
+        return_value = False
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
-            self.basePath = sys._MEIPASS
-            returnValue = True
+            self.base_path = sys._MEIPASS
+            return_value = True
         except Exception:
-            self.basePath = os.path.abspath(".")
-            returnValue = False
+            self.base_path = os.path.abspath(".")
+            return_value = False
 
-        return returnValue
+        return return_value
 
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = App(root)
+    app = EspEasyFlasher(root)
     root.mainloop()
