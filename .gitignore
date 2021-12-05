@@ -137,3 +137,4 @@ dmypy.json
 *.ico
 *.zip
 *.icns
+/ESP_Packages/Extracted
