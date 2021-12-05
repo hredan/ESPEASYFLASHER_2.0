@@ -35,12 +35,14 @@ import glob
 from io import StringIO
 import tkinter as tk
 from tkinter import ttk
-from serial.tools.list_ports import comports
-from esptool_com import EsptoolCom
-import serial_monitor as sm
-from io_redirection import StderrRedirection
-from io_redirection import StdoutRedirection
 
+from serial.tools.list_ports import comports
+
+# import eef modules
+import eef_modules.serial_monitor as sm
+from eef_modules.esptool_com import EsptoolCom
+from eef_modules.io_redirection import StderrRedirection
+from eef_modules.io_redirection import StdoutRedirection
 
 class EspEasyFlasher:
     """TkInter App class EspEasyFlasher"""
@@ -164,7 +166,7 @@ class EspEasyFlasher:
         self.label_write_flash.grid(column=0, row=row_pos_write, sticky="W")
 
         self.combo_write_flash = ttk.Combobox(self.write_group)
-        self.file_list = self.get_file_list()
+        self.file_list = EspEasyFlasher.get_file_list()
         self.set_file_list_combo_write(self.file_list)
         self.combo_write_flash.grid(column=1, row=row_pos_write,
                                 sticky="EW", padx=3, pady=3)
@@ -295,6 +297,9 @@ class EspEasyFlasher:
             if self.serial_monitor:
                 self.serial_monitor.start_thread(com_port)
 
+    # R0913: Too many arguments (6/5) (too-many-arguments)
+    # in this case allow more than 5 arguments, it is needed here
+    # pylint: disable=R0913
     def base_thread(self, target_method, info_text, set_progressbar=False,
                    second_arg=None, third_arg=None):
         """base thread"""
@@ -406,7 +411,7 @@ class EspEasyFlasher:
         self.str_io.write("### read eef file ###\n")
         return_value = ""
         try:
-            with open(filename) as json_file:
+            with open(filename, encoding="utf-8") as json_file:
                 data = json.load(json_file)
                 return_value = data['command']
 
@@ -415,7 +420,8 @@ class EspEasyFlasher:
                 f"Error could not read eef file {filename}: {err}\n")
         return return_value
 
-    def get_file_list(self):
+    @staticmethod
+    def get_file_list():
         """get file list for write combobox, depends on file extension,
         can be zip (ESPEasyFlasher Package)
         eef files with required bin files
@@ -435,7 +441,7 @@ class EspEasyFlasher:
 
     def com_port_scan(self):
         """scan for serial usb com port"""
-        com_info = self.get_com_info()
+        com_info = EspEasyFlasher.get_com_info()
         if len(com_info["comlist"]) > 0:
             self.combo_com_port["values"] = com_info["comlist"]
 
@@ -445,7 +451,8 @@ class EspEasyFlasher:
             else:
                 self.combo_com_port.current(0)
 
-    def get_com_info(self):
+    @staticmethod
+    def get_com_info():
         """ get comports by serial.tools.list_ports
             and returns a list of usb com ports and the first usb com port as default
         """
@@ -475,9 +482,14 @@ class EspEasyFlasher:
         return {"comlist": usb_com_list, "defaultCom": default_com}
 
     def read_config(self):
+        """ read and set the configuration of ESPEasyFlasher from ESPEasyFlasherConfig.json
+            ESPEasyFlasherConfig.json has to be in the root directory from espeasyflasher.py.
+            If ESPEasyFlasherConfig.json is not available EspEasyFlasher is using some
+            default values (not recommended)
+        """
         self.str_io.write("### Read Config ###\n")
         try:
-            with open('ESPEasyFlasherConfig.json') as json_file:
+            with open('ESPEasyFlasherConfig.json', encoding="utf-8") as json_file:
                 data = json.load(json_file)
 
                 self.with_logo = data['logo']
@@ -515,9 +527,11 @@ class EspEasyFlasher:
         return_value = False
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
+            # pylint: disable=E1101
+            # pylint: disable=W0212
             self.base_path = sys._MEIPASS
             return_value = True
-        except Exception:
+        except AttributeError:
             self.base_path = os.path.abspath(".")
             return_value = False
 
