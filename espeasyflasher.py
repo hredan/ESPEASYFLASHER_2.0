@@ -493,16 +493,16 @@ class EspEasyFlasher:
                 self.esp_info = data['espInfo']
                 self.str_io.writelines(f"esp info: {self.esp_info}\n")
 
-                self.esp.baudRate = data['baudRate']
+                self.esp.baud_rate = data['baudRate']
                 self.str_io.write(f"set baud rate to: {data['baudRate']}\n")
 
-                self.esp.readStart = data['readStart']
+                self.esp.read_start = data['readStart']
                 self.str_io.write(f"set read start to: {data['readStart']}\n")
 
-                self.esp.readSize = data['readSize']
+                self.esp.read_size = data['readSize']
                 self.str_io.write(f"set read size to: {data['readSize']}\n")
 
-                self.esp.writeStart = data['writeStart']
+                self.esp.write_start = data['writeStart']
                 self.str_io.write(
                     f"set write start to: {data['writeStart']}\n")
 

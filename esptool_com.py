@@ -21,10 +21,10 @@ import esptool
 
 class EsptoolCom:
     """EsptoolCom  ESPEasyFlasher interface to esptool"""
-    baudRate = '460800'
-    readStart = '0'
-    readSize = '0x400000'
-    writeStart = '0x00000'
+    baud_rate = '460800'
+    read_start = '0'
+    read_size = '0x400000'
+    write_start = '0x00000'
     root_dir = ''
 
     def esptool_write_eef(self, com_port, write_parameter, content_path):
@@ -45,8 +45,8 @@ class EsptoolCom:
             com_port (str): com port name
             filename (str): filename to save read data
         """
-        command = ['--port', com_port, '--baud', self.baudRate,
-                   'read_flash', self.readStart, self.readSize, filename]
+        command = ['--port', com_port, '--baud', self.baud_rate,
+                   'read_flash', self.read_start, self.read_size, filename]
         self.run_esptool(command)
 
     def esptool_write_flash(self, com_port, filename):
@@ -56,8 +56,8 @@ class EsptoolCom:
             com_port (str): com port name
             filename (str): filename of esp binary
         """
-        command = ['--port', com_port, '--baud', self.baudRate,
-                   'write_flash', self.writeStart, filename]
+        command = ['--port', com_port, '--baud', self.baud_rate,
+                   'write_flash', self.write_start, filename]
 
         self.run_esptool(command)
 
