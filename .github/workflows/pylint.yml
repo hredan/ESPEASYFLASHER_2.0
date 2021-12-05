@@ -22,9 +22,7 @@ jobs:
         pip install pyserial
         pip install esptool
         pip install pylint
-    - name: Analysing espeasyflasher.py with pylint
-      run: pylint espeasyflasher.py
-    - name: Analysing eef sub modules with pylint
+    - name: Analysing code with pylint
       run: |
-        cd eef_modules
-        pylint `ls -R|grep .py$|xargs`
+        pylint ./eef_modules
+        pylint espeasyflasher.py

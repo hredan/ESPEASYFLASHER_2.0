@@ -1,7 +1,5 @@
 #!/bin/sh
 cd ..
+pylint ./eef_modules
 pylint espeasyflasher.py
-
-cd eef_modules
-pylint `ls -R|grep .py$|xargs`
 read -p "Press enter to continue"
