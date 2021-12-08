@@ -20,9 +20,9 @@ import re
 
 class IORedirection:
     '''A general class for redirecting I/O to this Text widget.'''
-    def __init__(self, text_area, progress_bar):
-        self.text_area = text_area
-        self.progress_bar = progress_bar
+    def __init__(self, public_gui_elements):
+        self.text_area = public_gui_elements.get_text_box()
+        self.progress_bar = public_gui_elements.get_progress_bar()
         self.text_area.tag_config("error", foreground="red")
 
     def flush(self):
