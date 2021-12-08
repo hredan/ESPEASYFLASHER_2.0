@@ -1,5 +1,5 @@
 '''
-  label_frame_write_flash.py is used by ESPEasyFlasher.py to create and handle the Write Label Frame.
+  label_frame_write_flash.py is used by ESPEasyFlasher.py to create and handle Write Label Frame.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
   Copyright (C) 2021  André Herrmann (hredan)
@@ -17,14 +17,16 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 class WriteLabelFrame:
     """
     Class to create and handle the Write Label Frame
     """
+
     def __init__(self, frame, row_pos_frame, file_list, esp_func_calls) -> None:
         write_group = tk.LabelFrame(frame, text='WriteFlash')
         write_group.grid(column=0, row=row_pos_frame,
-                              columnspan=3, sticky="EW", padx=5, pady=5)
+                         columnspan=3, sticky="EW", padx=5, pady=5)
 
         row_pos_write = 0
         label_write_flash = tk.Label(write_group, text="bin file: ")
@@ -34,12 +36,13 @@ class WriteLabelFrame:
 
         self.set_file_list_combo_write(file_list)
         self.__combo_write_flash.grid(column=1, row=row_pos_write,
-                                    sticky="EW", padx=3, pady=3)
+                                      sticky="EW", padx=3, pady=3)
 
         row_pos_write += 1
-        button = tk.Button(write_group, text="WriteFlash", command=esp_func_calls.write_flash)
+        button = tk.Button(write_group, text="WriteFlash",
+                           command=esp_func_calls.write_flash)
         button.grid(column=0, row=row_pos_write,
-                         columnspan=2, sticky="EW", padx=3, pady=3)
+                    columnspan=2, sticky="EW", padx=3, pady=3)
 
         tk.Grid.columnconfigure(write_group, 0, weight=1)
         tk.Grid.columnconfigure(write_group, 1, weight=2)
@@ -53,7 +56,7 @@ class WriteLabelFrame:
     def get_file_list_combo_write(self):
         """get the file list of the combobox"""
         return self.__combo_write_flash["values"]
-    
+
     def get_file_name(self):
         """get the selected file name in the combobox"""
         self.__combo_write_flash.get()

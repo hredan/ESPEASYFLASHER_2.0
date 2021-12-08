@@ -22,6 +22,7 @@ import zipfile
 import threading
 import re
 
+# pylint: disable=too-few-public-methods
 class EspFuncCalls():
     """
     EspFuncCalls contains functions to run esptool actions in a separate thread
@@ -44,8 +45,8 @@ class EspFuncCalls():
             progress_bar["maximum"] = 100
 
         # Disable Serial Monitor if enabled
-        if self.status_serial_monitor:
-            self.serial_monitor_switch()
+        self.__public_gui_elements.get_frame_serial_monitor().disable_serial_monitor()
+
         print(info_text)
         com_port = self.__public_gui_elements.get_serial_com_group().get_com_port()
         if com_port == "":
@@ -121,7 +122,7 @@ class EspFuncCalls():
                     zip_ref.extractall(extract_path)
                 if os.path.exists(eef_path):
                     print(f"Info: eef file path: {eef_path}")
-                    command = self.__read_eef_file(eef_path)
+                    command = EspFuncCalls.__read_eef_file(eef_path)
                     self.__base_thread(
                         self.__esp_com.esptool_write_eef, "### Write Flash ###",
                         True, command, extract_path)
@@ -143,7 +144,8 @@ class EspFuncCalls():
             self.__base_thread(self.__esp_com.esptool_read_flash,
                              "### Read Flash ###", True, filename)
 
-    def __read_eef_file(self, filename):
+    @staticmethod
+    def __read_eef_file(filename):
         """read esptool parameter settings from eef file"""
         print("### read eef file ###")
         return_value = ""

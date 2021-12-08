@@ -1,10 +1,30 @@
+'''
+  label_frame_serial_com.py is used by ESPEasyFlasher.py to create and handle the
+  Label Frame Serial Com (contains selection of serial com port, logo, and ESP Info).
+  https://github.com/hredan/ESPEASYFLASHER_2.0
+
+  Copyright (C) 2021  André Herrmann (hredan)
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
 
 import tkinter as tk
 from tkinter import ttk
 
 from serial.tools.list_ports import comports
 
-class SerialComPortGroup():
+class SerialComLabelFrame():
+    """
+    SerialComLabelFrame contains selection of serial com port, logo, and ESP Info
+    """
     def __init__(self, frame, row_pos_frame, eef_config, esp_func_calls) -> None:
         com_group = tk.LabelFrame(frame, text='Serial Com Port')
 
@@ -16,7 +36,7 @@ class SerialComPortGroup():
             self.label_logo.grid(column=1, row=row_pos_frame,
                                     columnspan=2, sticky="EW")
         else:
-            SerialComPortGroup.__grid_without_logo(row_pos_frame, com_group)
+            SerialComLabelFrame.__grid_without_logo(row_pos_frame, com_group)
 
         # Com Port
         row_pos_com = 0
@@ -61,7 +81,7 @@ class SerialComPortGroup():
 
     def com_port_scan(self):
         """scan for serial usb com port"""
-        com_info = SerialComPortGroup.__get_com_info()
+        com_info = SerialComLabelFrame.__get_com_info()
         if len(com_info["comlist"]) > 0:
             self.combo_com_port["values"] = com_info["comlist"]
 
@@ -70,7 +90,7 @@ class SerialComPortGroup():
                     com_info["comlist"].index(com_info["defaultCom"]))
             else:
                 self.combo_com_port.current(0)
-    
+
     def get_com_port(self):
         """get com port name"""
         self.combo_com_port.get()

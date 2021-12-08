@@ -19,6 +19,7 @@ import tkinter as tk
 
 from eef_modules.serial_monitor import SerialMonitor
 
+# pylint: disable=too-few-public-methods
 class SerialMonitorFrame:
     """
     Class to create and handle the Serial Monitor Frame
@@ -35,20 +36,20 @@ class SerialMonitorFrame:
         label_serial_monitor.grid(column=0, row=0, sticky="W")
 
         self.__serial_monitor_btn_on_off = tk.Button(serial_monitor_frame, text="On",
-                                                        command=self.serial_monitor_switch)
+                                                        command=self.__serial_monitor_switch)
         self.__serial_monitor_btn_on_off.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
 
         self.__esp_reset_btn = tk.Button(serial_monitor_frame, text="ESP Reset",
-                                            state=tk.DISABLED, command=self.esp_reset)
+                                            state=tk.DISABLED, command=self.__esp_reset)
         self.__esp_reset_btn.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
 
-    def esp_reset(self):
+    def __esp_reset(self):
         """ trigger esp reset via RTS pins"""
         if (self.__status_serial_monitor and self.__serial_monitor_thread):
             print("### Hard Reset via RTS pin ###")
             self.__serial_monitor_thread.esp_reset()
 
-    def serial_monitor_switch(self):
+    def __serial_monitor_switch(self):
         """ enable/disable Serial Monitor"""
         com_port = self.__label_frame_serial_com.get_com_port()
         if self.__status_serial_monitor:
@@ -63,3 +64,10 @@ class SerialMonitorFrame:
             self.__esp_reset_btn.config(state=tk.NORMAL)
             if self.__serial_monitor_thread:
                 self.__serial_monitor_thread.start_thread(com_port)
+
+    def disable_serial_monitor(self):
+        """
+        if serial monitor is running, stops the serial monitor thread
+        """
+        if self.__status_serial_monitor:
+            self.__serial_monitor_switch()

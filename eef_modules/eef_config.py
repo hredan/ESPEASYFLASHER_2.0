@@ -20,6 +20,7 @@ import sys
 
 import json
 
+# pylint: disable=too-many-instance-attributes
 class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher

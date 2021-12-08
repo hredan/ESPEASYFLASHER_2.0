@@ -37,7 +37,7 @@ from eef_modules.esptool_com import EsptoolCom
 from eef_modules.io_redirection import StderrRedirection
 from eef_modules.io_redirection import StdoutRedirection
 from eef_modules.eef_config import EEFConfig
-from eef_modules.label_frame_serial_com import SerialComPortGroup
+from eef_modules.label_frame_serial_com import SerialComLabelFrame
 from eef_modules.esp_func_calls import EspFuncCalls
 from eef_modules.public_gui_elements import PublicGUIElements
 from eef_modules.label_frame_write_flash import WriteLabelFrame
@@ -84,7 +84,7 @@ class EspEasyFlasher:
 
         # Serial Com Port Group
         row_pos_frame = 0
-        label_frame_serial_com = SerialComPortGroup(frame, row_pos_frame, eef_config, esp_func_calls)
+        label_frame_serial_com = SerialComLabelFrame(frame, row_pos_frame, eef_config, esp_func_calls)
         public_gui_elements.set_label_frame_serial_com(label_frame_serial_com)
 
         # Write Flash Group

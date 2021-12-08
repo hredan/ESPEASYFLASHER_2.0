@@ -17,6 +17,7 @@
 
 import tkinter as tk
 
+# pylint: disable=too-few-public-methods
 class ReadLabelFrame:
     """
     Class to create and handle the Read Label Frame
