@@ -1,4 +1,4 @@
-'''
+"""
   label_frame_read_flash.py is used by ESPEasyFlasher.py to create and handle the read Label Frame.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
@@ -13,9 +13,10 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import tkinter as tk
+
 
 # pylint: disable=too-few-public-methods
 class ReadLabelFrame:
@@ -28,8 +29,7 @@ class ReadLabelFrame:
                               columnspan=3, sticky="EW", padx=5, pady=5)
 
         row_pos_read = 0
-        label_read_flash = tk.Label(
-        read_group, text="Flash write to: ")
+        label_read_flash = tk.Label(read_group, text="Flash write to: ")
         label_read_flash.grid(column=0, row=row_pos_read, sticky="W")
 
         default_text = tk.StringVar(read_group, value="filename_read_flash")
@@ -49,4 +49,4 @@ class ReadLabelFrame:
 
     def get_read_file_name(self):
         """get file name"""
-        self.__entry_file_name.get()
+        return self.__entry_file_name.get()

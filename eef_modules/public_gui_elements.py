@@ -1,4 +1,4 @@
-'''
+"""
   public_gui_elements.py is used by ESPEasyFlasher.py to handle GUI elemtens
   wish are used by other instances.
   https://github.com/hredan/ESPEASYFLASHER_2.0
@@ -14,7 +14,9 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
+
+
 # pylint: disable=too-many-instance-attributes
 class PublicGUIElements:
     """

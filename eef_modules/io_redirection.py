@@ -1,4 +1,4 @@
-'''
+"""
   io_redirection.py is used by ESPEasyFlasher.py to redirect and filter
   the stdout and stderr to the TK text_area.
   https://github.com/hredan/ESPEASYFLASHER_2.0
@@ -14,12 +14,13 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 import tkinter as tk
 import re
 
+
 class IORedirection:
-    '''A general class for redirecting I/O to this Text widget.'''
+    """A general class for redirecting I/O to this Text widget."""
     def __init__(self, public_gui_elements):
         self.text_area = public_gui_elements.get_text_box()
         self.progress_bar = public_gui_elements.get_progress_bar()
@@ -28,14 +29,14 @@ class IORedirection:
     def flush(self):
         """dummy flush needed for IO"""
 
-    @staticmethod
-    def isatty():
+    @classmethod
+    def isatty(cls):
         """dummy isatty needed for IO"""
         return False
 
 
 class StderrRedirection(IORedirection):
-    '''A class for redirecting stderr to this Text widget.'''
+    """A class for redirecting stderr to this Text widget."""
     def write(self, stderr_text_input):
         """
         write method, filtered the Stderr and adept the text before insert to the text_area
@@ -47,9 +48,8 @@ class StderrRedirection(IORedirection):
         self.text_area.see(tk.END)
 
 
-
 class StdoutRedirection(IORedirection):
-    '''A class for redirecting stdout to this Text widget.'''
+    """A class for redirecting stdout to this Text widget."""
     esp_type = None
     esp_flash_size = None
 

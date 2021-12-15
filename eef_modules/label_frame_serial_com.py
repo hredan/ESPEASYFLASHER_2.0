@@ -93,7 +93,7 @@ class SerialComLabelFrame():
 
     def get_com_port(self):
         """get com port name"""
-        self.combo_com_port.get()
+        return self.combo_com_port.get()
 
     @staticmethod
     def __get_com_info():

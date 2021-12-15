@@ -59,4 +59,4 @@ class WriteLabelFrame:
 
     def get_file_name(self):
         """get the selected file name in the combobox"""
-        self.__combo_write_flash.get()
+        return self.__combo_write_flash.get()

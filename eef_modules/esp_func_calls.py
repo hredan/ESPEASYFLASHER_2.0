@@ -1,4 +1,4 @@
-'''
+"""
   esp_func_calls.py is used by ESPEasyFlasher.py to support esptool functionality.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
@@ -13,7 +13,7 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import os
 import json
@@ -22,11 +22,13 @@ import zipfile
 import threading
 import re
 
+
 # pylint: disable=too-few-public-methods
-class EspFuncCalls():
+class EspFuncCalls:
     """
     EspFuncCalls contains functions to run esptool actions in a separate thread
     """
+
     def __init__(self, public_gui_elements, esp_com) -> None:
         self.__public_gui_elements = public_gui_elements
         self.__esp_com = esp_com
@@ -35,7 +37,7 @@ class EspFuncCalls():
     # in this case allow more than 5 arguments, it is needed here
     # pylint: disable=R0913
     def __base_thread(self, target_method, info_text, set_progressbar=False,
-                    second_arg=None, third_arg=None):
+                      second_arg=None, third_arg=None):
         """base thread"""
         os.chdir(self.__esp_com.root_dir)
         print(f"Info: CWD {os.getcwd()}")
@@ -48,16 +50,16 @@ class EspFuncCalls():
         self.__public_gui_elements.get_frame_serial_monitor().disable_serial_monitor()
 
         print(info_text)
-        com_port = self.__public_gui_elements.get_serial_com_group().get_com_port()
+        com_port = self.__public_gui_elements.get_label_frame_serial_com().get_com_port()
         if com_port == "":
             print("Error: select a Serial Com Port before you can start read flash!")
         else:
             if third_arg:
                 thread = threading.Thread(target=target_method, args=(
-                    com_port, second_arg, third_arg, ))
+                    com_port, second_arg, third_arg,))
             elif second_arg:
                 thread = threading.Thread(target=target_method,
-                                          args=(com_port, second_arg, ))
+                                          args=(com_port, second_arg,))
             else:
                 thread = threading.Thread(
                     target=target_method, args=(com_port,))
@@ -71,12 +73,12 @@ class EspFuncCalls():
         file_list = []
         if stdout_redirection.esp_type:
 
-            for entry in self.__public_gui_elements.get_write_group.get_file_list_combo_write():
+            for entry in self.__public_gui_elements.get_label_frame_write().get_file_list_combo_write():
                 if re.match(f"^{stdout_redirection.esp_type}", entry, re.IGNORECASE):
                     file_list.append(entry)
 
             if len(file_list) > 0:
-                self.__public_gui_elements.get_write_group.set_file_list_combo_write(file_list)
+                self.__public_gui_elements.get_label_frame_write().set_file_list_combo_write(file_list)
                 print(f"Filter {stdout_redirection.esp_type} files")
             else:
                 print(
@@ -88,7 +90,7 @@ class EspFuncCalls():
         stdout_redirection.esp_type = None
         stdout_redirection.esp_flash_size = None
         self.__base_thread(self.__esp_com.esptool_esp_info,
-                         "### ESP INFO ###", False, self.esp_info_callback)
+                           "### ESP INFO ###", False, self.esp_info_callback)
 
     def erase_flash(self):
         """erase ESP flash"""
@@ -108,7 +110,7 @@ class EspFuncCalls():
                 print(f"Info: eef file path: {eef_path}")
                 command = self.__read_eef_file(eef_path)
                 self.__base_thread(self.__esp_com.esptool_write_eef,
-                                 "### Write Flash ###", True, command, content_path)
+                                   "### Write Flash ###", True, command, content_path)
             elif file_extension == ".zip":
                 extract_path = f"{root_dir}/ESP_Packages/Extracted"
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
@@ -132,7 +134,7 @@ class EspFuncCalls():
 
             else:
                 self.__base_thread(self.__esp_com.esptool_write_flash,
-                                 "### Write Flash ###", True, filename)
+                                   "### Write Flash ###", True, filename)
 
     def read_flash(self):
         """ read ESP flash"""
@@ -142,7 +144,7 @@ class EspFuncCalls():
         else:
             filename = filename + ".bin"
             self.__base_thread(self.__esp_com.esptool_read_flash,
-                             "### Read Flash ###", True, filename)
+                               "### Read Flash ###", True, filename)
 
     @staticmethod
     def __read_eef_file(filename):

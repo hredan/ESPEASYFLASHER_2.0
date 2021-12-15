@@ -1,4 +1,4 @@
-'''
+"""
   ESPEasyFlasher.py is a Simple GUI for esptool.py by espressif
   (https://github.com/espressif/esptool)
 
@@ -21,7 +21,7 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import sys
 import os
@@ -45,6 +45,9 @@ from eef_modules.label_frame_read_flash import ReadLabelFrame
 from eef_modules.label_frame_erase_flash import EraseLabelFrame
 from eef_modules.frame_serial_monitor import SerialMonitorFrame
 
+ESP_PACKAGES = "./ESP_Packages"
+
+
 class EspEasyFlasher:
     """TkInter App class EspEasyFlasher"""
 
@@ -53,12 +56,11 @@ class EspEasyFlasher:
         str_io = StringIO()
         esp_com = EsptoolCom()
         eef_config = EEFConfig(str_io, esp_com)
-        
+        base_path = eef_config.get_base_path()
+
         public_gui_elements = PublicGUIElements()
 
         esp_func_calls = EspFuncCalls(public_gui_elements, esp_com)
-
-        self.serial_monitor = None
 
         str_io.write(f"os: {sys.platform}\n")
         if eef_config.is_pyinstaller():
@@ -66,10 +68,10 @@ class EspEasyFlasher:
                 path = os.path.sep.join(sys.argv[0].split(os.path.sep))
                 dirname = os.path.dirname(path)
                 os.chdir(dirname)
-                self.str_io.write(f"{dirname}\n")
+                str_io.write(f"{dirname}\n")
             else:
                 icon_file = "./icon_256x256.png"
-                icon_path = os.path.join(self.base_path, icon_file)
+                icon_path = os.path.join(base_path, icon_file)
                 root.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         str_io.write(f"CWD: {os.getcwd()}\n")
@@ -102,17 +104,17 @@ class EspEasyFlasher:
 
         # create Text box for Logging
         text_box = tk.Text(frame, wrap='word', height=11, width=80)
-        
+
         # Serial Monitor
         if eef_config.with_serial_monitor():
             row_pos_frame += 1
-            public_gui_elements.set_frame_serial_monitor(SerialMonitorFrame(frame, row_pos_frame, text_box, label_frame_serial_com))
+            public_gui_elements.set_frame_serial_monitor(SerialMonitorFrame(frame, row_pos_frame, text_box,
+                                                                            label_frame_serial_com))
 
         # Textbox Logging
         row_pos_frame += 1
-        
-        text_box.grid(column=0, row=row_pos_frame,
-                           columnspan=2, sticky="EW", padx=5, pady=5)
+
+        text_box.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
 
         scrollbar = ttk.Scrollbar(frame, command=text_box.yview)
         scrollbar.grid(row=row_pos_frame, column=2, sticky='nsew')
@@ -121,10 +123,8 @@ class EspEasyFlasher:
 
         # Progressbar
         row_pos_frame += 1
-        progress_bar = ttk.Progressbar(frame, orient="horizontal",
-                                        length=200, mode="determinate")
-        progress_bar.grid(column=0, row=row_pos_frame,
-                           columnspan=2, sticky="EW", padx=5, pady=5)
+        progress_bar = ttk.Progressbar(frame, orient="horizontal", length=200, mode="determinate")
+        progress_bar.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
         public_gui_elements.set_progress_bar(progress_bar)
 
         # create stdout and stderr redirection instances
@@ -149,12 +149,13 @@ class EspEasyFlasher:
         can be zip (ESPEasyFlasher Package)
         eef files with required bin files
         or only a bin for a ESP8266"""
-        file_list = glob.glob("*.zip", root_dir="./ESP_Packages")
+        file_list = glob.glob("*.zip", root_dir=ESP_PACKAGES)
         if len(file_list) == 0:
-            file_list = glob.glob("*.eef", root_dir="./ESP_Packages")
+            file_list = glob.glob("*.eef", root_dir=ESP_PACKAGES)
             if len(file_list) == 0:
-                file_list = glob.glob("*.bin", root_dir="./ESP_Packages")
+                file_list = glob.glob("*.bin", root_dir=ESP_PACKAGES)
         return file_list
+
 
 if __name__ == "__main__":
     root = tk.Tk()

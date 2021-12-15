@@ -1,4 +1,4 @@
-'''
+"""
   eef_config contains the class EEFConfig
   It is used by ESPEasyFlasher to read the config from ESPEasyFlasherConfig.json.
   https://github.com/hredan/ESPEASYFLASHER_2.0
@@ -14,11 +14,12 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 import os
 import sys
 
 import json
+
 
 # pylint: disable=too-many-instance-attributes
 class EEFConfig:
@@ -34,7 +35,7 @@ class EEFConfig:
         self.__with_serial_monitor = True
         self.__with_esp_info = True
         self.__logo_file_path = None
-
+        self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
         self.__read_config()
 
