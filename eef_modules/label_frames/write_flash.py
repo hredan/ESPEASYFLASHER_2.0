@@ -1,5 +1,5 @@
 '''
-  label_frame_write_flash.py is used by ESPEasyFlasher.py to create and handle Write Label Frame.
+  write_flash.py is used by ESPEasyFlasher.py to create and handle Write Label Frame.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
   Copyright (C) 2021  André Herrmann (hredan)

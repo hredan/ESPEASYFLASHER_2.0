@@ -1,4 +1,4 @@
-'''
+"""
   frame_serial_monitor.py is used by ESPEasyFlasher.py to create and handle Serial Monitor Frame.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
@@ -13,21 +13,22 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import tkinter as tk
 
 from eef_modules.serial_monitor import SerialMonitor
+
 
 # pylint: disable=too-few-public-methods
 class SerialMonitorFrame:
     """
     Class to create and handle the Serial Monitor Frame
     """
-    def __init__(self, frame, row_pos_frame, text_box, label_frame_serial_com) -> None:
+    def __init__(self, frame, row_pos_frame, text_box, get_com_port) -> None:
         self.__status_serial_monitor = False
         self.__serial_monitor_thread = SerialMonitor(text_box)
-        self.__label_frame_serial_com = label_frame_serial_com
+        self.__get_com_port = get_com_port
 
         serial_monitor_frame = tk.Frame(frame)
         serial_monitor_frame.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW")
@@ -51,7 +52,7 @@ class SerialMonitorFrame:
 
     def __serial_monitor_switch(self):
         """ enable/disable Serial Monitor"""
-        com_port = self.__label_frame_serial_com.get_com_port()
+        com_port = self.__get_com_port()
         if self.__status_serial_monitor:
             self.__status_serial_monitor = False
             self.__serial_monitor_btn_on_off.config(text="On", bg="grey")

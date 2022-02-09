@@ -37,13 +37,14 @@ from eef_modules.esptool_com import EsptoolCom
 from eef_modules.io_redirection import StderrRedirection
 from eef_modules.io_redirection import StdoutRedirection
 from eef_modules.eef_config import EEFConfig
-from eef_modules.label_frame_serial_com import SerialComLabelFrame
+
 from eef_modules.esp_func_calls import EspFuncCalls
 from eef_modules.public_gui_elements import PublicGUIElements
-from eef_modules.label_frame_write_flash import WriteLabelFrame
-from eef_modules.label_frame_read_flash import ReadLabelFrame
-from eef_modules.label_frame_erase_flash import EraseLabelFrame
+
 from eef_modules.frame_serial_monitor import SerialMonitorFrame
+
+from eef_modules.label_frame_handler import LabelFrameHandler
+
 
 ESP_PACKAGES = "./ESP_Packages"
 
@@ -59,8 +60,9 @@ class EspEasyFlasher:
         base_path = eef_config.get_base_path()
 
         public_gui_elements = PublicGUIElements()
+        label_frames = LabelFrameHandler()
 
-        esp_func_calls = EspFuncCalls(public_gui_elements, esp_com)
+        esp_func_calls = EspFuncCalls(public_gui_elements, label_frames, esp_com)
 
         str_io.write(f"os: {sys.platform}\n")
         if eef_config.is_pyinstaller():
@@ -86,21 +88,20 @@ class EspEasyFlasher:
 
         # Serial Com Port Group
         row_pos_frame = 0
-        label_frame_serial_com = SerialComLabelFrame(frame, row_pos_frame, eef_config, esp_func_calls)
-        public_gui_elements.set_label_frame_serial_com(label_frame_serial_com)
+        label_frames.create_header_frame(frame, row_pos_frame, eef_config, esp_func_calls)
 
         # Write Flash Group
         row_pos_frame += 1
         file_list = EspEasyFlasher.get_file_list()
-        public_gui_elements.set_label_frame_write(WriteLabelFrame(frame, row_pos_frame, file_list, esp_func_calls))
+        label_frames.create_write_frame(frame, row_pos_frame, file_list, esp_func_calls)
 
         # Read Flash Group (optional)
         if eef_config.with_developer_mode():
             row_pos_frame += 1
-            public_gui_elements.set_label_frame_read(ReadLabelFrame(frame, row_pos_frame, esp_func_calls))
+            label_frames.create_read_frame(frame, row_pos_frame, esp_func_calls)
 
             row_pos_frame += 1
-            public_gui_elements.set_label_frame_erase(EraseLabelFrame(frame, row_pos_frame, esp_func_calls))
+            label_frames.create_erase_frame(frame, row_pos_frame, esp_func_calls)
 
         # create Text box for Logging
         text_box = tk.Text(frame, wrap='word', height=11, width=80)
@@ -109,7 +110,7 @@ class EspEasyFlasher:
         if eef_config.with_serial_monitor():
             row_pos_frame += 1
             public_gui_elements.set_frame_serial_monitor(SerialMonitorFrame(frame, row_pos_frame, text_box,
-                                                                            label_frame_serial_com))
+                                                                            label_frames.get_com_port))
 
         # Textbox Logging
         row_pos_frame += 1
@@ -141,7 +142,7 @@ class EspEasyFlasher:
         text_box.insert(tk.END, str_io.getvalue())
 
         # scan com ports
-        public_gui_elements.get_label_frame_serial_com().com_port_scan()
+        label_frames.com_port_scan()
 
     @staticmethod
     def get_file_list():

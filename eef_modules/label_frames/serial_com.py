@@ -1,5 +1,5 @@
 '''
-  label_frame_serial_com.py is used by ESPEasyFlasher.py to create and handle the
+  serial_com.py is used by ESPEasyFlasher.py to create and handle the
   Label Frame Serial Com (contains selection of serial com port, logo, and ESP Info).
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
@@ -21,7 +21,8 @@ from tkinter import ttk
 
 from serial.tools.list_ports import comports
 
-class SerialComLabelFrame():
+
+class SerialComLabelFrame:
     """
     SerialComLabelFrame contains selection of serial com port, logo, and ESP Info
     """

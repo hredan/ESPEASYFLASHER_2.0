@@ -27,10 +27,6 @@ class PublicGUIElements:
         self.__text_box = None
         self.__stdout_redirection = None
         self.__root_dir = None
-        self.__label_frame_write_flash = None
-        self.__label_frame_serial = None
-        self.__label_frame_read_flash = None
-        self.__label_frame_erase_flash = None
         self.__frame_serial_monitor = None
 
     def set_progress_bar(self, progress_bar):
@@ -80,54 +76,6 @@ class PublicGUIElements:
         get root dir
         """
         return self.__root_dir
-
-    def set_label_frame_write(self, label_frame_write):
-        """
-        set write_group
-        """
-        self.__label_frame_write_flash = label_frame_write
-
-    def get_label_frame_write(self):
-        """
-        get write group
-        """
-        return self.__label_frame_write_flash
-
-    def set_label_frame_serial_com(self, label_frame_serial_com):
-        """
-        set serial_com_group
-        """
-        self.__label_frame_serial = label_frame_serial_com
-
-    def get_label_frame_serial_com(self):
-        """
-        get serial_com_group
-        """
-        return self.__label_frame_serial
-
-    def set_label_frame_read(self, label_frame_read):
-        """
-        set label frame read flash
-        """
-        self.__label_frame_read_flash = label_frame_read
-
-    def get_label_frame_read(self):
-        """
-        get label frame read flash
-        """
-        return self.__label_frame_read_flash
-
-    def set_label_frame_erase(self, label_frame_erase):
-        """
-        set label frame erase flash
-        """
-        self.__label_frame_erase_flash = label_frame_erase
-
-    def get_label_frame_erase(self):
-        """
-        get label frame erase flash
-        """
-        return self.__label_frame_erase_flash
 
     def set_frame_serial_monitor(self, frame_serial_monitor):
         """

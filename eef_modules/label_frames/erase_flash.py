@@ -1,5 +1,5 @@
 '''
-  label_frame_erase_flash.py is used by ESPEasyFlasher.py to create and handle Erase Label Frame.
+  erase_flash.py is used by ESPEasyFlasher.py to create and handle Erase Label Frame.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
   Copyright (C) 2021  André Herrmann (hredan)
