@@ -60,9 +60,6 @@ class EspEasyFlasher:
         base_path = eef_config.get_base_path()
 
         public_gui_elements = PublicGUIElements()
-        label_frames = LabelFrameHandler()
-
-        esp_func_calls = EspFuncCalls(public_gui_elements, label_frames, esp_com)
 
         str_io.write(f"os: {sys.platform}\n")
         if eef_config.is_pyinstaller():
@@ -86,9 +83,13 @@ class EspEasyFlasher:
         frame = ttk.Frame(master)
         frame.pack()
 
+        esp_func_calls = EspFuncCalls(public_gui_elements, esp_com)
+        label_frames = LabelFrameHandler(frame, eef_config, esp_func_calls)
+        esp_func_calls.label_frames = label_frames
+
         # Serial Com Port Group
         row_pos_frame = 0
-        label_frames.create_header_frame(frame, row_pos_frame, eef_config, esp_func_calls)
+        label_frames.set_pos_header_frame(row_pos_frame)
 
         # Write Flash Group
         row_pos_frame += 1

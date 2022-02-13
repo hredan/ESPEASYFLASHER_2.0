@@ -29,9 +29,9 @@ class EspFuncCalls:
     EspFuncCalls contains functions to run esptool actions in a separate thread
     """
 
-    def __init__(self, public_gui_elements, label_frames, esp_com) -> None:
+    def __init__(self, public_gui_elements, esp_com) -> None:
         self.__public_gui_elements = public_gui_elements
-        self.__label_frames = label_frames
+        self.label_frames = None
         self.__esp_com = esp_com
 
     # R0913: Too many arguments (6/5) (too-many-arguments)
@@ -51,7 +51,7 @@ class EspFuncCalls:
         self.__public_gui_elements.get_frame_serial_monitor().disable_serial_monitor()
 
         print(info_text)
-        com_port = self.__label_frames.get_com_port()
+        com_port = self.label_frames.get_com_port()
         if com_port == "":
             print("Error: select a Serial Com Port before you can start read flash!")
         else:
@@ -74,12 +74,12 @@ class EspFuncCalls:
         file_list = []
         if stdout_redirection.esp_type:
 
-            for entry in self.__label_frames.get_file_list_combo_write():
+            for entry in self.label_frames.get_file_list_combo_write():
                 if re.match(f"^{stdout_redirection.esp_type}", entry, re.IGNORECASE):
                     file_list.append(entry)
 
             if len(file_list) > 0:
-                self.__label_frames.set_file_list_combo_write(file_list)
+                self.label_frames.set_file_list_combo_write(file_list)
                 print(f"Filter {stdout_redirection.esp_type} files")
             else:
                 print(
@@ -99,7 +99,7 @@ class EspFuncCalls:
 
     def write_flash(self):
         """ write data to ESP flash"""
-        filename = self.__label_frames.get_filename_write()
+        filename = self.label_frames.get_filename_write()
         if filename == "":
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
@@ -139,7 +139,7 @@ class EspFuncCalls:
 
     def read_flash(self):
         """ read ESP flash"""
-        filename = self.__label_frames.get_read_file_name()
+        filename = self.label_frames.get_read_file_name()
         if filename == "":
             print("Error: before you can read flash, define a filename")
         else:

@@ -1,4 +1,4 @@
-'''
+"""
   serial_com.py is used by ESPEasyFlasher.py to create and handle the
   Label Frame Serial Com (contains selection of serial com port, logo, and ESP Info).
   https://github.com/hredan/ESPEASYFLASHER_2.0
@@ -14,7 +14,7 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 import tkinter as tk
 from tkinter import ttk
@@ -22,54 +22,62 @@ from tkinter import ttk
 from serial.tools.list_ports import comports
 
 
-class SerialComLabelFrame:
+class SerialComLabelFrame(tk.LabelFrame):
     """
     SerialComLabelFrame contains selection of serial com port, logo, and ESP Info
     """
-    def __init__(self, frame, row_pos_frame, eef_config, esp_func_calls) -> None:
-        com_group = tk.LabelFrame(frame, text='Serial Com Port')
 
+    def __init__(self, frame, label_str, eef_config, esp_func_calls):
+        super().__init__(frame, text=label_str)
+        self.__eef_config = eef_config
+        self.__frame = frame
         if eef_config.with_logo():
-            com_group.grid(column=0, row=row_pos_frame,
-                                sticky="EW", padx=5, pady=5)
             self.logo = tk.PhotoImage(file=eef_config.get_logo_file_path())
             self.label_logo = tk.Label(frame, image=self.logo)
-            self.label_logo.grid(column=1, row=row_pos_frame,
-                                    columnspan=2, sticky="EW")
         else:
-            SerialComLabelFrame.__grid_without_logo(row_pos_frame, com_group)
+            self.logo = None
+            self.label_logo = None
+
+        self.label_com_port = tk.Label(self, text="Com Port: ")
+        self.combo_com_port = ttk.Combobox(self)
+        self.com_btn_frame = tk.Frame(self)
+
+        self.esp_info = tk.Button(self.com_btn_frame, text="ESP Info", command=esp_func_calls.get_esp_info)
+        self.com_refresh_btn = tk.Button(self.com_btn_frame, text="Scan", command=self.com_port_scan)
+
+    def set_positioning(self, row_pos_frame):
+        # com_group = tk.LabelFrame(frame, text='Serial Com Port')
+
+        if self.__eef_config.with_logo():
+            self.grid(column=0, row=row_pos_frame, sticky="EW", padx=5, pady=5)
+            self.label_logo.grid(column=1, row=row_pos_frame, columnspan=2, sticky="EW")
+        else:
+            SerialComLabelFrame.__grid_without_logo(row_pos_frame, self)
 
         # Com Port
         row_pos_com = 0
-        self.label_com_port = tk.Label(com_group, text="Com Port: ")
         self.label_com_port.grid(column=0, row=row_pos_com, sticky="W")
 
-        self.combo_com_port = ttk.Combobox(com_group)
         self.combo_com_port.grid(column=1, row=row_pos_com,
                                  sticky="WE", padx=3, pady=3)
 
         row_pos_com += 1
-        self.com_btn_frame = tk.Frame(com_group)
-        self.com_btn_frame.grid(column=0, row=row_pos_com,
-                                columnspan=2, sticky="EW")
+        self.com_btn_frame.grid(column=0, row=row_pos_com, columnspan=2, sticky="EW")
 
-        if eef_config.with_esp_info():
+        if self.__eef_config.with_esp_info():
             self.com_refresh_btn = tk.Button(
                 self.com_btn_frame, text="Scan", command=self.com_port_scan)
             self.com_refresh_btn.grid(
                 column=0, row=0, sticky="EW", padx=3, pady=3)
 
-            self.esp_info = tk.Button(
-                self.com_btn_frame, text="ESP Info", command=esp_func_calls.get_esp_info)
             self.esp_info.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
         else:
-            self.com_refresh_btn = tk.Button(
-                self.com_btn_frame, text="Scan", command=self.com_port_scan)
+
             self.com_refresh_btn.grid(
                 column=0, row=0, columnspan=2, sticky="EW", padx=3, pady=3)
 
-        tk.Grid.columnconfigure(com_group, 0, weight=1)
-        tk.Grid.columnconfigure(com_group, 1, weight=2)
+        tk.Grid.columnconfigure(self, 0, weight=1)
+        tk.Grid.columnconfigure(self, 1, weight=2)
 
         tk.Grid.columnconfigure(self.com_btn_frame, 0, weight=1)
         tk.Grid.columnconfigure(self.com_btn_frame, 1, weight=1)
