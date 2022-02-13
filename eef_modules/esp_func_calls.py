@@ -29,9 +29,9 @@ class EspFuncCalls:
     EspFuncCalls contains functions to run esptool actions in a separate thread
     """
 
-    def __init__(self, public_gui_elements, esp_com) -> None:
+    def __init__(self, public_gui_elements, esp_com, label_frames) -> None:
         self.__public_gui_elements = public_gui_elements
-        self.label_frames = None
+        self.label_frames = label_frames
         self.__esp_com = esp_com
 
     # R0913: Too many arguments (6/5) (too-many-arguments)

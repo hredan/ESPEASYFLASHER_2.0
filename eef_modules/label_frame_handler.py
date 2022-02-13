@@ -22,15 +22,19 @@ from eef_modules.label_frames.erase_flash import EraseLabelFrame
 
 
 class LabelFrameHandler:
-    def __init__(self, frame, eef_config, esp_func_calls):
+    """ the class LabelFrame Handler managed the Labelframes:
+    SerialComLabelFrame (header_frame)
 
-        self.__header_frame = SerialComLabelFrame(frame, 'Serial Com Port', eef_config, esp_func_calls)
+    """
+    def __init__(self, frame, eef_config):
+
+        self.__header_frame = SerialComLabelFrame(frame, 'Serial Com Port', eef_config)
         self.__write_frame = None
         self.__read_frame = None
         self.__erase_frame = None
 
-    def set_pos_header_frame(self, row_pos_frame):
-        self.__header_frame.set_positioning(row_pos_frame)
+    def set_pos_header_frame(self, row_pos_frame, esp_func_calls):
+        self.__header_frame.set_positioning(row_pos_frame, esp_func_calls)
 
     def create_write_frame(self, frame, row_pos_frame, file_list, esp_func_calls):
         self.__write_frame = WriteLabelFrame(frame, row_pos_frame, file_list, esp_func_calls)

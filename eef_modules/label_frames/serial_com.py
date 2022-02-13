@@ -3,7 +3,7 @@
   Label Frame Serial Com (contains selection of serial com port, logo, and ESP Info).
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
-  Copyright (C) 2021  André Herrmann (hredan)
+  Copyright (C) 2022  André Herrmann (hredan)
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -24,88 +24,74 @@ from serial.tools.list_ports import comports
 
 class SerialComLabelFrame(tk.LabelFrame):
     """
-    SerialComLabelFrame contains selection of serial com port, logo, and ESP Info
+    SerialComLabelFrame (header frame) contains section of serial com port, logo, and ESP Info
     """
 
-    def __init__(self, frame, label_str, eef_config, esp_func_calls):
+    def __init__(self, frame, label_str, eef_config):
         super().__init__(frame, text=label_str)
+        # keep private reference
         self.__eef_config = eef_config
         self.__frame = frame
-        if eef_config.with_logo():
-            self.logo = tk.PhotoImage(file=eef_config.get_logo_file_path())
-            self.label_logo = tk.Label(frame, image=self.logo)
-        else:
-            self.logo = None
-            self.label_logo = None
 
-        self.label_com_port = tk.Label(self, text="Com Port: ")
-        self.combo_com_port = ttk.Combobox(self)
-        self.com_btn_frame = tk.Frame(self)
+        self.__combo_com_port = ttk.Combobox(self)
 
-        self.esp_info = tk.Button(self.com_btn_frame, text="ESP Info", command=esp_func_calls.get_esp_info)
-        self.com_refresh_btn = tk.Button(self.com_btn_frame, text="Scan", command=self.com_port_scan)
-
-    def set_positioning(self, row_pos_frame):
-        # com_group = tk.LabelFrame(frame, text='Serial Com Port')
-
+    def set_positioning(self, row_pos_frame, esp_func_calls):
+        """ define the positions from GUI elements in header frame """
         if self.__eef_config.with_logo():
+            # with logo
+            logo = tk.PhotoImage(file=self.__eef_config.get_logo_file_path())
+            label_logo = tk.Label(self.__frame, image=logo)
             self.grid(column=0, row=row_pos_frame, sticky="EW", padx=5, pady=5)
-            self.label_logo.grid(column=1, row=row_pos_frame, columnspan=2, sticky="EW")
+            label_logo.grid(column=1, row=row_pos_frame, columnspan=2, sticky="EW")
         else:
-            SerialComLabelFrame.__grid_without_logo(row_pos_frame, self)
+            # without logo use columnspan = 3
+            self.grid(column=0, row=row_pos_frame, columnspan=3, sticky="EW", padx=5, pady=5)
 
-        # Com Port
+        # Position of comport label and combo box
         row_pos_com = 0
-        self.label_com_port.grid(column=0, row=row_pos_com, sticky="W")
+        label_com_port = tk.Label(self, text="Com Port: ")
+        label_com_port.grid(column=0, row=row_pos_com, sticky="W")
+        self.__combo_com_port.grid(column=1, row=row_pos_com, sticky="WE", padx=3, pady=3)
 
-        self.combo_com_port.grid(column=1, row=row_pos_com,
-                                 sticky="WE", padx=3, pady=3)
-
+        # Postion of buttons Scan and ESP Info, vision of ESP Info depends on esp config
         row_pos_com += 1
-        self.com_btn_frame.grid(column=0, row=row_pos_com, columnspan=2, sticky="EW")
 
+        # create button frame with buttons Scan and ESP Info
+        com_btn_frame = tk.Frame(self)
+        com_btn_frame.grid(column=0, row=row_pos_com, columnspan=2, sticky="EW")
+        com_refresh_btn = tk.Button(com_btn_frame, text="Scan", command=self.com_port_scan)
         if self.__eef_config.with_esp_info():
-            self.com_refresh_btn = tk.Button(
-                self.com_btn_frame, text="Scan", command=self.com_port_scan)
-            self.com_refresh_btn.grid(
-                column=0, row=0, sticky="EW", padx=3, pady=3)
+            com_refresh_btn.grid(column=0, row=0, sticky="EW", padx=3, pady=3)
 
-            self.esp_info.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
+            esp_info = tk.Button(com_btn_frame, text="ESP Info", command=esp_func_calls.get_esp_info)
+            esp_info.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
         else:
-
-            self.com_refresh_btn.grid(
-                column=0, row=0, columnspan=2, sticky="EW", padx=3, pady=3)
+            com_refresh_btn.grid(column=0, row=0, columnspan=2, sticky="EW", padx=3, pady=3)
 
         tk.Grid.columnconfigure(self, 0, weight=1)
         tk.Grid.columnconfigure(self, 1, weight=2)
 
-        tk.Grid.columnconfigure(self.com_btn_frame, 0, weight=1)
-        tk.Grid.columnconfigure(self.com_btn_frame, 1, weight=1)
-
-    @staticmethod
-    def __grid_without_logo(row_pos_frame, com_group):
-        """set gird columnspan to 3 means without logo"""
-        com_group.grid(column=0, row=row_pos_frame,
-                            columnspan=3, sticky="EW", padx=5, pady=5)
+        tk.Grid.columnconfigure(com_btn_frame, 0, weight=1)
+        tk.Grid.columnconfigure(com_btn_frame, 1, weight=1)
 
     def com_port_scan(self):
         """scan for serial usb com port"""
-        com_info = SerialComLabelFrame.__get_com_info()
+        com_info = self.__get_com_info()
         if len(com_info["comlist"]) > 0:
-            self.combo_com_port["values"] = com_info["comlist"]
+            self.__combo_com_port["values"] = com_info["comlist"]
 
             if com_info["defaultCom"] != "":
-                self.combo_com_port.current(
+                self.__combo_com_port.current(
                     com_info["comlist"].index(com_info["defaultCom"]))
             else:
-                self.combo_com_port.current(0)
+                self.__combo_com_port.current(0)
 
     def get_com_port(self):
         """get com port name"""
-        return self.combo_com_port.get()
+        return self.__combo_com_port.get()
 
-    @staticmethod
-    def __get_com_info():
+    @classmethod
+    def __get_com_info(cls):
         """ get comports by serial.tools.list_ports
             and returns a list of usb com ports and the first usb com port as default
         """

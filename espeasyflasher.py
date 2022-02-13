@@ -83,13 +83,12 @@ class EspEasyFlasher:
         frame = ttk.Frame(master)
         frame.pack()
 
-        esp_func_calls = EspFuncCalls(public_gui_elements, esp_com)
-        label_frames = LabelFrameHandler(frame, eef_config, esp_func_calls)
-        esp_func_calls.label_frames = label_frames
+        label_frames = LabelFrameHandler(frame, eef_config)
+        esp_func_calls = EspFuncCalls(public_gui_elements, esp_com, label_frames)
 
         # Serial Com Port Group
         row_pos_frame = 0
-        label_frames.set_pos_header_frame(row_pos_frame)
+        label_frames.set_pos_header_frame(row_pos_frame, esp_func_calls)
 
         # Write Flash Group
         row_pos_frame += 1
