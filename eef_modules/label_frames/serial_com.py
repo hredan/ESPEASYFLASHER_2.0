@@ -27,8 +27,8 @@ class SerialComLabelFrame(tk.LabelFrame):
     SerialComLabelFrame (header frame) contains section of serial com port, logo, and ESP Info
     """
 
-    def __init__(self, frame, label_str, eef_config):
-        super().__init__(frame, text=label_str)
+    def __init__(self, frame, eef_config):
+        super().__init__(frame, text='Serial Com Port')
         # keep private reference
         self.__eef_config = eef_config
         self.__frame = frame

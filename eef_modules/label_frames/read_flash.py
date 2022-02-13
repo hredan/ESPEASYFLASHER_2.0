@@ -17,35 +17,37 @@
 
 import tkinter as tk
 
-
-# pylint: disable=too-few-public-methods
-class ReadLabelFrame:
+class ReadLabelFrame(tk.LabelFrame):
     """
     Class to create and handle the Read Label Frame
     """
-    def __init__(self, frame, row_pos_frame, esp_func_calls) -> None:
-        read_group = tk.LabelFrame(frame, text='ReadFlash')
-        read_group.grid(column=0, row=row_pos_frame,
-                              columnspan=3, sticky="EW", padx=5, pady=5)
+
+    def __init__(self, frame):
+        super().__init__(frame, text='ReadFlash')
+
+        default_text = tk.StringVar(self, value="filename_read_flash")
+        self.__entry_file_name = tk.Entry(self, width=20, textvariable=default_text)
+
+    def set_positioning(self, row_pos_frame, esp_func_calls):
+        """ define and initialize elements of Read Label Frame """
+        self.grid(column=0, row=row_pos_frame, columnspan=3, sticky="EW", padx=5, pady=5)
 
         row_pos_read = 0
-        label_read_flash = tk.Label(read_group, text="Flash write to: ")
+        label_read_flash = tk.Label(self, text="Flash write to: ")
         label_read_flash.grid(column=0, row=row_pos_read, sticky="W")
 
-        default_text = tk.StringVar(read_group, value="filename_read_flash")
-        self.__entry_file_name = tk.Entry(read_group, width=20, textvariable=default_text)
         self.__entry_file_name.grid(column=1, row=row_pos_read, sticky="EW")
 
-        file_extension = tk.Label(read_group, text=".bin")
+        file_extension = tk.Label(self, text=".bin")
         file_extension.grid(column=2, row=row_pos_read, sticky="W")
 
         row_pos_read += 1
-        read_btn = tk.Button(read_group, text="ReadFlash", command=esp_func_calls.read_flash)
+        read_btn = tk.Button(self, text="ReadFlash", command=esp_func_calls.read_flash)
         read_btn.grid(column=0, row=row_pos_read, columnspan=3, sticky="EW", padx=3, pady=3)
 
-        tk.Grid.columnconfigure(read_group, 0, weight=1)
-        tk.Grid.columnconfigure(read_group, 1, weight=2)
-        tk.Grid.columnconfigure(read_group, 2, weight=1)
+        tk.Grid.columnconfigure(self, 0, weight=1)
+        tk.Grid.columnconfigure(self, 1, weight=2)
+        tk.Grid.columnconfigure(self, 2, weight=1)
 
     def get_read_file_name(self):
         """get file name"""

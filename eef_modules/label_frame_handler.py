@@ -3,7 +3,7 @@
   wish are used by other instances.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
-  Copyright (C) 2021  André Herrmann (hredan)
+  Copyright (C) 2022  André Herrmann (hredan)
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -28,39 +28,47 @@ class LabelFrameHandler:
     """
     def __init__(self, frame, eef_config):
 
-        self.__header_frame = SerialComLabelFrame(frame, 'Serial Com Port', eef_config)
-        self.__write_frame = None
-        self.__read_frame = None
-        self.__erase_frame = None
+        self.__header_frame = SerialComLabelFrame(frame, eef_config)
+        self.__write_frame = WriteLabelFrame(frame)
+        self.__read_frame = ReadLabelFrame(frame)
+        self.__erase_frame = EraseLabelFrame(frame)
 
     def set_pos_header_frame(self, row_pos_frame, esp_func_calls):
+        """ init header frame with all parts and grid positions"""
         self.__header_frame.set_positioning(row_pos_frame, esp_func_calls)
 
-    def create_write_frame(self, frame, row_pos_frame, file_list, esp_func_calls):
-        self.__write_frame = WriteLabelFrame(frame, row_pos_frame, file_list, esp_func_calls)
+    def set_pos_write_frame(self, row_pos_frame, file_list, esp_func_calls):
+        """ init write frame """
+        self.__write_frame.set_positioning(row_pos_frame, file_list, esp_func_calls)
 
-    def create_read_frame(self, frame, row_pos_frame, esp_func_calls):
-        self.__read_frame = ReadLabelFrame(frame, row_pos_frame, esp_func_calls)
+    def set_pos_read_frame(self, row_pos_frame, esp_func_calls):
+        """ init read frame """
+        self.__read_frame.set_positioning(row_pos_frame, esp_func_calls)
 
-    def create_erase_frame(self, frame, row_pos_frame, esp_func_calls):
-        self.__erase_frame = EraseLabelFrame(frame, row_pos_frame, esp_func_calls)
+    def set_pos_erase_frame(self, row_pos_frame, esp_func_calls):
+        """ init erase frame """
+        self.__erase_frame.set_positioning(row_pos_frame, esp_func_calls)
 
     def get_com_port(self):
-        if self.__header_frame:
-            return self.__header_frame.get_com_port()
+        """ get com port from header frame"""
+        return self.__header_frame.get_com_port()
 
     def com_port_scan(self):
-        if self.__header_frame:
-            return self.__header_frame.com_port_scan()
+        """ start com port scan"""
+        return self.__header_frame.com_port_scan()
 
     def get_file_list_combo_write(self):
+        """ get file list from combobox of write frame """
         return self.__write_frame.get_file_list_combo_write()
 
     def set_file_list_combo_write(self, file_list):
+        """ set file list of combo box from write frame """
         self.__write_frame.set_file_list_combo_write(file_list)
 
     def get_filename_write(self):
+        """ get filename entry of combobox from write frame """
         return self.__write_frame.get_file_name()
 
     def get_read_file_name(self):
+        """ get filename entry of read frame """
         return self.__read_frame.get_read_file_name()

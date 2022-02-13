@@ -93,15 +93,15 @@ class EspEasyFlasher:
         # Write Flash Group
         row_pos_frame += 1
         file_list = EspEasyFlasher.get_file_list()
-        label_frames.create_write_frame(frame, row_pos_frame, file_list, esp_func_calls)
+        label_frames.set_pos_write_frame(row_pos_frame, file_list, esp_func_calls)
 
         # Read Flash Group (optional)
         if eef_config.with_developer_mode():
             row_pos_frame += 1
-            label_frames.create_read_frame(frame, row_pos_frame, esp_func_calls)
+            label_frames.set_pos_read_frame(row_pos_frame, esp_func_calls)
 
             row_pos_frame += 1
-            label_frames.create_erase_frame(frame, row_pos_frame, esp_func_calls)
+            label_frames.set_pos_erase_frame(row_pos_frame, esp_func_calls)
 
         # create Text box for Logging
         text_box = tk.Text(frame, wrap='word', height=11, width=80)
