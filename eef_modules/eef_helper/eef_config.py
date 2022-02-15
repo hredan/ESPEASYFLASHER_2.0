@@ -21,7 +21,6 @@ import sys
 import json
 
 
-# pylint: disable=too-many-instance-attributes
 class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
@@ -29,20 +28,25 @@ class EEFConfig:
     def __init__(self, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
-        # default config
-        self.__developer_mode = True
-        self.__with_logo = True
-        self.__with_serial_monitor = True
-        self.__with_esp_info = True
+
+        # default config json file
+        self.__config_data = {
+            "logo": True,
+            "devMode": True,
+            "serialMonitor": True,
+            "espInfo": True
+        }
+
+        # more private attributes
         self.__logo_file_path = None
         self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
         self.__read_config()
 
         # check if logo file exists
-        if self.__with_logo:
+        if self.with_logo():
             if not self.logo_file_exists():
-                self.__with_logo = False
+                self.__config_data["logo"] = False
                 self.__logo_file_path = None
 
     def get_logo_file_path(self):
@@ -55,23 +59,31 @@ class EEFConfig:
 
     def with_developer_mode(self):
         """Config flag to show developer mode control panel in the GUI"""
-        return self.__developer_mode
+        return self.__config_data["devMode"]
 
     def with_logo(self):
         """Config flag to show a logo in the GUI"""
-        return self.__with_logo
+        return self.__config_data["logo"]
 
     def with_serial_monitor(self):
         """Config flag to show the serial monitor control panel in the GUI"""
-        return self.__with_serial_monitor
+        return self.__config_data["serialMonitor"]
 
     def with_esp_info(self):
         """Config flag to show the esp info button in the GUI"""
-        return self.__with_esp_info
+        return self.__config_data["espInfo"]
 
     def get_base_path(self):
         """ returns the root path which contains the eef script or executable"""
         return self.__base_path
+
+    def set_config_data(self, key, data):
+        """ copy config data from json data file to member __config_data """
+        if key in self.__config_data:
+            self.__config_data[key] = data[key]
+            self.__str_io.writelines(f"set {key} to\t: {data[key]}\n")
+        else:
+            raise ValueError("key is not available in config_data")
 
     def __read_config(self):
         """ read and set the configuration of ESPEasyFlasher from ESPEasyFlasherConfig.json
@@ -84,19 +96,12 @@ class EEFConfig:
             with open('ESPEasyFlasherConfig.json', encoding="utf-8") as json_file:
                 data = json.load(json_file)
 
-                self.__with_logo = data['logo']
-                self.__str_io.writelines(f"enable logo: {data['logo']}\n")
+                self.set_config_data('logo', data)
+                self.set_config_data('devMode', data)
+                self.set_config_data('serialMonitor', data)
+                self.set_config_data('espInfo', data)
 
-                self.__developer_mode = data['devMode']
-                self.__str_io.writelines(f"dev mode is: {data['devMode']}\n")
-
-                self.__with_serial_monitor = data['serialMonitor']
-                self.__str_io.writelines(
-                    f"serial monitor: {data['serialMonitor']}\n")
-
-                self.__with_esp_info = data['espInfo']
-                self.__str_io.writelines(f"esp info: {data['espInfo']}\n")
-
+                # set esp config values
                 self.__esp.baud_rate = data['baudRate']
                 self.__str_io.write(f"set baud rate to: {data['baudRate']}\n")
 
@@ -113,14 +118,12 @@ class EEFConfig:
             self.__str_io.writelines(
                 f"Error could not read config, default values will be used: {err}\n")
 
-
     def __check_meipass(self):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         return_value = False
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
-            # pylint: disable=E1101
-            # pylint: disable=W0212
+            # pylint: disable=protected-access
             self.__base_path = sys._MEIPASS
             return_value = True
         except AttributeError:

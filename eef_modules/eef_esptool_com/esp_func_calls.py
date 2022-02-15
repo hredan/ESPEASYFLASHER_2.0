@@ -23,7 +23,6 @@ import threading
 import re
 
 
-# pylint: disable=too-few-public-methods
 class EspFuncCalls:
     """
     EspFuncCalls contains functions to run esptool actions in a separate thread
@@ -36,7 +35,7 @@ class EspFuncCalls:
 
     # R0913: Too many arguments (6/5) (too-many-arguments)
     # in this case allow more than 5 arguments, it is needed here
-    # pylint: disable=R0913
+    # pylint: disable=too-many-arguments
     def __base_thread(self, target_method, info_text, set_progressbar=False,
                       second_arg=None, third_arg=None):
         """base thread"""

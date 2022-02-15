@@ -38,7 +38,6 @@ from eef_modules.eef_esptool_com.esp_func_calls import EspFuncCalls
 from eef_modules.bottom_gui_elements import BottomGUIElements
 from eef_modules.label_frame_handler import LabelFrameHandler
 
-
 ESP_PACKAGES = "./ESP_Packages"
 
 

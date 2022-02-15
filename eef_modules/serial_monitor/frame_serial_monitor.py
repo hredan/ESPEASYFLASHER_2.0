@@ -19,7 +19,6 @@ import tkinter as tk
 from eef_modules.serial_monitor.eef_serial_monitor import SerialMonitor
 
 
-# pylint: disable=too-few-public-methods
 class SerialMonitorFrame(tk.Frame):
     """
     Class to create and handle the Serial Monitor Frame

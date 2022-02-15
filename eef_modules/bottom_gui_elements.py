@@ -24,7 +24,6 @@ from eef_modules.eef_helper.io_redirection import StderrRedirection
 from eef_modules.eef_helper.io_redirection import StdoutRedirection
 
 
-# pylint: disable=too-many-instance-attributes
 class BottomGUIElements:
     """
     BottomGUIElements handles the SerialMonitorFrame, Output Textbox with scrollbar and the progress bar
