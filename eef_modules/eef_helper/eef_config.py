@@ -3,7 +3,7 @@
   It is used by ESPEasyFlasher to read the config from ESPEasyFlasherConfig.json.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
-  Copyright (C) 2021  André Herrmann (hredan)
+  Copyright (C) 2022  André Herrmann (hredan)
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -124,7 +124,7 @@ class EEFConfig:
             self.__base_path = sys._MEIPASS
             return_value = True
         except AttributeError:
-            self.__base_path = os.path.abspath(".")
+            self.__base_path = os.path.abspath("..")
             return_value = False
 
         return return_value

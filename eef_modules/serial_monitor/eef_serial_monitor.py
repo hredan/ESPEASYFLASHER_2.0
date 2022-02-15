@@ -1,9 +1,9 @@
-'''
-  SerialMonitor.py can start and stop a serial connection to an ESP microcontroller.
+"""
+  eef_serial_monitor.py can start and stop a serial connection to an ESP microcontroller.
   It is used by ESPEasyFlasher.py to get the output from Serial interface of ESP microcontroller.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
-  Copyright (C) 2021  André Herrmann (hredan)
+  Copyright (C) 2022  André Herrmann (hredan)
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@
 
   Some of the code is bases on wxTerminal example (SPDX-License-Identifier:    BSD-3-Clause):
   https://github.com/pyserial/pyserial/blob/master/examples/wxTerminal.py
-'''
+"""
 
 import threading
 import time
@@ -27,6 +27,7 @@ import serial
 NEWLINE_CR = 0
 NEWLINE_LF = 1
 NEWLINE_CRLF = 2
+
 
 class SerialMonitor:
     """

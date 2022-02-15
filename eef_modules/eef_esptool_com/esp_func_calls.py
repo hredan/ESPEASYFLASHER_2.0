@@ -2,7 +2,7 @@
   esp_func_calls.py is used by ESPEasyFlasher.py to support esptool functionality.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
-  Copyright (C) 2021  André Herrmann (hredan)
+  Copyright (C) 2022  André Herrmann (hredan)
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
