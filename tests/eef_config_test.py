@@ -1,3 +1,21 @@
+"""
+  eef_config_test contains unittest for eef_config.py
+  It is part of ESPEasyFlasher tests.
+  https://github.com/hredan/ESPEASYFLASHER_2.0
+
+  Copyright (C) 2022  André Herrmann (hredan)
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import sys
 import os
 import unittest
@@ -9,8 +27,9 @@ from eef_modules.eef_helper.eef_config import EEFConfig
 
 
 class EEFConfigTests(unittest.TestCase):
-
+    """ Test class for EEFConfig"""
     def test_default_values(self):
+        """ tests the default values of EEFConfig """
         esp = Mock()
         str_io = StringIO()
 
@@ -28,6 +47,7 @@ class EEFConfigTests(unittest.TestCase):
         self.assertEqual(eef_config.get_base_path(), os.path.abspath(".."))
 
     def test_config_read(self):
+        """ tests the read out of config json file """
         esp = Mock()
         str_io = StringIO()
 
@@ -46,6 +66,10 @@ class EEFConfigTests(unittest.TestCase):
         self.assertEqual(esp.write_start, '0x00002')
 
     def test_meipass(self):
+        """ tests meipass created by PyInstaller"""
+
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        # pylint: disable=protected-access
         sys._MEIPASS = "test"
 
         esp = Mock()
@@ -61,6 +85,7 @@ class EEFConfigTests(unittest.TestCase):
         delattr(sys, "_MEIPASS")
 
     def test_missing_logo(self):
+        """ tests missing logo """
         esp = Mock()
         str_io = StringIO()
 
@@ -74,6 +99,9 @@ class EEFConfigTests(unittest.TestCase):
         self.assertEqual(eef_config.get_logo_file_path(), None)
 
     def test_missing_logo_meipass(self):
+        """ tests missing logo if PyInstaller is used"""
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        # pylint: disable=protected-access
         sys._MEIPASS = "test"
         esp = Mock()
         str_io = StringIO()

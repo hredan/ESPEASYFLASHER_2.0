@@ -23,6 +23,7 @@ jobs:
         pip install esptool
         pip install pylint
     - name: Analysing code with pylint
-      run: |
-        pylint --rcfile=./Scripts/pylint.rc ./eef_modules
+      run: |        
         pylint --rcfile=./Scripts/pylint.rc espeasyflasher.py
+        pylint --rcfile=./Scripts/pylint.rc ./eef_modules
+        pylint --rcfile=./Scripts/pylint.rc ./tests

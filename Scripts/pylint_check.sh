@@ -6,5 +6,6 @@ PYLINT_RC=$BASEDIR/pylint.rc
 cd ..
 pylint --rcfile=$PYLINT_RC espeasyflasher.py
 pylint --rcfile=$PYLINT_RC ./eef_modules
+pylint --rcfile=$PYLINT_RC ./tests
 
 read -p "Press enter to continue"

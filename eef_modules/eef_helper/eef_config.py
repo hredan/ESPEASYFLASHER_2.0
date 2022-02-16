@@ -25,6 +25,8 @@ class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
     """
+    # for the config more than 7 instance-attributes are acceptable
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
