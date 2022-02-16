@@ -25,9 +25,11 @@ class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
     """
-    def __init__(self, str_io, esp) -> None:
+    def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
+        self.__config_file = config_file
+        self.__logo_file = logo_file
 
         # default config json file
         self.__config_data = {
@@ -93,7 +95,7 @@ class EEFConfig:
         """
         self.__str_io.write("### Read Config ###\n")
         try:
-            with open('ESPEasyFlasherConfig.json', encoding="utf-8") as json_file:
+            with open(self.__config_file, encoding="utf-8") as json_file:
                 data = json.load(json_file)
 
                 self.set_config_data('logo', data)
@@ -135,16 +137,17 @@ class EEFConfig:
     def logo_file_exists(self):
         """check if logo file exists"""
         return_value = False
-        filename = "./LogoEasyFlash.png"
-        if os.path.exists(filename):
-            self.__logo_file_path = filename
-            return_value = True
-        elif self.__check_meipass():
-            self.__logo_file_path = os.path.join(self.__base_path, filename)
+        if self.__check_meipass():
+            logo_path = os.path.join(self.__base_path, self.__logo_file)
+        else:
+            logo_path = self.__logo_file
+
+        if os.path.exists(logo_path):
+            self.__logo_file_path = logo_path
             return_value = True
         else:
             return_value = False
             self.__str_io.write(
-                f"Warning: Could not find '{filename}', using layout without logo!\n")
+                f"Warning: Could not find '{logo_path}', using layout without logo!\n")
 
         return return_value
