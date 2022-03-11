@@ -15,6 +15,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import platform
 import tkinter as tk
 from tkinter import ttk
 
@@ -37,18 +38,21 @@ class SerialComTest(unittest.TestCase):
         """ tear down destroy root for every test"""
         self.root.destroy()
 
+    @unittest.skipIf(platform.system() != "Windows", "not supported os")
     def test_serial_com(self):
         """ test create SerialComLabelFrame instance"""
         eef_config = Mock()
         serial_com = SerialComLabelFrame(self.frame, eef_config)
         self.assertIsNotNone(serial_com)
 
+    @unittest.skipIf(platform.system() != "Windows", "not supported os")
     def test_serial_com_set_pos(self):
         """ test  serial_com.set_positioning without logo and esp_info """
 
         expected_calls_eef_config = [call.with_logo(), call.with_esp_info()]
         self.set_pos(False, False, expected_calls_eef_config, [])
 
+    @unittest.skipIf(platform.system() != "Windows", "not supported os")
     def test_serial_com_set_pos_with_logo(self):
         """ test  serial_com.set_positioning with logo and esp_info """
         expected_calls_eef_config = [call.with_logo(), call.get_logo_file_path(),
