@@ -46,6 +46,27 @@ class SerialComTest(unittest.TestCase):
         self.assertIsNotNone(serial_com)
 
     @unittest.skipIf(platform.system() != "Windows", "not supported os")
+    # it is a test protected-access is allowed to make it testable
+    # pylint: disable=protected-access
+    def test_serial_com_com_port_scan(self):
+        """ test method com_port_scan"""
+        eef_config = Mock()
+        serial_com_access = Mock()
+        com_list = {'comlist': ['COM4', 'COM5', 'COM7'], 'defaultCom': 'COM7'}
+        serial_com_access.get_com_info.return_value = com_list
+
+        expected_calls_serial_com_access = [call.get_com_info()]
+
+        serial_com = SerialComLabelFrame(self.frame, eef_config)
+
+        # Replace instance objects for testing
+        serial_com._serial_com = serial_com_access
+
+        serial_com.com_port_scan()
+
+        self.assertEqual(serial_com_access.mock_calls, expected_calls_serial_com_access)
+
+    @unittest.skipIf(platform.system() != "Windows", "not supported os")
     def test_serial_com_set_pos(self):
         """ test  serial_com.set_positioning without logo and esp_info """
 

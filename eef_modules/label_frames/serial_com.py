@@ -18,8 +18,7 @@
 
 import tkinter as tk
 from tkinter import ttk
-
-from serial.tools.list_ports import comports
+from eef_modules.label_frames.serial_com_port_access import SerialComPortAccess
 
 
 class SerialComLabelFrame(tk.LabelFrame):
@@ -33,7 +32,8 @@ class SerialComLabelFrame(tk.LabelFrame):
         self.__eef_config = eef_config
         self.__frame = frame
 
-        self.__combo_com_port = ttk.Combobox(self)
+        self._combo_com_port = ttk.Combobox(self)
+        self._serial_com = SerialComPortAccess()
 
     def set_positioning(self, row_pos_frame, esp_func_calls):
         """ define the positions from GUI elements in header frame """
@@ -51,7 +51,7 @@ class SerialComLabelFrame(tk.LabelFrame):
         row_pos_com = 0
         label_com_port = tk.Label(self, text="Com Port: ")
         label_com_port.grid(column=0, row=row_pos_com, sticky="W")
-        self.__combo_com_port.grid(column=1, row=row_pos_com, sticky="WE", padx=3, pady=3)
+        self._combo_com_port.grid(column=1, row=row_pos_com, sticky="WE", padx=3, pady=3)
 
         # Postion of buttons Scan and ESP Info, vision of ESP Info depends on esp config
         row_pos_com += 1
@@ -76,46 +76,16 @@ class SerialComLabelFrame(tk.LabelFrame):
 
     def com_port_scan(self):
         """scan for serial usb com port"""
-        com_info = self.__get_com_info()
+        com_info = self._serial_com.get_com_info()
         if len(com_info["comlist"]) > 0:
-            self.__combo_com_port["values"] = com_info["comlist"]
+            self._combo_com_port["values"] = com_info["comlist"]
 
             if com_info["defaultCom"] != "":
-                self.__combo_com_port.current(
+                self._combo_com_port.current(
                     com_info["comlist"].index(com_info["defaultCom"]))
             else:
-                self.__combo_com_port.current(0)
+                self._combo_com_port.current(0)
 
     def get_com_port(self):
         """get com port name"""
-        return self.__combo_com_port.get()
-
-    @classmethod
-    def __get_com_info(cls):
-        """ get comports by serial.tools.list_ports
-            and returns a list of usb com ports and the first usb com port as default
-        """
-        print("### Com Port Scan ###")
-        usb_com_list = []
-        default_com = ""
-
-        com_ports = comports()
-        print("Number of Com Ports: " + str(len(com_ports)))
-        if len(com_ports) > 0:
-            default_com = com_ports[0].device
-
-        is_found_usb_serial_com_port = False
-        for com in com_ports:
-            # print(com.name)
-            print("*" + com.description)
-            usb_com_list.append(com.device)
-            if com.description.lower().find("usb") != -1:
-                default_com = com.device
-                print("Found: "+default_com)
-                is_found_usb_serial_com_port = True
-
-        if not is_found_usb_serial_com_port:
-            print(
-                "Warning: could not find a usb-serial device, connect your device and scan again!")
-
-        return {"comlist": usb_com_list, "defaultCom": default_com}
+        return self._combo_com_port.get()
