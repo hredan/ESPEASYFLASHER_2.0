@@ -37,13 +37,3 @@ jobs:
         pip install esptool
     - name: Testing EspEasyFlasher_2.0
       run: pytest tests
-  job:
-    runs-on: windows-latest
-    needs: [pylint, pytest]
-    - uses: actions/checkout@v3
-    - name: Set up Python "3.10"
-    - uses: actions/setup-python@v3
-      with: 
-        python-version: "3.10"
-    - name: run pyhton script
-      run: python --version
