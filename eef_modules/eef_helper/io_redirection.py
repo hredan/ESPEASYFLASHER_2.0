@@ -50,8 +50,11 @@ class StderrRedirection(IORedirection):
 
 class StdoutRedirection(IORedirection):
     """A class for redirecting stdout to this Text widget."""
-    esp_type = None
-    esp_flash_size = None
+
+    def __init__(self, text_area, progress_bar):
+        super().__init__(text_area, progress_bar)
+        self.esp_type = None
+        self.esp_flash_size = None
 
     def normal_output(self, text_area_output):
         """

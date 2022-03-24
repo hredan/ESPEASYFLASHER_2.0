@@ -39,6 +39,8 @@ from eef_modules.bottom_gui_elements import BottomGUIElements
 from eef_modules.label_frame_handler import LabelFrameHandler
 
 ESP_PACKAGES = "./ESP_Packages"
+EEF_CONFIG = "./ESPEasyFlasherConfig.json"
+EEF_LOGO_FILE = "./LogoEasyFlash.png"
 
 
 # pylint: disable=too-few-public-methods
@@ -49,7 +51,7 @@ class EspEasyFlasher:
         self.file_list = []
         str_io = StringIO()
         esp_com = EsptoolCom()
-        eef_config = EEFConfig(str_io, esp_com)
+        eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
         base_path = eef_config.get_base_path()
 
         str_io.write(f"os: {sys.platform}\n")

@@ -34,6 +34,7 @@ class BottomGUIElements:
         self.__text_box = tk.Text(frame, wrap='word', height=11, width=80)
         self.__root_dir = None
         self.__frame_serial_monitor = SerialMonitorFrame(frame, self.__text_box)
+        self.stdout_redirection = None
 
     def set_pos_serial_monitor_frame(self, row_pos_frame, get_com_port):
         """ full initializing and positioning of serial monitor frame parts"""
@@ -57,11 +58,11 @@ class BottomGUIElements:
     def redirect_stdout_to_textbox(self):
         """ redirection of stdout and stderr to output text box"""
         # create stdout and stderr redirection instances
-        stdout_redirection = StdoutRedirection(self.__text_box, self.__progress_bar)
+        self.stdout_redirection = StdoutRedirection(self.__text_box, self.__progress_bar)
         stderr_redirection = StderrRedirection(self.__text_box, self.__progress_bar)
 
         # redirection of stdout and stderr
-        sys.stdout = stdout_redirection
+        sys.stdout = self.stdout_redirection
         sys.stderr = stderr_redirection
 
     def set_root_dir(self, root_dir):
@@ -75,3 +76,9 @@ class BottomGUIElements:
         get root dir
         """
         return self.__root_dir
+
+    def disable_serial_monitor(self):
+        """
+        disable serial monitor, if active
+        """
+        self.__frame_serial_monitor.disable_serial_monitor()

@@ -21,32 +21,40 @@ import sys
 import json
 
 
+# pylint: disable=too-few-public-methods
+class GUISettings:
+    """ GUISettings contains attributes to disable/enable GUI elements like logo, devMode and so on. """
+    def __init__(self):
+        # set default config values
+        self.logo = True
+        self.dev_mode = True
+        self.serial_monitor = True
+        self.esp_info = True
+
+
 class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
     """
-    def __init__(self, str_io, esp) -> None:
+    # for the config more than 7 instance-attributes are acceptable
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
+        self.__logo_file_path = logo_file
 
         # default config json file
-        self.__config_data = {
-            "logo": True,
-            "devMode": True,
-            "serialMonitor": True,
-            "espInfo": True
-        }
+        self.__gui_settings = GUISettings()
 
         # more private attributes
-        self.__logo_file_path = None
         self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
-        self.__read_config()
+        self.__read_config(config_file)
 
         # check if logo file exists
         if self.with_logo():
-            if not self.logo_file_exists():
-                self.__config_data["logo"] = False
+            if not self.logo_file_exists(logo_file):
+                self.__gui_settings.logo = False
                 self.__logo_file_path = None
 
     def get_logo_file_path(self):
@@ -59,33 +67,25 @@ class EEFConfig:
 
     def with_developer_mode(self):
         """Config flag to show developer mode control panel in the GUI"""
-        return self.__config_data["devMode"]
+        return self.__gui_settings.dev_mode
 
     def with_logo(self):
         """Config flag to show a logo in the GUI"""
-        return self.__config_data["logo"]
+        return self.__gui_settings.logo
 
     def with_serial_monitor(self):
         """Config flag to show the serial monitor control panel in the GUI"""
-        return self.__config_data["serialMonitor"]
+        return self.__gui_settings.serial_monitor
 
     def with_esp_info(self):
         """Config flag to show the esp info button in the GUI"""
-        return self.__config_data["espInfo"]
+        return self.__gui_settings.esp_info
 
     def get_base_path(self):
         """ returns the root path which contains the eef script or executable"""
         return self.__base_path
 
-    def set_config_data(self, key, data):
-        """ copy config data from json data file to member __config_data """
-        if key in self.__config_data:
-            self.__config_data[key] = data[key]
-            self.__str_io.writelines(f"set {key} to\t: {data[key]}\n")
-        else:
-            raise ValueError("key is not available in config_data")
-
-    def __read_config(self):
+    def __read_config(self, config_file):
         """ read and set the configuration of ESPEasyFlasher from ESPEasyFlasherConfig.json
             ESPEasyFlasherConfig.json has to be in the root directory from espeasyflasher.py.
             If ESPEasyFlasherConfig.json is not available EspEasyFlasher is using some
@@ -93,13 +93,13 @@ class EEFConfig:
         """
         self.__str_io.write("### Read Config ###\n")
         try:
-            with open('ESPEasyFlasherConfig.json', encoding="utf-8") as json_file:
+            with open(config_file, encoding="utf-8") as json_file:
                 data = json.load(json_file)
 
-                self.set_config_data('logo', data)
-                self.set_config_data('devMode', data)
-                self.set_config_data('serialMonitor', data)
-                self.set_config_data('espInfo', data)
+                self.__gui_settings.logo = data["logo"]
+                self.__gui_settings.dev_mode = data["devMode"]
+                self.__gui_settings.serial_monitor = data["serialMonitor"]
+                self.__gui_settings.esp_info = data["espInfo"]
 
                 # set esp config values
                 self.__esp.baud_rate = data['baudRate']
@@ -132,19 +132,20 @@ class EEFConfig:
 
         return return_value
 
-    def logo_file_exists(self):
+    def logo_file_exists(self, logo_file):
         """check if logo file exists"""
         return_value = False
-        filename = "./LogoEasyFlash.png"
-        if os.path.exists(filename):
-            self.__logo_file_path = filename
-            return_value = True
-        elif self.__check_meipass():
-            self.__logo_file_path = os.path.join(self.__base_path, filename)
+        if self.__check_meipass():
+            logo_path = os.path.join(self.__base_path, logo_file)
+        else:
+            logo_path = logo_file
+
+        if os.path.exists(logo_path):
+            self.__logo_file_path = logo_path
             return_value = True
         else:
             return_value = False
             self.__str_io.write(
-                f"Warning: Could not find '{filename}', using layout without logo!\n")
+                f"Warning: Could not find '{logo_path}', using layout without logo!\n")
 
         return return_value

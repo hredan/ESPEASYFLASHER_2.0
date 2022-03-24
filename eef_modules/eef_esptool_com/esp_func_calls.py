@@ -28,8 +28,8 @@ class EspFuncCalls:
     EspFuncCalls contains functions to run esptool actions in a separate thread
     """
 
-    def __init__(self, public_gui_elements, esp_com, label_frames) -> None:
-        self.__public_gui_elements = public_gui_elements
+    def __init__(self, bottom_gui_elements, esp_com, label_frames) -> None:
+        self.__bottom_gui_elements = bottom_gui_elements
         self.label_frames = label_frames
         self.__esp_com = esp_com
 
@@ -42,12 +42,12 @@ class EspFuncCalls:
         os.chdir(self.__esp_com.root_dir)
         print(f"Info: CWD {os.getcwd()}")
         if set_progressbar:
-            progress_bar = self.__public_gui_elements.get_progress_bar()
+            progress_bar = self.__bottom_gui_elements.get_progress_bar()
             progress_bar["value"] = 0
             progress_bar["maximum"] = 100
 
         # Disable Serial Monitor if enabled
-        self.__public_gui_elements.get_frame_serial_monitor().disable_serial_monitor()
+        self.__bottom_gui_elements.disable_serial_monitor()
 
         print(info_text)
         com_port = self.label_frames.get_com_port()
@@ -67,7 +67,7 @@ class EspFuncCalls:
 
     def esp_info_callback(self):
         """ Callback function for esp threads"""
-        stdout_redirection = self.__public_gui_elements.get_stdout_redirection()
+        stdout_redirection = self.__bottom_gui_elements.stdout_redirection
         print(f"Detected ESP of type: {stdout_redirection.esp_type}, " +
               f"with Flash Size of: {stdout_redirection.esp_flash_size}")
         file_list = []
@@ -86,7 +86,7 @@ class EspFuncCalls:
 
     def get_esp_info(self):
         """ESP Info request"""
-        stdout_redirection = self.__public_gui_elements.get_stdout_redirection()
+        stdout_redirection = self.__bottom_gui_elements.stdout_redirection
         stdout_redirection.esp_type = None
         stdout_redirection.esp_flash_size = None
         self.__base_thread(self.__esp_com.esptool_esp_info,

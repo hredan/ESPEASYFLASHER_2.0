@@ -1,0 +1,10 @@
+{
+    "logo": false,
+    "devMode": false,
+    "serialMonitor" : false,
+    "espInfo" : false,
+    "baudRate": "460801",
+    "readStart": "0x00001",
+    "readSize": "0x100000",
+    "writeStart": "0x00002"
+}
