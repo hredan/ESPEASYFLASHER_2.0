@@ -36,8 +36,7 @@ jobs:
         pip install pytest
         pip install esptool
     - name: Testing EspEasyFlasher_2.0
-      run: |
-        pytest tests
+      run: pytest tests
   windows_exe:
     runs-on: windows-latest
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
@@ -48,4 +47,3 @@ jobs:
       with: 
         python-version: "3.10"
     - run: python --version
-    
