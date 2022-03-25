@@ -50,5 +50,5 @@ jobs:
       run: |
         python --version
         pip install pyinstaller
-        pip install esptool
-        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png:." ESPEasyFlasher.py
+        pip install esptool      
+        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." espeasyflasher.py
