@@ -36,15 +36,11 @@ class EspFuncCalls:
     # R0913: Too many arguments (6/5) (too-many-arguments)
     # in this case allow more than 5 arguments, it is needed here
     # pylint: disable=too-many-arguments
-    def __base_thread(self, target_method, info_text, set_progressbar=False,
+    def __base_thread(self, target_method, info_text,
                       second_arg=None, third_arg=None):
         """base thread"""
         os.chdir(self.__esp_com.root_dir)
         print(f"Info: CWD {os.getcwd()}")
-        if set_progressbar:
-            progress_bar = self.__bottom_gui_elements.get_progress_bar()
-            progress_bar["value"] = 0
-            progress_bar["maximum"] = 100
 
         # Disable Serial Monitor if enabled
         self.__bottom_gui_elements.disable_serial_monitor()
@@ -90,7 +86,7 @@ class EspFuncCalls:
         stdout_redirection.esp_type = None
         stdout_redirection.esp_flash_size = None
         self.__base_thread(self.__esp_com.esptool_esp_info,
-                           "### ESP INFO ###", False, self.esp_info_callback)
+                           "### ESP INFO ###", self.esp_info_callback)
 
     def erase_flash(self):
         """erase ESP flash"""
@@ -110,7 +106,7 @@ class EspFuncCalls:
                 print(f"Info: eef file path: {eef_path}")
                 command = self.__read_eef_file(eef_path)
                 self.__base_thread(self.__esp_com.esptool_write_eef,
-                                   "### Write Flash ###", True, command, content_path)
+                                   "### Write Flash ###", command, content_path)
             elif file_extension == ".zip":
                 extract_path = f"{root_dir}/ESP_Packages/Extracted"
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
@@ -126,15 +122,14 @@ class EspFuncCalls:
                     print(f"Info: eef file path: {eef_path}")
                     command = EspFuncCalls.__read_eef_file(eef_path)
                     self.__base_thread(
-                        self.__esp_com.esptool_write_eef, "### Write Flash ###",
-                        True, command, extract_path)
+                        self.__esp_com.esptool_write_eef, "### Write Flash ###", command, extract_path)
                 else:
                     print(
                         f"Error: WriteFlash->could not find eef file, expected {eef_path}")
 
             else:
                 self.__base_thread(self.__esp_com.esptool_write_flash,
-                                   "### Write Flash ###", True, filename)
+                                   "### Write Flash ###", filename)
 
     def read_flash(self):
         """ read ESP flash"""
@@ -144,7 +139,7 @@ class EspFuncCalls:
         else:
             filename = filename + ".bin"
             self.__base_thread(self.__esp_com.esptool_read_flash,
-                               "### Read Flash ###", True, filename)
+                               "### Read Flash ###", filename)
 
     @staticmethod
     def __read_eef_file(filename):
