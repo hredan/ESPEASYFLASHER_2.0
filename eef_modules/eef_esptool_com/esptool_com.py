@@ -91,5 +91,7 @@ class EsptoolCom:
         """
         print(f'Using command {command}')
         os.chdir(content_path)
+        # tested on windows and ubuntu 20.4 (could not reproduced, seems to be a false positive)
+        # pylint: disable=no-member
         esptool.main(command)
         os.chdir(self.root_dir)
