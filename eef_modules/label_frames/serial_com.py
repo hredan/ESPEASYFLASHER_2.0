@@ -34,6 +34,7 @@ class SerialComLabelFrame(tk.LabelFrame):
 
         self._combo_com_port = ttk.Combobox(self)
         self._serial_com = SerialComPortAccess()
+        self.logo = None
 
     def set_positioning(self, row_pos_frame, esp_func_calls):
         """ define the positions from GUI elements in header frame """
