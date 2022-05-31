@@ -53,6 +53,8 @@ jobs:
         pip install esptool
         python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
+        mkdir ./dist/ESP_Packages
+        copy ./ESP_Packages/README.md ./dist/ESP_Packages
     - name: Upload the Windows Excecutable
       uses: actions/upload-artifact@v3.0.0
       with:
