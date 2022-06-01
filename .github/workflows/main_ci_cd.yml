@@ -77,7 +77,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install esptool
-        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --name ESPEasyFlasher.appimage espeasyflasher.py
+        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --name ESPEasyFlasher espeasyflasher.py
         cp ./ESPEasyFlasherConfig.json ./dist
         mkdir ./dist/ESP_Packages
         cp ./ESP_Packages/README.md ./dist/ESP_Packages
@@ -86,6 +86,32 @@ jobs:
       with:
         # Artifact name
         name: espeasyflasher_linux_x64
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./dist
+        # The desired behavior if no files are found using the provided path.
+  macOs executable:
+    runs-on: macos-latest
+    needs: [pylint, pytest]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python "3.10"
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: run PyInstaller
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install esptool
+        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
+        cp ./ESPEasyFlasherConfig.json ./dist
+        mkdir ./dist/ESP_Packages
+        cp ./ESP_Packages/README.md ./dist/ESP_Packages
+    - name: Create macOs Artefact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        # Artifact name
+        name: espeasyflasher_macOs
         # A file, directory or wildcard pattern that describes what to upload
         path: ./dist
         # The desired behavior if no files are found using the provided path.
