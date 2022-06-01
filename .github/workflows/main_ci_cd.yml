@@ -89,7 +89,7 @@ jobs:
         # A file, directory or wildcard pattern that describes what to upload
         path: ./dist
         # The desired behavior if no files are found using the provided path.
-  macOs executable:
+  macOs_executable:
     runs-on: macos-latest
     needs: [pylint, pytest]
     steps:
