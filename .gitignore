@@ -139,3 +139,4 @@ dmypy.json
 *.icns
 /ESP_Packages/Extracted
 .idea
+/ESP_Packages/*.eep

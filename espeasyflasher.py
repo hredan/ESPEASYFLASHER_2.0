@@ -130,6 +130,7 @@ class EspEasyFlasher:
         eef files with required bin files
         or only a bin for a ESP8266"""
         file_list = glob.glob("*.zip", root_dir=ESP_PACKAGES)
+        file_list.extend(glob.glob("*.eep", root_dir=ESP_PACKAGES))
         if len(file_list) == 0:
             file_list = glob.glob("*.eef", root_dir=ESP_PACKAGES)
             if len(file_list) == 0:
