@@ -107,7 +107,7 @@ class EspFuncCalls:
                 command = self.__read_eef_file(eef_path)
                 self.__base_thread(self.__esp_com.esptool_write_eef,
                                    "### Write Flash ###", command, content_path)
-            elif file_extension == ".zip" or file_extension == ".eep":
+            elif file_extension in ('.zip', '.eep'):
                 extract_path = f"{root_dir}/ESP_Packages/Extracted"
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
                 eef_path = f"{root_dir}/ESP_Packages/Extracted/{file_name}.eef"
