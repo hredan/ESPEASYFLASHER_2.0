@@ -32,7 +32,7 @@ class WriteLabelFrame(tk.LabelFrame):
         self.grid(column=0, row=row_pos_frame, columnspan=3, sticky="EW", padx=5, pady=5)
 
         row_pos_write = 0
-        label_write_flash = tk.Label(self, text="bin file: ")
+        label_write_flash = tk.Label(self, text="binary file/package: ")
         label_write_flash.grid(column=0, row=row_pos_write, sticky="W")
 
         self.set_file_list_combo_write(file_list)
