@@ -69,7 +69,7 @@ class EspFuncCalls:
         file_list = []
         if stdout_redirection.esp_type:
 
-            for entry in self.label_frames.get_file_list_combo_write():
+            for entry in self.label_frames.get_file_list():
                 if re.match(f"^{stdout_redirection.esp_type}", entry, re.IGNORECASE):
                     file_list.append(entry)
 

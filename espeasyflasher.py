@@ -26,7 +26,6 @@
 import sys
 import os
 
-import glob
 from io import StringIO
 import tkinter as tk
 from tkinter import ttk
@@ -38,7 +37,6 @@ from eef_modules.eef_esptool_com.esp_func_calls import EspFuncCalls
 from eef_modules.bottom_gui_elements import BottomGUIElements
 from eef_modules.label_frame_handler import LabelFrameHandler
 
-ESP_PACKAGES = "./ESP_Packages"
 EEF_CONFIG = "./ESPEasyFlasherConfig.json"
 EEF_LOGO_FILE = "./LogoEasyFlash.png"
 
@@ -90,8 +88,7 @@ class EspEasyFlasher:
 
         # Write Flash Group
         row_pos_frame += 1
-        file_list = EspEasyFlasher.get_file_list()
-        label_frames.set_pos_write_frame(row_pos_frame, file_list, esp_func_calls)
+        label_frames.set_pos_write_frame(row_pos_frame, esp_func_calls)
 
         # Read Flash Group (optional)
         if eef_config.with_developer_mode():
@@ -122,21 +119,6 @@ class EspEasyFlasher:
 
         # scan com ports
         label_frames.com_port_scan()
-
-    @staticmethod
-    def get_file_list():
-        """get file list for write combobox, depends on file extension,
-        can be zip (ESPEasyFlasher Package)
-        eef files with required bin files
-        or only a bin for a ESP8266"""
-        file_list = glob.glob("*.zip", root_dir=ESP_PACKAGES)
-        file_list.extend(glob.glob("*.eep", root_dir=ESP_PACKAGES))
-        if len(file_list) == 0:
-            file_list = glob.glob("*.eef", root_dir=ESP_PACKAGES)
-            if len(file_list) == 0:
-                file_list = glob.glob("*.bin", root_dir=ESP_PACKAGES)
-        return file_list
-
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -14,10 +14,11 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import glob
 import tkinter as tk
 from tkinter import ttk
 
-
+ESP_PACKAGES = "./ESP_Packages"
 class WriteLabelFrame(tk.LabelFrame):
     """
     Class to create and handle the Write Label Frame
@@ -26,8 +27,9 @@ class WriteLabelFrame(tk.LabelFrame):
     def __init__(self, frame):
         super().__init__(frame, text='WriteFlash')
         self.__combo_write_flash = ttk.Combobox(self)
+        self.file_list = []
 
-    def set_positioning(self, row_pos_frame, file_list, esp_func_calls) -> None:
+    def set_positioning(self, row_pos_frame, esp_func_calls) -> None:
         """ define and initialize elements of Write Label Frame """
         self.grid(column=0, row=row_pos_frame, columnspan=3, sticky="EW", padx=5, pady=5)
 
@@ -35,7 +37,8 @@ class WriteLabelFrame(tk.LabelFrame):
         label_write_flash = tk.Label(self, text="binary file/package: ")
         label_write_flash.grid(column=0, row=row_pos_write, sticky="W")
 
-        self.set_file_list_combo_write(file_list)
+        self.get_file_list()
+        self.set_file_list_combo_write(self.file_list)
         self.__combo_write_flash.grid(column=1, row=row_pos_write,
                                       sticky="EW", padx=3, pady=3)
 
@@ -59,3 +62,17 @@ class WriteLabelFrame(tk.LabelFrame):
     def get_file_name(self):
         """get the selected file name in the combobox"""
         return self.__combo_write_flash.get()
+
+    def get_file_list(self):
+        """get file list for write combobox, depends on file extension,
+        can be zip (ESPEasyFlasher Package)
+        eef files with required bin files
+        or only a bin for a ESP8266"""
+        file_list = glob.glob("*.zip", root_dir=ESP_PACKAGES)
+        file_list.extend(glob.glob("*.eep", root_dir=ESP_PACKAGES))
+        if len(file_list) == 0:
+            file_list = glob.glob("*.eef", root_dir=ESP_PACKAGES)
+            if len(file_list) == 0:
+                file_list = glob.glob("*.bin", root_dir=ESP_PACKAGES)
+        self.file_list = file_list
+        return file_list
