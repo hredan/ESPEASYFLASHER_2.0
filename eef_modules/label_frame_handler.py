@@ -37,9 +37,9 @@ class LabelFrameHandler:
         """ init header frame with all parts and grid positions"""
         self.__header_frame.set_positioning(row_pos_frame, esp_func_calls)
 
-    def set_pos_write_frame(self, row_pos_frame, file_list, esp_func_calls):
+    def set_pos_write_frame(self, row_pos_frame, esp_func_calls):
         """ init write frame """
-        self.__write_frame.set_positioning(row_pos_frame, file_list, esp_func_calls)
+        self.__write_frame.set_positioning(row_pos_frame, esp_func_calls)
 
     def set_pos_read_frame(self, row_pos_frame, esp_func_calls):
         """ init read frame """
@@ -57,9 +57,9 @@ class LabelFrameHandler:
         """ start com port scan"""
         return self.__header_frame.com_port_scan()
 
-    def get_file_list_combo_write(self):
+    def get_file_list(self):
         """ get file list from combobox of write frame """
-        return self.__write_frame.get_file_list_combo_write()
+        return self.__write_frame.get_file_list()
 
     def set_file_list_combo_write(self, file_list):
         """ set file list of combo box from write frame """
