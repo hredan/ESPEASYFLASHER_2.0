@@ -62,7 +62,7 @@ class WriteLabelFrame(tk.LabelFrame):
     def get_file_name(self):
         """get the selected file name in the combobox"""
         return self.__combo_write_flash.get()
-    
+
     def get_file_list(self):
         """get file list for write combobox, depends on file extension,
         can be zip (ESPEasyFlasher Package)
