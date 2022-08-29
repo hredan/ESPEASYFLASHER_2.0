@@ -138,3 +138,5 @@ dmypy.json
 *.zip
 *.icns
 /ESP_Packages/Extracted
+.idea
+/ESP_Packages/*.eep

@@ -34,13 +34,14 @@ class SerialComLabelFrame(tk.LabelFrame):
 
         self._combo_com_port = ttk.Combobox(self)
         self._serial_com = SerialComPortAccess()
+        self.logo = None
 
     def set_positioning(self, row_pos_frame, esp_func_calls):
         """ define the positions from GUI elements in header frame """
         if self.__eef_config.with_logo():
             # with logo
-            logo = tk.PhotoImage(file=self.__eef_config.get_logo_file_path())
-            label_logo = tk.Label(self.__frame, image=logo)
+            self.logo = tk.PhotoImage(file=self.__eef_config.get_logo_file_path())
+            label_logo = tk.Label(self.__frame, image=self.logo)
             self.grid(column=0, row=row_pos_frame, sticky="EW", padx=5, pady=5)
             label_logo.grid(column=1, row=row_pos_frame, columnspan=2, sticky="EW")
         else:

@@ -21,11 +21,12 @@ import esptool
 
 class EsptoolCom:
     """EsptoolCom  ESPEasyFlasher interface to esptool"""
-    baud_rate = '460800'
-    read_start = '0'
-    read_size = '0x400000'
-    write_start = '0x00000'
-    root_dir = ''
+    def __init__(self):
+        self.baud_rate = '460800'
+        self.read_start = '0'
+        self.read_size = '0x400000'
+        self.write_start = '0x00000'
+        self.root_dir = ''
 
     def esptool_write_eef(self, com_port, write_parameter, content_path):
         """write firmware to flash, with parameter from eef file
@@ -90,5 +91,7 @@ class EsptoolCom:
         """
         print(f'Using command {command}')
         os.chdir(content_path)
+        # tested on windows and ubuntu 20.4 (could not reproduced, seems to be a false positive)
+        # pylint: disable=no-member
         esptool.main(command)
         os.chdir(self.root_dir)
