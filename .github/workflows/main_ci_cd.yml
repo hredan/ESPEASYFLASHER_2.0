@@ -51,8 +51,10 @@ jobs:
         python --version
         pip install pyinstaller
         pip install esptool
-        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
+        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
+        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
+        copy ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
         copy ./ESP_Packages/README.md ./dist/ESP_Packages
     - name: Create Windows Artifact
@@ -77,8 +79,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install esptool
-        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --name ESPEasyFlasher espeasyflasher.py
+        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
+        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --name ESPEasyFlasher espeasyflasher.py
         cp ./ESPEasyFlasherConfig.json ./dist
+        cp ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
         cp ./ESP_Packages/README.md ./dist/ESP_Packages
     - name: Create Linux Artefact
@@ -103,8 +107,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install esptool
-        python -m PyInstaller -F --windowed --add-data "./LogoEasyFlash.png:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
+        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
+        python -m PyInstaller -F --windowed --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
         cp ./ESPEasyFlasherConfig.json ./dist
+        cp ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
         cp ./ESP_Packages/README.md ./dist/ESP_Packages
         rm ./dist/ESPEasyFlasher
