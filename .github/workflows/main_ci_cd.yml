@@ -51,8 +51,10 @@ jobs:
         python --version
         pip install pyinstaller
         pip install esptool
-        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
+        python ./Scripts/build_info.py -s $GITHUB_SHA -r $GITHUB_REPOSITORY
+        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
+        copy ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
         copy ./ESP_Packages/README.md ./dist/ESP_Packages
     - name: Create Windows Artifact
