@@ -38,6 +38,9 @@ from eef_modules.eef_esptool_com.esp_func_calls import EspFuncCalls
 from eef_modules.bottom_gui_elements import BottomGUIElements
 from eef_modules.label_frame_handler import LabelFrameHandler
 
+EEF_CONFIG = "./ESPEasyFlasherConfig.json"
+EEF_LOGO_FILE = "./LogoEasyFlash.png"
+
 # pylint: disable=too-few-public-methods
 class EspEasyFlasher:
     """TkInter App class EspEasyFlasher"""
@@ -46,7 +49,7 @@ class EspEasyFlasher:
         self.file_list = []
         str_io = StringIO()
         esp_com = EsptoolCom()
-        eef_config = EEFConfig(str_io, esp_com)
+        eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
         base_path = eef_config.get_base_path()
 
         str_io.write(f"os: {sys.platform}\n")
@@ -118,23 +121,24 @@ class EspEasyFlasher:
         # scan com ports
         label_frames.com_port_scan()
 
-    def GetInfo(self):
+    def get_info(self):
+        """show EEF build info in dialog"""
         messagebox.showinfo("Info ESPEASYFLASHER 2.0", self.info)
 
-    def CreateErrorReport(self):
-        pass
+    # def create_error_report(self):
+    #     info = self.info
 
 if __name__ == "__main__":
     root = tk.Tk()
     menu = tk.Menu(root)
     root.config(menu=menu)
-    
+
     app = EspEasyFlasher(root)
 
     helpmenu = tk.Menu(menu)
     menu.add_cascade(label='Help', menu=helpmenu)
-    helpmenu.add_command(label="Info", command=app.GetInfo)
-    helpmenu.add_command(label="Error Report", command=app.CreateErrorReport)
+    helpmenu.add_command(label="Info", command=app.get_info)
+#    helpmenu.add_command(label="Error Report", command=app.create_error_report)
     helpmenu.add_separator()
     helpmenu.add_command(label="Exit", command=root.quit)
 

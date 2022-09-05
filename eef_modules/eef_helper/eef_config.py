@@ -15,14 +15,12 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from distutils.log import info
+# from distutils.log import info
 import os
 import sys
 
 import json
 
-EEF_CONFIG = "./ESPEasyFlasherConfig.json"
-EEF_LOGO_FILE = "./LogoEasyFlash.png"
 EEF_INFO = "./build_info.txt"
 
 # pylint: disable=too-few-public-methods
@@ -41,9 +39,10 @@ class EEFConfig:
     """
     # for the config more than 7 instance-attributes are acceptable
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, str_io, esp) -> None:
+    def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
+        self.__info_path = EEF_INFO
 
         # default config json file
         self.__gui_settings = GUISettings()
@@ -51,22 +50,24 @@ class EEFConfig:
         # more private attributes
         self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
-        self.__read_config(EEF_CONFIG)
+        self.__read_config(config_file)
 
         # check if logo file exists
         if self.with_logo():
-            if not self.logo_file_exists(EEF_LOGO_FILE):
+            if not self.logo_file_exists(logo_file):
                 self.__gui_settings.logo = False
                 self.__logo_file_path = None
             else:
-                self.__logo_file_path = EEF_LOGO_FILE
+                self.__logo_file_path = logo_file
 
     def get_info(self):
-        if (self.info_file_exists(EEF_INFO)):
-            info_file = open(self.__info_path, "r")
-            return info_file.read()
+        """ return build info string """
+        if self.info_file_exists(EEF_INFO):
+            with open(self.__info_path, "r", encoding="utf-8") as info_file:
+                info_txt = info_file.read()
         else:
-            return "Missing " + EEF_INFO
+            info_txt = "Missing " + EEF_INFO
+        return info_txt
 
     def get_logo_file_path(self):
         """returns logo file path if exists otherwise None"""
