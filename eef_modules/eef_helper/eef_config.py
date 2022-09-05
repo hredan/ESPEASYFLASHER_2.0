@@ -15,11 +15,15 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+from distutils.log import info
 import os
 import sys
 
 import json
 
+EEF_CONFIG = "./ESPEasyFlasherConfig.json"
+EEF_LOGO_FILE = "./LogoEasyFlash.png"
+EEF_INFO = "./build_info.txt"
 
 # pylint: disable=too-few-public-methods
 class GUISettings:
@@ -31,17 +35,15 @@ class GUISettings:
         self.serial_monitor = True
         self.esp_info = True
 
-
 class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
     """
     # for the config more than 7 instance-attributes are acceptable
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, config_file, logo_file, str_io, esp) -> None:
+    def __init__(self, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
-        self.__logo_file_path = logo_file
 
         # default config json file
         self.__gui_settings = GUISettings()
@@ -49,13 +51,22 @@ class EEFConfig:
         # more private attributes
         self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
-        self.__read_config(config_file)
+        self.__read_config(EEF_CONFIG)
 
         # check if logo file exists
         if self.with_logo():
-            if not self.logo_file_exists(logo_file):
+            if not self.logo_file_exists(EEF_LOGO_FILE):
                 self.__gui_settings.logo = False
                 self.__logo_file_path = None
+            else:
+                self.__logo_file_path = EEF_LOGO_FILE
+
+    def get_info(self):
+        if (self.info_file_exists(EEF_INFO)):
+            info_file = open(self.__info_path, "r")
+            return info_file.read()
+        else:
+            return "Missing " + EEF_INFO
 
     def get_logo_file_path(self):
         """returns logo file path if exists otherwise None"""
@@ -147,5 +158,21 @@ class EEFConfig:
             return_value = False
             self.__str_io.write(
                 f"Warning: Could not find '{logo_path}', using layout without logo!\n")
+
+        return return_value
+
+    def info_file_exists(self, info_path):
+        """check if info file exists"""
+        return_value = False
+        if self.__check_meipass():
+            info_path = os.path.join(self.__base_path, info_path)
+
+        if os.path.exists(info_path):
+            self.__info_path = info_path
+            return_value = True
+        else:
+            return_value = False
+            self.__str_io.write(
+                f"Warning: Could not find '{info_path}'\n")
 
         return return_value

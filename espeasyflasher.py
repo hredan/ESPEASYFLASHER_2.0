@@ -29,6 +29,7 @@ import os
 from io import StringIO
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 # import eef modules
 from eef_modules.eef_esptool_com.esptool_com import EsptoolCom
@@ -36,10 +37,6 @@ from eef_modules.eef_helper.eef_config import EEFConfig
 from eef_modules.eef_esptool_com.esp_func_calls import EspFuncCalls
 from eef_modules.bottom_gui_elements import BottomGUIElements
 from eef_modules.label_frame_handler import LabelFrameHandler
-
-EEF_CONFIG = "./ESPEasyFlasherConfig.json"
-EEF_LOGO_FILE = "./LogoEasyFlash.png"
-
 
 # pylint: disable=too-few-public-methods
 class EspEasyFlasher:
@@ -49,7 +46,7 @@ class EspEasyFlasher:
         self.file_list = []
         str_io = StringIO()
         esp_com = EsptoolCom()
-        eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
+        eef_config = EEFConfig(str_io, esp_com)
         base_path = eef_config.get_base_path()
 
         str_io.write(f"os: {sys.platform}\n")
@@ -69,6 +66,7 @@ class EspEasyFlasher:
         esp_com.root_dir = root_dir
 
         self.__init_gui_frame(eef_config, esp_com, str_io)
+        self.info = eef_config.get_info()
 
     def __init_gui_frame(self, eef_config, esp_com, str_io):
         """ creates the GUI ESPEasyFlasher2.0 """
@@ -120,7 +118,24 @@ class EspEasyFlasher:
         # scan com ports
         label_frames.com_port_scan()
 
+    def GetInfo(self):
+        messagebox.showinfo("Info ESPEASYFLASHER 2.0", self.info)
+
+    def CreateErrorReport(self):
+        pass
+
 if __name__ == "__main__":
     root = tk.Tk()
+    menu = tk.Menu(root)
+    root.config(menu=menu)
+    
     app = EspEasyFlasher(root)
+
+    helpmenu = tk.Menu(menu)
+    menu.add_cascade(label='Help', menu=helpmenu)
+    helpmenu.add_command(label="Info", command=app.GetInfo)
+    helpmenu.add_command(label="Error Report", command=app.CreateErrorReport)
+    helpmenu.add_separator()
+    helpmenu.add_command(label="Exit", command=root.quit)
+
     root.mainloop()
