@@ -10,7 +10,6 @@ HELP="""Paramter:
 e.g. python ./build_info.py -s \$GITHUB_SHA -r \$GITHUB_REPOSITORY"""
 
 def create_info_file(repo_name, tag_name, sha):
-    print(f"{repo_name}, {tag_name} ,{sha}")
     installed_packages = pkg_resources.working_set
     installed_packages_list = sorted(["%s==%s" % (i.key, i.version) for i in installed_packages])
 
@@ -22,8 +21,8 @@ def create_info_file(repo_name, tag_name, sha):
         if(tag_name):
           f.write('Release version: ' + tag_name + '\n')
 
-        f.write('OS: ' + platform.system() + platform.release() + '\n')
-        f.write('Pyhton Version: ' + sys.version + '\n')
+        f.write('OS:              ' + platform.system() + platform.release() + '\n')
+        f.write('Pyhton Version:  ' + sys.version + '\n')
         f.write('PIP list: \n')
         for package in installed_packages_list:
             f.write('\t' + package + '\n')
@@ -41,7 +40,6 @@ def main(argv):
       print("use:")
       print(HELP)
       sys.exit(2)
-    print(opts)
     for opt, arg in opts:
       if opt == '-h':
          print(HELP)
