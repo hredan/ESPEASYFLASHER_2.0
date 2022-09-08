@@ -42,6 +42,7 @@ class EEFConfig:
     def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
+        self.__logo_file_path = logo_file
         self.__info_path = EEF_INFO
 
         # default config json file
@@ -57,8 +58,6 @@ class EEFConfig:
             if not self.logo_file_exists(logo_file):
                 self.__gui_settings.logo = False
                 self.__logo_file_path = None
-            else:
-                self.__logo_file_path = logo_file
 
     def get_info(self):
         """ return build info string """
@@ -159,7 +158,6 @@ class EEFConfig:
             return_value = False
             self.__str_io.write(
                 f"Warning: Could not find '{logo_path}', using layout without logo!\n")
-
         return return_value
 
     def info_file_exists(self, info_path):
