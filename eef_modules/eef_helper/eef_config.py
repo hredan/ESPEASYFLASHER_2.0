@@ -19,11 +19,9 @@
 import os
 import sys
 import platform
-import pkg_resources
-
 from io import StringIO
-
 import json
+from pkg_resources import working_set
 
 EEF_INFO = "./build_info.txt"
 
@@ -70,21 +68,8 @@ class EEFConfig:
                 info_txt = info_file.read()
         else:
             info_txt = self.create_system_env_info()
-            # info_text = "Missing " + EEF_INFO
+            # info_txt = "Missing " + EEF_INFO
         return info_txt
-
-    def create_system_env_info(self):
-        """"create base system env info string"""
-        installed_packages = pkg_resources.working_set
-        installed_packages_list = sorted(["%s==%s" % (i.key, i.version) for i in installed_packages])
-
-        stringIO = StringIO
-        stringIO.write('OS:              ' + platform.system() + platform.release() + '\n')
-        stringIO.write('Pyhton Version:  ' + sys.version + '\n')
-        stringIO.write('PIP list: \n')
-        for package in installed_packages_list:
-            stringIO.write('\t' + package + '\n')
-        return stringIO.getvalue()
 
     def get_logo_file_path(self):
         """returns logo file path if exists otherwise None"""
@@ -193,3 +178,16 @@ class EEFConfig:
                 f"Warning: Could not find '{info_path}'\n")
 
         return return_value
+    @staticmethod
+    def create_system_env_info():
+        """"create base system env info string"""
+        string_io = StringIO()
+        packages = working_set.by_key
+        sorted_package_names = sorted(packages.keys())
+
+        string_io.write(f"OS:              {platform.system()}{platform.release()}\n")
+        string_io.write(f"Pyhton Version:  {sys.version}\n")
+        string_io.write("PIP list: \n")
+        for name in sorted_package_names:
+            string_io.write(f"\t{packages[name].key} {packages[name].version}\n")
+        return string_io.getvalue()

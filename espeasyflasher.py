@@ -67,9 +67,13 @@ class EspEasyFlasher:
         str_io.write(f"CWD: {os.getcwd()}\n")
         root_dir = os.getcwd()
         esp_com.root_dir = root_dir
-
-        self.__init_gui_frame(eef_config, esp_com, str_io)
         self.info = eef_config.get_info()
+
+        # init "__init_gui_frame contains" as last one!
+        # Because the method contains a redirection of stdout
+        # If something goes wrong, errors will not be visible in terminal
+        # in case it is not the last one!
+        self.__init_gui_frame(eef_config, esp_com, str_io)
 
     def __init_gui_frame(self, eef_config, esp_com, str_io):
         """ creates the GUI ESPEasyFlasher2.0 """
@@ -132,7 +136,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     menu = tk.Menu(root)
     root.config(menu=menu)
-
     app = EspEasyFlasher(root)
 
     helpmenu = tk.Menu(menu)
@@ -141,5 +144,4 @@ if __name__ == "__main__":
 #    helpmenu.add_command(label="Error Report", command=app.create_error_report)
     helpmenu.add_separator()
     helpmenu.add_command(label="Exit", command=root.quit)
-
     root.mainloop()
