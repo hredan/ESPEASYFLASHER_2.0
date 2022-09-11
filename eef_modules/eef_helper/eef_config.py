@@ -186,7 +186,9 @@ class EEFConfig:
         sorted_package_names = sorted(packages.keys())
 
         string_io.write(f"OS:              {platform.system()}{platform.release()}\n")
-        string_io.write(f"Pyhton Version:  {sys.version}\n")
+        string_io.write(f'Architecture:    {platform.architecture()}\n')
+        string_io.write(f'Processor:       {platform.processor()}\n')
+        string_io.write(f"Python Version:  {sys.version}\n")
         string_io.write("PIP list: \n")
         for name in sorted_package_names:
             string_io.write(f"\t{packages[name].key} {packages[name].version}\n")

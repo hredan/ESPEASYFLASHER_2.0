@@ -43,9 +43,10 @@ def create_info_file(repo_name, tag_name, sha):
         if tag_name:
             info_file.write('Release version: ' + tag_name + '\n')
 
-        info_file.write('OS:              ' + platform.system() +
-                platform.release() + '\n')
-        info_file.write('Pyhton Version:  ' + sys.version + '\n')
+        info_file.write(f'OS:              {platform.system()} {platform.release()}\n')
+        info_file.write(f'Architecture:    {platform.architecture()}\n')
+        info_file.write(f'Processor:       {platform.processor()}\n')
+        info_file.write(f'Python Version:  {sys.version}\n')
         info_file.write('PIP list: \n')
         for name in sorted_package_names:
             info_file.write(f'\t{packages[name].key} {packages[name].version}\n')
