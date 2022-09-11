@@ -18,8 +18,10 @@
 # from distutils.log import info
 import os
 import sys
-
+import platform
+from io import StringIO
 import json
+from pkg_resources import working_set
 
 EEF_INFO = "./build_info.txt"
 
@@ -65,7 +67,8 @@ class EEFConfig:
             with open(self.__info_path, "r", encoding="utf-8") as info_file:
                 info_txt = info_file.read()
         else:
-            info_txt = "Missing " + EEF_INFO
+            info_txt = self.create_system_env_info()
+            # info_txt = "Missing " + EEF_INFO
         return info_txt
 
     def get_logo_file_path(self):
@@ -175,3 +178,18 @@ class EEFConfig:
                 f"Warning: Could not find '{info_path}'\n")
 
         return return_value
+    @staticmethod
+    def create_system_env_info():
+        """"create base system env info string"""
+        string_io = StringIO()
+        packages = working_set.by_key
+        sorted_package_names = sorted(packages.keys())
+
+        string_io.write(f"OS:              {platform.system()}{platform.release()}\n")
+        string_io.write(f'Architecture:    {platform.architecture()}\n')
+        string_io.write(f'Processor:       {platform.processor()}\n')
+        string_io.write(f"Python Version:  {sys.version}\n")
+        string_io.write("PIP list: \n")
+        for name in sorted_package_names:
+            string_io.write(f"\t{packages[name].key} {packages[name].version}\n")
+        return string_io.getvalue()
