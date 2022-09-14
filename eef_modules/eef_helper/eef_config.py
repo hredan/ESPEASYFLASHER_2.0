@@ -19,6 +19,7 @@
 import os
 import sys
 import platform
+import tkinter
 from io import StringIO
 import json
 from pkg_resources import working_set
@@ -189,6 +190,7 @@ class EEFConfig:
         string_io.write(f'Architecture:    {platform.architecture()}\n')
         string_io.write(f'Processor:       {platform.processor()}\n')
         string_io.write(f"Python Version:  {sys.version}\n")
+        string_io.write(f'Tk Version:      {tkinter.TkVersion}\n')
         string_io.write("PIP list: \n")
         for name in sorted_package_names:
             string_io.write(f"\t{packages[name].key} {packages[name].version}\n")

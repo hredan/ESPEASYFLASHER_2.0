@@ -21,6 +21,7 @@
 import sys
 import platform
 import getopt
+import tkinter
 from pkg_resources import working_set
 
 HELP = r"""Paramter:
@@ -47,6 +48,7 @@ def create_info_file(repo_name, tag_name, sha):
         info_file.write(f'Architecture:    {platform.architecture()}\n')
         info_file.write(f'Processor:       {platform.processor()}\n')
         info_file.write(f'Python Version:  {sys.version}\n')
+        info_file.write(f'Tk Version:      {tkinter.TkVersion}\n')
         info_file.write('PIP list: \n')
         for name in sorted_package_names:
             info_file.write(f'\t{packages[name].key} {packages[name].version}\n')
