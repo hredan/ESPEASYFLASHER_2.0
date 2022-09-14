@@ -109,12 +109,12 @@ jobs:
         pip install esptool
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
         python -m PyInstaller -F --windowed --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
-        cp ./ESPEasyFlasherConfig.json ./dist
-        cp ./build_info.txt ./dist
-        mkdir ./dist/ESP_Packages
-        cp ./ESP_Packages/README.md ./dist/ESP_Packages
+        rem cp ./ESPEasyFlasherConfig.json ./dist
+        rem cp ./build_info.txt ./dist
+        rem mkdir ./dist/ESP_Packages
+        rem cp ./ESP_Packages/README.md ./dist/ESP_Packages
         rm ./dist/ESPEasyFlasher
-        chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        rem chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v3.0.0
       with:
