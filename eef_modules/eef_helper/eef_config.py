@@ -61,11 +61,8 @@ class EEFConfig:
                 path = os.path.sep.join(sys.argv[0].split(os.path.sep))
                 dirname = os.path.dirname(path)
                 os.chdir(dirname)
-                str_io.write(f"{dirname}\n")
-            else:
-                icon_file = "./icon_256x256.png"
-                icon_path = os.path.join(self.__base_path, icon_file)
-                root.iconphoto(False, tk.PhotoImage(file=icon_path))
+                str_io.write(f"{dirname}\n") 
+                
         self.__read_config(config_file)
 
         # check if logo file exists

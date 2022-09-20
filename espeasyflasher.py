@@ -52,6 +52,11 @@ class EspEasyFlasher:
         str_io.write(f"os: {sys.platform}\n")
         eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
 
+        if eef_config.is_pyinstaller and sys.platform == "win32":
+            icon_file = "./icon_256x256.png"
+            icon_path = os.path.join(self.__base_path, icon_file)
+            master.iconphoto(False, tk.PhotoImage(file=icon_path))
+
         str_io.write(f"CWD: {os.getcwd()}\n")
         root_dir = os.getcwd()
         esp_com.root_dir = root_dir
