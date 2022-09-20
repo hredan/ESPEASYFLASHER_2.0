@@ -61,8 +61,8 @@ class EEFConfig:
                 path = os.path.sep.join(sys.argv[0].split(os.path.sep))
                 dirname = os.path.dirname(path)
                 os.chdir(dirname)
-                str_io.write(f"{dirname}\n") 
-                
+                str_io.write(f"{dirname}\n")
+
         self.__read_config(config_file)
 
         # check if logo file exists
