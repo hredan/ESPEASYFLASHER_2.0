@@ -51,7 +51,7 @@ class EspEasyFlasher:
         esp_com = EsptoolCom()
         str_io.write(f"os: {sys.platform}\n")
         eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
-        
+
         str_io.write(f"CWD: {os.getcwd()}\n")
         root_dir = os.getcwd()
         esp_com.root_dir = root_dir
