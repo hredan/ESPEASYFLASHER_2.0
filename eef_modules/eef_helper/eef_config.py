@@ -17,6 +17,7 @@
 """
 # from distutils.log import info
 import os
+from os.path import exists
 import sys
 import platform
 import tkinter
@@ -54,6 +55,17 @@ class EEFConfig:
         # more private attributes
         self.__base_path = None
         self.__is_pyinstaller = self.__check_meipass()
+
+        if self.__is_pyinstaller:
+            if sys.platform != "win32":
+                path = os.path.sep.join(sys.argv[0].split(os.path.sep))
+                dirname = os.path.dirname(path)
+                os.chdir(dirname)
+                str_io.write(f"{dirname}\n")
+            else:
+                icon_file = "./icon_256x256.png"
+                icon_path = os.path.join(self.__base_path, icon_file)
+                root.iconphoto(False, tk.PhotoImage(file=icon_path))
         self.__read_config(config_file)
 
         # check if logo file exists
@@ -107,31 +119,34 @@ class EEFConfig:
             default values (not recommended)
         """
         self.__str_io.write("### Read Config ###\n")
-        try:
-            with open(config_file, encoding="utf-8") as json_file:
-                data = json.load(json_file)
+        if not exists(config_file):
+            self.__str_io.write(f"Error could not find: {config_file}, default config values will be used\n")
+        else:
+            try:
+                with open(config_file, encoding="utf-8") as json_file:
+                    data = json.load(json_file)
 
-                self.__gui_settings.logo = data["logo"]
-                self.__gui_settings.dev_mode = data["devMode"]
-                self.__gui_settings.serial_monitor = data["serialMonitor"]
-                self.__gui_settings.esp_info = data["espInfo"]
+                    self.__gui_settings.logo = data["logo"]
+                    self.__gui_settings.dev_mode = data["devMode"]
+                    self.__gui_settings.serial_monitor = data["serialMonitor"]
+                    self.__gui_settings.esp_info = data["espInfo"]
 
-                # set esp config values
-                self.__esp.baud_rate = data['baudRate']
-                self.__str_io.write(f"set baud rate to: {data['baudRate']}\n")
+                    # set esp config values
+                    self.__esp.baud_rate = data['baudRate']
+                    self.__str_io.write(f"set baud rate to: {data['baudRate']}\n")
 
-                self.__esp.read_start = data['readStart']
-                self.__str_io.write(f"set read start to: {data['readStart']}\n")
+                    self.__esp.read_start = data['readStart']
+                    self.__str_io.write(f"set read start to: {data['readStart']}\n")
 
-                self.__esp.read_size = data['readSize']
-                self.__str_io.write(f"set read size to: {data['readSize']}\n")
+                    self.__esp.read_size = data['readSize']
+                    self.__str_io.write(f"set read size to: {data['readSize']}\n")
 
-                self.__esp.write_start = data['writeStart']
-                self.__str_io.write(f"set write start to: {data['writeStart']}\n")
+                    self.__esp.write_start = data['writeStart']
+                    self.__str_io.write(f"set write start to: {data['writeStart']}\n")
 
-        except EnvironmentError as err:
-            self.__str_io.writelines(
-                f"Error could not read config, default values will be used: {err}\n")
+            except EnvironmentError as err:
+                self.__str_io.writelines(
+                    f"Error could not read config, default values will be used: {err}\n")
 
     def __check_meipass(self):
         """ Get absolute path to resource, works for dev and for PyInstaller """

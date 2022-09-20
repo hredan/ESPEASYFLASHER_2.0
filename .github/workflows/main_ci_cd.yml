@@ -115,8 +115,8 @@ jobs:
         cp ./build_info.txt ./dist/ESPEasyFlasher.app/Contents/MacOS
         mkdir ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
         cp ./ESP_Packages/README.md ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
-        rm ./dist/ESPEasyFlasher
-        chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        # rm ./dist/ESPEasyFlasher
+        # chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v3.0.0
       with:
