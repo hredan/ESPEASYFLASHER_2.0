@@ -1,5 +1,4 @@
 esptool
-pyserial
 pyinstaller
 pylint
 pytest
