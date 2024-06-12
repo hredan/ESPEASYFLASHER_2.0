@@ -52,7 +52,7 @@ jobs:
         pip install pyinstaller
         pip install esptool
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
-        python -m PyInstaller -F --noconsole --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
+        python -m PyInstaller -F --noconsole --collect-data esptool --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
         copy ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
@@ -80,7 +80,7 @@ jobs:
         pip install pyinstaller
         pip install esptool
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
-        python -m PyInstaller -F --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --name ESPEasyFlasher espeasyflasher.py
+        python -m PyInstaller -F --collect-data esptool --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --name ESPEasyFlasher espeasyflasher.py
         cp ./ESPEasyFlasherConfig.json ./dist
         cp ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
@@ -108,7 +108,7 @@ jobs:
         pip install pyinstaller
         pip install esptool
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
-        python -m PyInstaller -F --windowed --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
+        python -m PyInstaller -F --windowed --collect-data esptool --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
         cp ./ESPEasyFlasherConfig.json ./dist
         cp ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
