@@ -1,0 +1,8 @@
+{
+    "pylint.path": [
+        "${workspaceFolder}/.venv/python",
+        "-m",
+        "pylint"
+    ],
+    "pylint.args": ["--max-line-length=120"]
+}

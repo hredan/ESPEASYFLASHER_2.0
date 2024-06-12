@@ -141,3 +141,4 @@ dmypy.json
 .idea
 /ESP_Packages/*.eep
 /build_info.txt
+/Scripts/build_info.txt

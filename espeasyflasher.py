@@ -62,7 +62,7 @@ class EspEasyFlasher:
             else:
                 icon_file = "./icon_256x256.png"
                 icon_path = os.path.join(base_path, icon_file)
-                root.iconphoto(False, tk.PhotoImage(file=icon_path))
+                master.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         str_io.write(f"CWD: {os.getcwd()}\n")
         root_dir = os.getcwd()

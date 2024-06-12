@@ -1,0 +1,4 @@
+esptool
+pyinstaller
+pylint
+pytest
