@@ -2,6 +2,8 @@ FROM python:3.12-slim
 
 # docker build --platform linux/arm64 -t python_arm64 .
 # docker run -it --platform linux/arm64 python_arm64 bash
+# win
+# docker run -v %cd%:/home/workspace -w /home/workspace -it --platform linux/arm64 python_arm64 bash
 
 
 # docker buildx build --platform linux/amd64,linux/arm64 . (not working, not support docker driver)
