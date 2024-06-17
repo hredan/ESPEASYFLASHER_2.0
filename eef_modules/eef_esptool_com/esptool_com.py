@@ -1,6 +1,6 @@
 """
-  esptoo_com.py is a simple python interface to esptool.py (https://github.com/espressif/esptool).
-  It is used by ESPEasyFlasher.py to write, read, and erase flash of ESP microcontroller.
+  esptool_com.py is a simple python interface to esptool.py (https://github.com/espressif/esptool).
+  It is used by ESPEasyFlasher.py to write, read, and erase flash of ESP micro controller.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
   Copyright (C) 2021  André Herrmann (hredan)
@@ -16,8 +16,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
+import shutil
 import esptool
-
 
 class EsptoolCom:
     """EsptoolCom  ESPEasyFlasher interface to esptool"""
@@ -38,6 +38,9 @@ class EsptoolCom:
         """
         command = ['--port', com_port] + write_parameter
         self.run_esptool(command, content_path)
+        if not 'ESP_Packages' in content_path:
+            if os.path.exists(content_path):
+                shutil.rmtree(content_path)
 
     def esptool_read_flash(self, com_port, filename):
         """read firmware from flash

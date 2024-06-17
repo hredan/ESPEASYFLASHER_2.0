@@ -4,5 +4,16 @@
         "-m",
         "pylint"
     ],
-    "pylint.args": ["--max-line-length=120"]
+    "pylint.args": [
+        "--max-line-length=120"
+    ],
+    "cSpell.words": [
+        "columnspan",
+        "ESPEASYFLASHER",
+        "espressif",
+        "esptool",
+        "padx",
+        "pady",
+        "pyinstaller"
+    ]
 }
