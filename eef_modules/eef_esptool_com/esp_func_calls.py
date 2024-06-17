@@ -17,7 +17,6 @@
 
 import os
 import json
-import shutil
 import zipfile
 import threading
 import re
@@ -118,14 +117,9 @@ class EspFuncCalls:
                                    "### Write Flash ###", command, content_path)
             elif file_extension in ('.zip', '.eep'):
                 extract_path = tempfile.mkdtemp()
-                #extract_path = f"{root_dir}/ESP_Packages/Extracted"
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
                 eef_path = f"{extract_path}/{file_name}.eef"
-                # make dir, if exist clear content of dir
-                # if os.path.exists(extract_path):
-                #     shutil.rmtree(extract_path)
-                # else:
-                #     os.mkdir(extract_path)
+
                 with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                     zip_ref.extractall(extract_path)
                 if os.path.exists(eef_path):

@@ -1,5 +1,5 @@
 """
-  label_frame_handler.py is used by ESPEasyFlasher.py to handle label frame GUI elemtens
+  label_frame_handler.py is used by ESPEasyFlasher.py to handle label frame GUI elements
   wish are used by other instances.
   https://github.com/hredan/ESPEASYFLASHER_2.0
 
@@ -22,7 +22,7 @@ from eef_modules.label_frames.erase_flash import EraseLabelFrame
 
 
 class LabelFrameHandler:
-    """ the class LabelFrame Handler managed the Labelframes:
+    """ the class LabelFrame Handler managed the LabelFrames:
     SerialComLabelFrame (header_frame)
 
     """
