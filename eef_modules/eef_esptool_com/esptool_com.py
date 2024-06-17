@@ -17,6 +17,7 @@
 """
 import os
 import esptool
+import shutil
 
 
 class EsptoolCom:
@@ -38,6 +39,9 @@ class EsptoolCom:
         """
         command = ['--port', com_port] + write_parameter
         self.run_esptool(command, content_path)
+        if not 'ESP_Packages' in content_path:
+            if os.path.exists(content_path):
+                 shutil.rmtree(content_path)
 
     def esptool_read_flash(self, com_port, filename):
         """read firmware from flash

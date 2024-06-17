@@ -18,6 +18,8 @@ import glob
 import tkinter as tk
 from tkinter import ttk
 
+from eef_modules.eef_esptool_com.esp_func_calls import EspFuncCalls
+
 ESP_PACKAGES = "./ESP_Packages"
 class WriteLabelFrame(tk.LabelFrame):
     """
@@ -29,7 +31,7 @@ class WriteLabelFrame(tk.LabelFrame):
         self.__combo_write_flash = ttk.Combobox(self)
         self.file_list = []
 
-    def set_positioning(self, row_pos_frame, esp_func_calls) -> None:
+    def set_positioning(self, row_pos_frame, esp_func_calls:EspFuncCalls) -> None:
         """ define and initialize elements of Write Label Frame """
         self.grid(column=0, row=row_pos_frame, columnspan=3, sticky="EW", padx=5, pady=5)
 

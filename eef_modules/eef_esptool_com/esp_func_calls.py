@@ -21,23 +21,25 @@ import shutil
 import zipfile
 import threading
 import re
+import tempfile
 
-
+from eef_modules.eef_esptool_com.esptool_com import EsptoolCom
 class EspFuncCalls:
     """
     EspFuncCalls contains functions to run esptool actions in a separate thread
     """
 
-    def __init__(self, bottom_gui_elements, esp_com, label_frames) -> None:
+    def __init__(self, bottom_gui_elements, esp_com:EsptoolCom, label_frames) -> None:
         self.__bottom_gui_elements = bottom_gui_elements
         self.label_frames = label_frames
         self.__esp_com = esp_com
+        self.thread = None
 
     # R0913: Too many arguments (6/5) (too-many-arguments)
     # in this case allow more than 5 arguments, it is needed here
     # pylint: disable=too-many-arguments
     def __base_thread(self, target_method, info_text,
-                      second_arg=None, third_arg=None):
+                      second_arg=None, third_arg=None, fourth_arg=None):
         """base thread"""
         os.chdir(self.__esp_com.root_dir)
         print(f"Info: CWD {os.getcwd()}")
@@ -49,17 +51,23 @@ class EspFuncCalls:
         com_port = self.label_frames.get_com_port()
         if com_port == "":
             print("Error: select a Serial Com Port before you can start read flash!")
+        elif self.thread and self.thread.is_alive():
+            # do not start a new thread if a thread is already running
+            return
         else:
             if third_arg:
-                thread = threading.Thread(target=target_method, args=(
+                self.thread = threading.Thread(target=target_method, args=(
                     com_port, second_arg, third_arg,))
             elif second_arg:
-                thread = threading.Thread(target=target_method,
+                self.thread = threading.Thread(target=target_method,
                                           args=(com_port, second_arg,))
+            elif fourth_arg:
+                self.thread = threading.Thread(target=target_method,
+                                          args=(com_port, second_arg, third_arg, fourth_arg,))
             else:
-                thread = threading.Thread(
+                self.thread = threading.Thread(
                     target=target_method, args=(com_port,))
-            thread.start()
+            self.thread.start()
 
     def esp_info_callback(self):
         """ Callback function for esp threads"""
@@ -94,6 +102,7 @@ class EspFuncCalls:
 
     def write_flash(self):
         """ write data to ESP flash"""
+        extract_path=None
         filename = self.label_frames.get_filename_write()
         if filename == "":
             print("Error: before you can write to flash, select a firmware.bin file")
@@ -108,14 +117,15 @@ class EspFuncCalls:
                 self.__base_thread(self.__esp_com.esptool_write_eef,
                                    "### Write Flash ###", command, content_path)
             elif file_extension in ('.zip', '.eep'):
-                extract_path = f"{root_dir}/ESP_Packages/Extracted"
+                extract_path = tempfile.mkdtemp()
+                #extract_path = f"{root_dir}/ESP_Packages/Extracted"
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
-                eef_path = f"{root_dir}/ESP_Packages/Extracted/{file_name}.eef"
+                eef_path = f"{extract_path}/{file_name}.eef"
                 # make dir, if exist clear content of dir
-                if os.path.exists(extract_path):
-                    shutil.rmtree(extract_path)
-                else:
-                    os.mkdir(extract_path)
+                # if os.path.exists(extract_path):
+                #     shutil.rmtree(extract_path)
+                # else:
+                #     os.mkdir(extract_path)
                 with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                     zip_ref.extractall(extract_path)
                 if os.path.exists(eef_path):
@@ -126,7 +136,6 @@ class EspFuncCalls:
                 else:
                     print(
                         f"Error: WriteFlash->could not find eef file, expected {eef_path}")
-
             else:
                 self.__base_thread(self.__esp_com.esptool_write_flash,
                                    "### Write Flash ###", filename)
