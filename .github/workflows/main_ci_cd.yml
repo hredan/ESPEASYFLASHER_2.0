@@ -103,7 +103,7 @@ jobs:
           - uses: actions/checkout@v4
           - name: run PyInstaller in docker
             run: |
-              docker build --platform linux/arm64 -t python_arm64 .
+              docker buildx build --platform linux/arm64 -t python_arm64 .
               docker run -v $(pwd):/home/workspace -w /home/workspace -it --platform linux/arm64 python_arm64 bash /home/workspace/Scripts/build_linux.sh
           - name: Create LinuxArm64 Artefact
             uses: actions/upload-artifact@v4
