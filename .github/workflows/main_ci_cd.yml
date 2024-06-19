@@ -11,9 +11,10 @@ jobs:
             run: |
               ls -la
               echo $(pwd)
-              docker --version
+              docker version
               docker buildx build --platform linux/arm64 -t python_arm64 .
               docker images
+              docker inspect python_arm64
               docker run -v $(pwd):/home/workspace -w /home/workspace --platform linux/arm64 python_arm64 bash python --version
           - name: Create LinuxArm64 Artefact
             uses: actions/upload-artifact@v4
