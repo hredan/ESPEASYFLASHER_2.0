@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-RUN apt update
+# RUN apt update
 RUN apt -y install git
 RUN apt -y install binutils
 RUN apt -y install python3-tk
