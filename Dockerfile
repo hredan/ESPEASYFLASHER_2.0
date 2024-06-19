@@ -1,9 +1,9 @@
 FROM python:3.12-slim
 
-# RUN apt update
-RUN apt -y install git
-RUN apt -y install binutils
-RUN apt -y install python3-tk
+RUN apt-get update
+RUN apt-get -y install git
+RUN apt-get -y install binutils
+RUN apt-get -y install python3-tk
 RUN python -m pip install --upgrade pip
 
 # docker build --platform linux/arm64 -t python_arm64 .
