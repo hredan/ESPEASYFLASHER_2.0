@@ -1,4 +1,10 @@
 #!/bin/bash
+apt-get update
+apt-get -y install git
+apt-get -y install binutils
+apt-get -y install python3-tk
+python -m pip install --upgrade pip
+
 GIT_URL=$(git config --get remote.origin.url)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 GIT_HASH=$(git rev-parse HEAD)
