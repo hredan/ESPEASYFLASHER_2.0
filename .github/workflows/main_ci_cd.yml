@@ -37,4 +37,5 @@ jobs:
               docker version
               echo ######### docker images ########
               docker images
-              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_arm64 bash /home/workspace/Scripts/build_linux.sh
+              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_eef:arm64 bash /home/workspace/Scripts/build_linux.
+              ls -la
