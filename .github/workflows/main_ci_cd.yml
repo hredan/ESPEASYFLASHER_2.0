@@ -5,23 +5,30 @@ on: [push]
 jobs:
   linux_arm64_executable:
           runs-on: ubuntu-latest
+          outputs:
+            imageid: ${{ steps.buildx.outputs.imageid }}
           steps:
-          - uses: actions/checkout@v4
+          - name: Checkout
+            uses: actions/checkout@v4
+          - # Add support for more platforms with QEMU (optional)
+            # https://github.com/docker/setup-qemu-action
+            name: Set up QEMU
+            uses: docker/setup-qemu-action@v3
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          
+          - id: buildx
+            name: Build docker image arm64
+            uses: docker/build-push-action@v6
+            with:
+              push: false
+              file: ./Dockerfile
+              platforms: linux/arm64
+
           - name: run PyInstaller in docker
             run: |
               ls -la
               echo $(pwd)
+              echo ${{ steps.buildx.outputs.imageid }}
               docker version
               docker images
-              docker buildx build -t python_arm64 .
-              docker images
-              docker inspect python_arm64
-              docker run -v $(pwd):/home/workspace -w /home/workspace python_arm64 bash /home/workspace/Scripts/build_linux.sh
-          - name: Create LinuxArm64 Artefact
-            uses: actions/upload-artifact@v4
-            with:
-              # Artifact name
-              name: espeasyflasher_linux_arm64
-              # A file, directory or wildcard pattern that describes what to upload
-              path: ./dist
-              # The desired behavior if no files are found using the provided path.
