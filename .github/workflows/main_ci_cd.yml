@@ -5,8 +5,6 @@ on: [push]
 jobs:
   linux_arm64_executable:
           runs-on: ubuntu-latest
-          outputs:
-            imageid: ${{ steps.buildx.outputs.imageid }}
           steps:
           - name: Checkout
             uses: actions/checkout@v4
@@ -22,13 +20,19 @@ jobs:
             uses: docker/build-push-action@v6
             with:
               push: false
+              tags: python_eef:arm64
               file: ./Dockerfile
               platforms: linux/arm64
 
           - name: run PyInstaller in docker
             run: |
+              echo ######### ls ########
               ls -la
+              echo ######### pwd ########
               echo $(pwd)
+              echo ################# imageid ######################
               echo ${{ steps.buildx.outputs.imageid }}
+              echo ######## docker version #########
               docker version
+              echo ######### docker images ########
               docker images
