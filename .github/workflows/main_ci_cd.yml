@@ -23,6 +23,7 @@ jobs:
               tags: python_eef:arm64
               file: ./Dockerfile
               platforms: linux/arm64
+              outputs: type=docker
 
           - name: run PyInstaller in docker
             run: |
