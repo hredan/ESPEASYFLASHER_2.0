@@ -106,18 +106,9 @@ jobs:
             # https://github.com/docker/setup-qemu-action
             name: Set up QEMU
             uses: docker/setup-qemu-action@v3
-          - name: Set up Docker Buildx
-            uses: docker/setup-buildx-action@v3
-          - name: Build docker image arm64
-            uses: docker/build-push-action@v6
-            with:
-              push: false
-              tags: python_eef:arm64
-              file: ./Dockerfile
-              platforms: linux/arm64
-              outputs: type=docker
           - name: run PyInstaller in docker
             run: |
+              docker build --platform linux/arm64 -t python_eef:arm64 .
               docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_eef:arm64 bash /home/workspace/Scripts/build_linux.sh
           - name: Create LinuxArm64 Artefact
             uses: actions/upload-artifact@v4
