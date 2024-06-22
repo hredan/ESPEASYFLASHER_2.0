@@ -130,7 +130,6 @@ jobs:
                   uses: docker/setup-qemu-action@v3
                 - name: run PyInstaller in docker
                   run: |
-                    apt install build-essential
                     docker build --platform linux/arm/v7 -t python_eef:arm .
                     docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 python_eef:arm bash /home/workspace/Scripts/build_linux.sh
                 - name: Create LinuxArmv7 Artefact
