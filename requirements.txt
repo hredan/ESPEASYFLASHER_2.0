@@ -1,4 +1,2 @@
 esptool
 pyinstaller
-pylint
-pytest
