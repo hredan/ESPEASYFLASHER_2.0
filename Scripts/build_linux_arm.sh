@@ -1,8 +1,4 @@
 #!/bin/bash
-GIT_URL=$(git config --get remote.origin.url)
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-GIT_HASH=$(git rev-parse HEAD)
-
 cat > /etc/pip.conf << EOF
 [global]
 extra-index-url=https://www.piwheels.org/simple

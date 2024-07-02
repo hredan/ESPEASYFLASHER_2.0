@@ -109,7 +109,7 @@ jobs:
           - name: run PyInstaller in docker
             run: |
               docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
-              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
+              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 --env GIT_HASH:${{github.sha}} --env GIT_URL:${{github.repository}} python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
           - name: Create LinuxArm64 Artefact
             uses: actions/upload-artifact@v4
             with:
@@ -131,7 +131,7 @@ jobs:
                 - name: run PyInstaller in docker
                   run: |
                     docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
-                    docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
+                    docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 --env GIT_HASH:${{github.sha}} --env GIT_URL:${{github.repository}} python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
                 - name: Create LinuxArmv7 Artefact
                   uses: actions/upload-artifact@v4
                   with:
