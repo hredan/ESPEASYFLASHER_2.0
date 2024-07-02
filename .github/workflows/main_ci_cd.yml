@@ -108,8 +108,8 @@ jobs:
             uses: docker/setup-qemu-action@v3
           - name: run PyInstaller in docker
             run: |
-              docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm64 .
-              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_eef:arm64 bash /home/workspace/Scripts/build_linux.sh
+              docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
+              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
           - name: Create LinuxArm64 Artefact
             uses: actions/upload-artifact@v4
             with:
@@ -130,8 +130,8 @@ jobs:
                   uses: docker/setup-qemu-action@v3
                 - name: run PyInstaller in docker
                   run: |
-                    docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_armv7 .
-                    docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 python_eef:armv7 bash /home/workspace/Scripts/build_linux_armv7.sh
+                    docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
+                    docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
                 - name: Create LinuxArmv7 Artefact
                   uses: actions/upload-artifact@v4
                   with:
