@@ -162,13 +162,15 @@ jobs:
         mkdir ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
         cp ./ESP_Packages/README.md ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
         rm ./dist/ESPEasyFlasher
-        chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        chmod +x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        tar -czf ./dist/ESPEasyFlasher_macOs12_intel.tar.gz ./dist ESPEasyFlasher.app
+
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: espeasyflasher_macOs12_intel
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist
+        path: ./dist/ESPEasyFlasher_macOs12_intel.tar.gz
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
