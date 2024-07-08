@@ -51,11 +51,19 @@ class EspEasyFlasher:
         esp_com = EsptoolCom()
         str_io.write(f"os: {sys.platform}\n")
         eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
+        base_path = eef_config.get_base_path()
 
-        if eef_config.is_pyinstaller and sys.platform == "win32":
-            icon_file = "./icon_256x256.png"
-            icon_path = os.path.join(self.__base_path, icon_file)
-            master.iconphoto(False, tk.PhotoImage(file=icon_path))
+        str_io.write(f"os: {sys.platform}\n")
+        if eef_config.is_pyinstaller():
+            if sys.platform != "win32":
+                path = os.path.sep.join(sys.argv[0].split(os.path.sep))
+                dirname = os.path.dirname(path)
+                os.chdir(dirname)
+                str_io.write(f"{dirname}\n")
+            else:
+                icon_file = "./icon_256x256.png"
+                icon_path = os.path.join(base_path, icon_file)
+                master.iconphoto(False, tk.PhotoImage(file=icon_path))
 
         str_io.write(f"CWD: {os.getcwd()}\n")
         root_dir = os.getcwd()
@@ -131,10 +139,10 @@ if __name__ == "__main__":
     root.config(menu=menu)
     app = EspEasyFlasher(root)
 
-    helpmenu = tk.Menu(menu)
-    menu.add_cascade(label='Help', menu=helpmenu)
-    helpmenu.add_command(label="Info", command=app.get_info)
-#    helpmenu.add_command(label="Error Report", command=app.create_error_report)
-    helpmenu.add_separator()
-    helpmenu.add_command(label="Exit", command=root.quit)
+    help_menu = tk.Menu(menu)
+    menu.add_cascade(label='Help', menu=help_menu)
+    help_menu.add_command(label="Info", command=app.get_info)
+#    help_menu.add_command(label="Error Report", command=app.create_error_report)
+    help_menu.add_separator()
+    help_menu.add_command(label="Exit", command=root.quit)
     root.mainloop()

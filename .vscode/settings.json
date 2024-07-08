@@ -1,0 +1,24 @@
+{
+    "pylint.path": [
+        "${workspaceFolder}/.venv/python",
+        "-m",
+        "pylint"
+    ],
+    "pylint.args": [
+        "--max-line-length=120"
+    ],
+    "cSpell.words": [
+        "columnspan",
+        "ESPEASYFLASHER",
+        "espressif",
+        "esptool",
+        "padx",
+        "pady",
+        "pyinstaller"
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
