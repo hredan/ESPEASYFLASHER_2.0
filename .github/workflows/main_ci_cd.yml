@@ -178,3 +178,37 @@ jobs:
         path: ./dist/ESPEasyFlasher_macOs12_intel.tar.gz
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
+  macOs14_executable:
+    if: ${{ vars.TARGET == 'macos14' || vars.TARGET == 'all' }}
+    runs-on: macos-14
+    needs: [pylint, pytest]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python "3.12"
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: run PyInstaller
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install esptool
+        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
+        python -m PyInstaller -F --windowed --collect-data esptool --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
+        cp ./ESPEasyFlasherConfig.json ./dist/ESPEasyFlasher.app/Contents/MacOS
+        cp ./build_info.txt ./dist/ESPEasyFlasher.app/Contents/MacOS
+        mkdir ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
+        cp ./ESP_Packages/README.md ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
+        rm ./dist/ESPEasyFlasher
+        chmod +x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        tar -czf ./dist/ESPEasyFlasher_macOs12_intel.tar.gz ./dist/ESPEasyFlasher.app
+
+    - name: Create macOs Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        # Artifact name
+        name: espeasyflasher_macOs14_arm64
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./dist/ESPEasyFlasher_macOs14_arm64.tar.gz
+        retention-days: 10
+        # The desired behavior if no files are found using the provided path.
