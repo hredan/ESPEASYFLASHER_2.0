@@ -201,7 +201,7 @@ jobs:
         cp ./ESP_Packages/README.md ./dist/ESPEasyFlasher.app/Contents/MacOS/ESP_Packages
         rm ./dist/ESPEasyFlasher
         chmod +x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
-        tar -czf ./dist/ESPEasyFlasher_macOs12_intel.tar.gz ./dist/ESPEasyFlasher.app
+        tar -czf ./dist/ESPEasyFlasher_macOs14_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
 
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v4
