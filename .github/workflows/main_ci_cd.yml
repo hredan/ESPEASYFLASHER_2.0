@@ -64,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_win
+        name: espeasyflasher_win64
         # A file, directory or wildcard pattern that describes what to upload
         path: ./dist
         # The desired behavior if no files are found using the provided path.
@@ -109,7 +109,8 @@ jobs:
       run: |
         docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
         docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
-        tar -czf ./ESPEasyFlasher_linux_arm64.tar.gz -C ./dist .
+        cp -r ./dist ./ESPEasyFlasher
+        tar -czf ./ESPEasyFlasher_linux_arm64.tar.gz ./ESPEasyFlasher
     - name: Create LinuxArm64 Artefact
       uses: actions/upload-artifact@v4
       with:
@@ -133,7 +134,8 @@ jobs:
       run: |
         docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
         docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
-        tar -czf ./ESPEasyFlasher_linux_armv7.tar.gz -C ./dist .
+        cp -r ./dist ./ESPEasyFlasher
+        tar -czf ./ESPEasyFlasher_linux_armv7.tar.gz ./ESPEasyFlasher
     - name: Create LinuxArmv7 Artefact
       uses: actions/upload-artifact@v4
       with:
