@@ -1,5 +1,4 @@
 name: main_ci_cd
-
 on: [push]
 
 jobs:
@@ -41,6 +40,7 @@ jobs:
     - name: Testing EspEasyFlasher_2.0
       run: pytest tests
   windows_exe:
+    if: ${{ vars.TARGET == 'win64' || vars.TARGET == 'all' }}
     runs-on: windows-latest
     needs: [pylint, pytest]
     steps:
@@ -64,11 +64,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_win
+        name: espeasyflasher_win64
         # A file, directory or wildcard pattern that describes what to upload
         path: ./dist
         # The desired behavior if no files are found using the provided path.
+        retention-days: 10
   linux_x64_executable:
+    if: ${{ vars.TARGET == 'linux64' || vars.TARGET == 'all' }}
     runs-on: ubuntu-latest
     needs: [pylint, pytest]
     steps:
@@ -82,65 +84,68 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install esptool
-        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
-        python -m PyInstaller -F --collect-data esptool --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --name ESPEasyFlasher espeasyflasher.py
-        cp ./ESPEasyFlasherConfig.json ./dist
-        cp ./build_info.txt ./dist
-        mkdir ./dist/ESP_Packages
-        cp ./ESP_Packages/README.md ./dist/ESP_Packages
+        ./Scripts/build_linux.sh
+        tar -czf ./ESPEasyFlasher_linux_x64.tar.gz -C ./dist .
     - name: Create Linux Artefact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: espeasyflasher_linux_x64
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist
+        path: ./ESPEasyFlasher_linux_x64.tar.gz
         # The desired behavior if no files are found using the provided path.
   linux_arm64_executable:
-          runs-on: ubuntu-latest
-          needs: [pylint, pytest]
-          steps:
-          - name: Checkout repository
-            uses: actions/checkout@v4
-          - # Add support for more platforms with QEMU (optional)
-            # https://github.com/docker/setup-qemu-action
-            name: Set up QEMU
-            uses: docker/setup-qemu-action@v3
-          - name: run PyInstaller in docker
-            run: |
-              docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
-              docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
-          - name: Create LinuxArm64 Artefact
-            uses: actions/upload-artifact@v4
-            with:
-              # Artifact name
-              name: espeasyflasher_linux_arm64
-              # A file, directory or wildcard pattern that describes what to upload
-              path: ./dist
-              # The desired behavior if no files are found using the provided path.
+    if: ${{ vars.TARGET == 'linuxarm64' || vars.TARGET == 'all' }}
+    runs-on: ubuntu-latest
+    needs: [pylint, pytest]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - # Add support for more platforms with QEMU (optional)
+      # https://github.com/docker/setup-qemu-action
+      name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: run PyInstaller in docker
+      run: |
+        docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
+        docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm64 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:arm64 bash /home/workspace/Scripts/build_linux_arm.sh
+        cp -r ./dist ./ESPEasyFlasher
+        tar -czf ./ESPEasyFlasher_linux_arm64.tar.gz ./ESPEasyFlasher
+    - name: Create LinuxArm64 Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        # Artifact name
+        name: espeasyflasher_linux_arm64
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./ESPEasyFlasher_linux_arm64.tar.gz
+        # The desired behavior if no files are found using the provided path.
   linux_armv7_executable:
-                runs-on: ubuntu-latest
-                needs: [pylint, pytest]
-                steps:
-                - name: Checkout repository
-                  uses: actions/checkout@v4
-                - # Add support for more platforms with QEMU (optional)
-                  # https://github.com/docker/setup-qemu-action
-                  name: Set up QEMU
-                  uses: docker/setup-qemu-action@v3
-                - name: run PyInstaller in docker
-                  run: |
-                    docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
-                    docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
-                - name: Create LinuxArmv7 Artefact
-                  uses: actions/upload-artifact@v4
-                  with:
-                    # Artifact name
-                    name: espeasyflasher_linux_armv7
-                    # A file, directory or wildcard pattern that describes what to upload
-                    path: ./dist
-                    # The desired behavior if no files are found using the provided path.
+    if: ${{ vars.TARGET == 'linuxarmv7' || vars.TARGET == 'all' }}
+    runs-on: ubuntu-latest
+    needs: [pylint, pytest]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - # Add support for more platforms with QEMU (optional)
+      # https://github.com/docker/setup-qemu-action
+      name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: run PyInstaller in docker
+      run: |
+        docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
+        docker run -v $(pwd):/home/workspace -w /home/workspace -i --platform linux/arm/v7 --env GIT_HASH=${{github.sha}} --env GIT_URL=${{github.repository}} python_eef:armv7 bash /home/workspace/Scripts/build_linux_arm.sh
+        cp -r ./dist ./ESPEasyFlasher
+        tar -czf ./ESPEasyFlasher_linux_armv7.tar.gz ./ESPEasyFlasher
+    - name: Create LinuxArmv7 Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        # Artifact name
+        name: espeasyflasher_linux_armv7
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./ESPEasyFlasher_linux_armv7.tar.gz
+        # The desired behavior if no files are found using the provided path.
   macOs12_executable:
+    if: ${{ vars.TARGET == 'macos12' || vars.TARGET == 'all' }}
     runs-on: macos-12
     needs: [pylint, pytest]
     steps:
@@ -154,19 +159,41 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
         pip install esptool
-        python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}}
-        python -m PyInstaller -F --windowed --collect-data esptool --add-data "./LogoEasyFlash.png:." --add-data "build_info.txt:." --icon "./resource/macOs/SleepUino.icns" --name ESPEasyFlasher espeasyflasher.py
-        cp ./ESPEasyFlasherConfig.json ./dist
-        cp ./build_info.txt ./dist
-        mkdir ./dist/ESP_Packages
-        cp ./ESP_Packages/README.md ./dist/ESP_Packages
-        rm ./dist/ESPEasyFlasher
-        chmod o+x ./dist/ESPEasyFlasher.app/Contents/MacOS/ESPEasyFlasher
+        ./Scripts/build_macOS.sh
+        tar -czf ./dist/ESPEasyFlasher_macOs12_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: espeasyflasher_macOs12_intel
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist
+        path: ./dist/ESPEasyFlasher_macOs12_intel.tar.gz
+        retention-days: 10
+        # The desired behavior if no files are found using the provided path.
+  macOs14_executable:
+    if: ${{ vars.TARGET == 'macos14' || vars.TARGET == 'all' }}
+    runs-on: macos-14
+    needs: [pylint, pytest]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python "3.12"
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: run PyInstaller
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install esptool
+        ./Scripts/build_macOS.sh
+        tar -czf ./dist/ESPEasyFlasher_macOs14_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
+
+    - name: Create macOs Artefact
+      uses: actions/upload-artifact@v4
+      with:
+        # Artifact name
+        name: espeasyflasher_macOs14_arm64
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./dist/ESPEasyFlasher_macOs14_arm64.tar.gz
+        retention-days: 10
         # The desired behavior if no files are found using the provided path.

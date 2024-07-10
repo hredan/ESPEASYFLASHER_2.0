@@ -49,6 +49,7 @@ class EspEasyFlasher:
         self.file_list = []
         str_io = StringIO()
         esp_com = EsptoolCom()
+        str_io.write(f"os: {sys.platform}\n")
         eef_config = EEFConfig(EEF_CONFIG, EEF_LOGO_FILE, str_io, esp_com)
         base_path = eef_config.get_base_path()
 

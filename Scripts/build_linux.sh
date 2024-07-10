@@ -1,7 +1,19 @@
 #!/bin/bash
-GIT_URL=$(git config --get remote.origin.url)
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-GIT_HASH=$(git rev-parse HEAD)
+
+# if $GITHUB_REPOSITORY is available, then script is running in GitHub Actions on GitHub Runner
+if [ -n "$GITHUB_REPOSITORY" ]
+then
+    GIT_URL="www.github.com/${GITHUB_REPOSITORY}"
+else
+    GIT_URL=$(git config --get remote.origin.url)
+fi
+
+if [ -n "$GITHUB_SHA" ]
+then
+    GIT_HASH=$GITHUB_SHA
+else
+    GIT_HASH=$(git rev-parse HEAD)
+fi
 
 pip install -r requirements.txt
 python ./Scripts/build_info.py -s $GIT_HASH -r $GIT_URL
