@@ -1,8 +1,8 @@
 name: main_ci_cd
-on: 
-  push:
-    tags-ignore:
-      - '**'
+on: [push]
+  # push:
+  #   tags-ignore:
+  #     - '**'
 
 jobs:
   call-workflow-build:
