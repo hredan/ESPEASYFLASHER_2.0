@@ -11,3 +11,5 @@ jobs:
   build-targets:
     needs: test
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
+    with:
+      target: 'win64'

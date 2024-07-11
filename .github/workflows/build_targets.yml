@@ -1,8 +1,14 @@
 on:
     workflow_call:
+      inputs:
+        target:
+          description: 'Targets to build'
+          required: true
+          default: 'all'
+          type: string
 jobs:
   windows_exe:
-    if: ${{ vars.TARGET == 'win64' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'win64' || inputs.target == 'all' }}
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -33,7 +39,7 @@ jobs:
         # The desired behavior if no files are found using the provided path.
         retention-days: 10
   linux_x64_executable:
-    if: ${{ vars.TARGET == 'linux64' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'linux64' || inputs.target == 'all' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -57,7 +63,7 @@ jobs:
         path: ./ESPEasyFlasher_linux_x64.tar.gz
         # The desired behavior if no files are found using the provided path.
   linux_arm64_executable:
-    if: ${{ vars.TARGET == 'linuxarm64' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'linuxarm64' || inputs.target == 'all' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -81,7 +87,7 @@ jobs:
         path: ./ESPEasyFlasher_linux_arm64.tar.gz
         # The desired behavior if no files are found using the provided path.
   linux_armv7_executable:
-    if: ${{ vars.TARGET == 'linuxarmv7' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'linuxarmv7' || inputs.target == 'all' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -105,7 +111,7 @@ jobs:
         path: ./ESPEasyFlasher_linux_armv7.tar.gz
         # The desired behavior if no files are found using the provided path.
   macOs12_executable:
-    if: ${{ vars.TARGET == 'macos12' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'macos12' || inputs.target == 'all' }}
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v4
@@ -130,7 +136,7 @@ jobs:
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
   macOs14_executable:
-    if: ${{ vars.TARGET == 'macos14' || vars.TARGET == 'all' }}
+    if: ${{ inputs.target == 'macos14' || inputs.target == 'all' }}
     runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
