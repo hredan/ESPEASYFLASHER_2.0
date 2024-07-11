@@ -1,8 +1,9 @@
 name: main_ci_cd
-on: [push]
-  # push:
-  #   tags-ignore:
-  #     - '**'
+#on: [push]
+on:
+  push:
+    tags-ignore:
+      - '**'
 
 jobs:
   build-targets:
