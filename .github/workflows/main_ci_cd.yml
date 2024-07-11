@@ -5,5 +5,5 @@ on: [push]
   #     - '**'
 
 jobs:
-  call-workflow-build:
+  build-targets:
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
