@@ -2,7 +2,7 @@ name: main_ci_cd
 #on: [push]
 on:
   push:
-    tags-ignore:
+    branches:
       - '**'
 
 jobs:

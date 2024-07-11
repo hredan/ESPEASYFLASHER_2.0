@@ -1,0 +1,11 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release and upload assets
+
+jobs:
+  build-targets:
+    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
