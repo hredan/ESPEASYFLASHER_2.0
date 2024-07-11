@@ -59,13 +59,15 @@ jobs:
         copy ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
         copy ./ESP_Packages/README.md ./dist/ESP_Packages
+        ren dist ESPEasyFlasher
+        7z.exe a -tzip espeasyflasher_win64.zip ESPEasyFlasher
     - name: Create Windows Artifact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: espeasyflasher_win64
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist
+        path: ./espeasyflasher_win64.zip
         # The desired behavior if no files are found using the provided path.
         retention-days: 10
   linux_x64_executable:
