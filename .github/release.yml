@@ -2,10 +2,35 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-    - '**' # Push events to matching v*, i.e. v1.0, v20.15.10
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10-prerelease, with prerelease flag
 
 name: Create Release and upload assets
 
 jobs:
   build-targets:
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
+  release:
+    name: Create Release and upload assets
+    needs: [build-targets]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get the tag name and prerelease flag
+        run: |
+          TAG=${GITHUB_REF/refs\/tags\//}
+          if [[ ${TAG} == *"prerelease"* ]]; then
+            PRERELEASE=true
+          else
+            PRERELEASE=false
+          fi
+          # add variables to env
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+          echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
+          echo "TAG: ${TAG}"
+          echo "PRE: ${PRERELEASE}"
+    - name: download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: .
+    - name: Check artifacts
+      run: |
+        ls -la
