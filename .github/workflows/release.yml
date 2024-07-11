@@ -1,6 +1,9 @@
 on:
   push:
     # Sequence of patterns matched against refs/tags
+    # To create relases or pre-releases, push a tag with the following format: v1.0 or v1.0-prerelease
+    # git tag -a -m "Description of this release" v1.0-prerelease
+    # git push --follow-tags
     tags:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10-prerelease, with prerelease flag
 
@@ -15,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Get the tag name and prerelease flag
-        run: |
+      run: |
           TAG=${GITHUB_REF/refs\/tags\//}
           if [[ ${TAG} == *"prerelease"* ]]; then
             PRERELEASE=true
