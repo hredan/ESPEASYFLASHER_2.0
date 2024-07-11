@@ -10,8 +10,13 @@ on:
 name: Create Release and upload assets
 
 jobs:
+  test:
+    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/test.yml@main
   build-targets:
+    needs: test
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
+    with:
+      target: 'all'
   release:
     name: Create Release and upload assets
     needs: [build-targets]
@@ -37,6 +42,13 @@ jobs:
         merge-multiple: true
     - name: Check artifacts
       run: |
-        ls -la
         cd ./release
         ls -la
+    - name: Upload Release Assets
+      id: upload-release-assets
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: ./release/*
+        draft: ${{ env.PRERELEASE }}
+        prerelease: ${{ env.PRERELEASE }}
+        generateReleaseNotes: true
