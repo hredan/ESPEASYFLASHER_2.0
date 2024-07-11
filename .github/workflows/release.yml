@@ -37,3 +37,5 @@ jobs:
     - name: Check artifacts
       run: |
         ls -la
+        cd ./espeasyflasher_linux_x64
+        ls -la
