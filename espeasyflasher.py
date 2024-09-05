@@ -29,7 +29,11 @@ import os
 from io import StringIO
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
 from tkinter import messagebox
+
+from CTkMenuBar import CTkMenuBar
+from CTkMenuBar import CustomDropdownMenu
 
 # import eef modules
 from eef_modules.eef_esptool_com.esptool_com import EsptoolCom
@@ -81,7 +85,7 @@ class EspEasyFlasher:
         self.master.title("ESPEasyFlasher2.0")
         self.master.resizable(0, 0)
 
-        frame = ttk.Frame(self.master)
+        frame = ctk.CTkFrame(self.master)
         frame.pack()
 
         label_frames = LabelFrameHandler(frame, eef_config)
@@ -134,15 +138,16 @@ class EspEasyFlasher:
     #     info = self.info
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    menu = tk.Menu(root)
+    root = ctk.CTk()
+    menu = CTkMenuBar(root)
     root.config(menu=menu)
     app = EspEasyFlasher(root)
 
-    help_menu = tk.Menu(menu)
-    menu.add_cascade(label='Help', menu=help_menu)
-    help_menu.add_command(label="Info", command=app.get_info)
+    # help_menu = CTkMenuBar(menu)
+    btn_help = menu.add_cascade('Help')
+    dropdown_help = CustomDropdownMenu(widget=btn_help)
+    dropdown_help.add_option(option="Info", command=app.get_info)
 #    help_menu.add_command(label="Error Report", command=app.create_error_report)
-    help_menu.add_separator()
-    help_menu.add_command(label="Exit", command=root.quit)
+    dropdown_help.add_separator()
+    dropdown_help.add_option(option="Exit", command=root.quit)
     root.mainloop()

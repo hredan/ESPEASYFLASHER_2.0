@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "Python Debugger: main file",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "./espeasyflasher.py",
             "console": "integratedTerminal"
         }
     ]

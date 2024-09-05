@@ -20,8 +20,9 @@ import tkinter as tk
 from tkinter import ttk
 from eef_modules.label_frames.serial_com_port_access import SerialComPortAccess
 
+import customtkinter as ctk
 
-class SerialComLabelFrame(tk.LabelFrame):
+class SerialComLabelFrame(ctk.CTkLabel):
     """
     SerialComLabelFrame (header frame) contains section of serial com port, logo, and ESP Info
     """
