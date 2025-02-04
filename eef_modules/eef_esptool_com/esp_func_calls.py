@@ -36,6 +36,7 @@ class EspFuncCalls:
 
     # R0913: Too many arguments (6/5) (too-many-arguments)
     # in this case allow more than 5 arguments, it is needed here
+    # pylint: disable=too-many-positional-arguments
     # pylint: disable=too-many-arguments
     def __base_thread(self, target_method, info_text,
                       second_arg=None, third_arg=None, fourth_arg=None):
