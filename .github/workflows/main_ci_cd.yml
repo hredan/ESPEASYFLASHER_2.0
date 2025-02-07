@@ -10,6 +10,6 @@ jobs:
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/test.yml@main
   build-targets:
     needs: test
-    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
+    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@34-custom-logo-does-not-shown
     with:
       target: 'all'
