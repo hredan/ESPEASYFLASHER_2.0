@@ -110,9 +110,9 @@ jobs:
         # A file, directory or wildcard pattern that describes what to upload
         path: ./ESPEasyFlasher_linux_armv7.tar.gz
         # The desired behavior if no files are found using the provided path.
-  macOs14x86_executable:
-    if: ${{ inputs.target == 'macos14_intel' || inputs.target == 'all' }}
-    runs-on: macos-14-large
+  macOs13:
+    if: ${{ inputs.target == 'macos13' || inputs.target == 'all' }}
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python "3.12"
@@ -130,9 +130,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_macOs14_intel
+        name: espeasyflasher_macOs13_intel
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist/ESPEasyFlasher_macOs14_intel.tar.gz
+        path: ./dist/ESPEasyFlasher_macOs13_intel.tar.gz
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
   macOs14_executable:

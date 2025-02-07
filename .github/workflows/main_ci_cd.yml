@@ -12,4 +12,4 @@ jobs:
     needs: test
     uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@34-custom-logo-does-not-shown
     with:
-      target: 'all'
+      target: 'macos13'
