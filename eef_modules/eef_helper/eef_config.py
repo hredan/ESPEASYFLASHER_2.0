@@ -162,13 +162,15 @@ class EEFConfig:
     def logo_file_exists(self, logo_file):
         """check if logo file exists"""
         return_value = False
+        logo_path = logo_file
         if self.__check_meipass():
-            logo_path = os.path.join(self.__base_path, logo_file)
-        else:
-            logo_path = logo_file
+            if not exists(logo_file):
+                logo_path = os.path.join(self.__base_path, logo_file)
+                # self.__str_io.write(f"Info: MEIPASS '{logo_path}'\n")
 
         if os.path.exists(logo_path):
             self.__logo_file_path = logo_path
+            # self.__str_io.write(f"Info: set __logo_file_path'{logo_path}'\n")
             return_value = True
         else:
             return_value = False
