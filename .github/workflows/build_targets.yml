@@ -125,7 +125,7 @@ jobs:
         pip install pyinstaller
         pip install esptool
         ./Scripts/build_macOS.sh
-        tar -czf ./dist/ESPEasyFlasher_macOs12_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
+        tar -czf ./dist/ESPEasyFlasher_macOs13_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
     - name: Create macOs Artefact
       uses: actions/upload-artifact@v4
       with:
