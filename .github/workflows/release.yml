@@ -11,10 +11,10 @@ name: Create Release and upload assets
 
 jobs:
   test:
-    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/test.yml@main
+    uses: ./.github/workflows/test.yml
   build-targets:
     needs: test
-    uses: hredan/ESPEASYFLASHER_2.0/.github/workflows/build_targets.yml@main
+    uses: ./.github/workflows/build_targets.yml
     with:
       target: 'all'
   release:
