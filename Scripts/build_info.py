@@ -27,7 +27,7 @@ from pkg_resources import working_set
 HELP = r"""Paramter:
 -s\tGITHUB_SHA
 -r\tGITHUB_REPOSITORY
--t\tTAG_NAME
+-n\tGITHUB_REF_NAME
 e.g. python ./build_info.py -s \$GITHUB_SHA -r \$GITHUB_REPOSITORY"""
 
 
@@ -61,7 +61,7 @@ def main(argv):
     sha = ''
 
     try:
-        opts = getopt.getopt(argv, "hs:r:t:")
+        opts = getopt.getopt(argv, "hs:r:n:")
     except getopt.GetoptError as err:
         print("Error:")
         print(err)
@@ -74,7 +74,7 @@ def main(argv):
             sys.exit(0)
         elif opt == "-r":
             repo_name = arg
-        elif opt == "-t":
+        elif opt == "-n":
             tag_name = arg
         elif opt == "-s":
             sha = arg
