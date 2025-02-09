@@ -12,4 +12,4 @@ jobs:
     needs: test
     uses: ./.github/workflows/build_targets.yml
     with:
-      target: 'all'
+      target: 'win64'
