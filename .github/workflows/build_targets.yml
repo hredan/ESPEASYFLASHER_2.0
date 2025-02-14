@@ -28,14 +28,14 @@ jobs:
         mkdir ./dist/ESP_Packages
         copy ./ESP_Packages/README.md ./dist/ESP_Packages
         ren dist ESPEasyFlasher
-        7z.exe a -tzip espeasyflasher_win64.zip ESPEasyFlasher
+        7z.exe a -tzip ESPEasyFlasher_win64.zip ESPEasyFlasher
     - name: Create Windows Artifact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_win64
+        name: ESPEasyFlasher_win64
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./espeasyflasher_win64.zip
+        path: ./ESPEasyFlasher_win64.zip
         # The desired behavior if no files are found using the provided path.
         retention-days: 10
   linux_x64_executable:
@@ -58,7 +58,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_linux_x64
+        name: ESPEasyFlasher_linux_x64
         # A file, directory or wildcard pattern that describes what to upload
         path: ./ESPEasyFlasher_linux_x64.tar.gz
         # The desired behavior if no files are found using the provided path.
@@ -82,7 +82,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_linux_arm64
+        name: ESPEasyFlasher_linux_arm64
         # A file, directory or wildcard pattern that describes what to upload
         path: ./ESPEasyFlasher_linux_arm64.tar.gz
         # The desired behavior if no files are found using the provided path.
@@ -106,11 +106,11 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_linux_armv7
+        name: ESPEasyFlasher_linux_armv7
         # A file, directory or wildcard pattern that describes what to upload
         path: ./ESPEasyFlasher_linux_armv7.tar.gz
         # The desired behavior if no files are found using the provided path.
-  macOs_x64_executable:
+  macOS_x64_executable:
     if: ${{ inputs.target == 'macos_intel' || inputs.target == 'all' }}
     runs-on: macos-13
     steps:
@@ -125,17 +125,17 @@ jobs:
         pip install pyinstaller
         pip install esptool
         ./Scripts/build_macOS.sh
-        tar -czf ./dist/ESPEasyFlasher_macOs_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
-    - name: Create macOs Artefact
+        tar -czf ./dist/ESPEasyFlasher_macOS_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
+    - name: Create macOS Artefact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_macOs_intel
+        name: ESPEasyFlasher_macOS_intel
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist/ESPEasyFlasher_macOs_intel.tar.gz
+        path: ./dist/ESPEasyFlasher_macOS_intel.tar.gz
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
-  macOs_arm64_executable:
+  macOS_arm64_executable:
     if: ${{ inputs.target == 'macos_arm64' || inputs.target == 'all' }}
     runs-on: macos-14
     steps:
@@ -150,14 +150,14 @@ jobs:
         pip install pyinstaller
         pip install esptool
         ./Scripts/build_macOS.sh
-        tar -czf ./dist/ESPEasyFlasher_macOs_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
+        tar -czf ./dist/ESPEasyFlasher_macOS_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
 
-    - name: Create macOs Artefact
+    - name: Create macOS Artefact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: espeasyflasher_macOs_arm64
+        name: ESPEasyFlasher_macOS_arm64
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./dist/ESPEasyFlasher_macOs_arm64.tar.gz
+        path: ./dist/ESPEasyFlasher_macOS_arm64.tar.gz
         retention-days: 10
         # The desired behavior if no files are found using the provided path.
