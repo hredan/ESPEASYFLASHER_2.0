@@ -120,7 +120,7 @@ class EspFuncCalls:
         if filename == "":
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
-            file_name, file_extension = os.path.splitext(filename)
+            file_extension = os.path.splitext(filename)[1]
             root_dir = self.__esp_com.root_dir
             if file_extension == ".eef":
                 content_path = f"{root_dir}/ESP_Packages"
