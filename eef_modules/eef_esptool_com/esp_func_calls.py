@@ -69,6 +69,19 @@ class EspFuncCalls:
                     target=target_method, args=(com_port,))
             self.thread.start()
 
+    def get_eef_path(self, extract_path):
+        """get eef file path from extract path"""
+        eef_files = []
+        for file in os.listdir(extract_path):
+            if file.endswith(".eef"):
+                eef_files.append(file)
+        if len(eef_files) > 1:
+            print("warning: Multiple eef files found in zip/eep file")
+        elif len(eef_files) == 0:
+            print("Error: No eef file found in zip/eep file")
+            return None
+        return os.path.join(extract_path, eef_files[0])
+
     def esp_info_callback(self):
         """ Callback function for esp threads"""
         stdout_redirection = self.__bottom_gui_elements.stdout_redirection
@@ -107,7 +120,7 @@ class EspFuncCalls:
         if filename == "":
             print("Error: before you can write to flash, select a firmware.bin file")
         else:
-            file_name, file_extension = os.path.splitext(filename)
+            file_extension = os.path.splitext(filename)[1]
             root_dir = self.__esp_com.root_dir
             if file_extension == ".eef":
                 content_path = f"{root_dir}/ESP_Packages"
@@ -119,10 +132,10 @@ class EspFuncCalls:
             elif file_extension in ('.zip', '.eep'):
                 extract_path = tempfile.mkdtemp()
                 zip_path = f"{root_dir}/ESP_Packages/{filename}"
-                eef_path = f"{extract_path}/{file_name}.eef"
 
                 with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                     zip_ref.extractall(extract_path)
+                eef_path = self.get_eef_path(extract_path)
                 if os.path.exists(eef_path):
                     print(f"Info: eef file path: {eef_path}")
                     command = EspFuncCalls.__read_eef_file(eef_path)
