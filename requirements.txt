@@ -1,2 +1,2 @@
 esptool
-pyinstaller
+pyinstaller==6.11.1

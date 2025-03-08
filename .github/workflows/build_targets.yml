@@ -22,7 +22,7 @@ jobs:
         pip install pyinstaller
         pip install esptool
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}} -n ${{github.ref_name}}
-        python -m PyInstaller -F --noconsole --collect-data esptool --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." espeasyflasher.py
+        python -m PyInstaller -F --noconsole --collect-data esptool --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." --icon ./resource/win/icon_64x64.ico espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
         copy ./build_info.txt ./dist
         mkdir ./dist/ESP_Packages
