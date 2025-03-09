@@ -19,8 +19,7 @@ jobs:
     - name: run PyInstaller
       run: |
         python --version
-        pip install pyinstaller
-        pip install esptool
+        pip install -r requirements.txt
         python ./Scripts/build_info.py -s ${{github.sha}} -r ${{github.repository}} -n ${{github.ref_name}}
         python -m PyInstaller -F --noconsole --collect-data esptool --add-data "LogoEasyFlash.png;." --add-data "build_info.txt;." --add-data "./resource/win/icon_256x256.png;." --icon ./resource/win/icon_64x64.ico espeasyflasher.py
         copy ./ESPEasyFlasherConfig.json ./dist
@@ -50,8 +49,6 @@ jobs:
     - name: run PyInstaller
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller
-        pip install esptool
         ./Scripts/build_linux.sh
         tar -czf ./ESPEasyFlasher_linux_x64.tar.gz -C ./dist .
     - name: Create Linux Artefact
@@ -122,8 +119,7 @@ jobs:
     - name: run PyInstaller
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller
-        pip install esptool
+        pip install -r requirements.txt
         ./Scripts/build_macOS.sh
         tar -czf ./dist/ESPEasyFlasher_macOS_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
     - name: Create macOS Artefact
@@ -147,8 +143,7 @@ jobs:
     - name: run PyInstaller
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller
-        pip install esptool
+        pip install -r requirements.txt
         ./Scripts/build_macOS.sh
         tar -czf ./dist/ESPEasyFlasher_macOS_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
 
