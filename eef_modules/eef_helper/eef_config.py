@@ -215,5 +215,4 @@ class EEFConfig:
             name = dist.metadata['Name']
             version = dist.version
             string_io.write(f"\t{name}=={version}\n")
-        
         return string_io.getvalue()
