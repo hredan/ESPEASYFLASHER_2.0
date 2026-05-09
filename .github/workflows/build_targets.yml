@@ -109,7 +109,7 @@ jobs:
         # The desired behavior if no files are found using the provided path.
   macOS_x64_executable:
     if: ${{ inputs.target == 'macos_intel' || inputs.target == 'all' }}
-    runs-on: macos-13
+    runs-on: macos-15-intel
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python "3.12"
@@ -133,7 +133,7 @@ jobs:
         # The desired behavior if no files are found using the provided path.
   macOS_arm64_executable:
     if: ${{ inputs.target == 'macos_arm64' || inputs.target == 'all' }}
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python "3.12"
