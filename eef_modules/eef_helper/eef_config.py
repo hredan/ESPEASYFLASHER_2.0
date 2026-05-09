@@ -23,7 +23,11 @@ import platform
 import tkinter
 from io import StringIO
 import json
-from pkg_resources import working_set
+try:
+    from importlib import metadata
+except ImportError:
+    # For Python < 3.8, install importlib_metadata
+    import importlib_metadata as metadata
 
 EEF_INFO = "./build_info.txt"
 
@@ -197,8 +201,8 @@ class EEFConfig:
     def create_system_env_info():
         """"create base system env info string"""
         string_io = StringIO()
-        packages = working_set.by_key
-        sorted_package_names = sorted(packages.keys())
+        # packages = working_set.by_key
+        # sorted_package_names = sorted(packages.keys())
 
         string_io.write(f"OS:              {platform.system()}{platform.release()}\n")
         string_io.write(f'Architecture:    {platform.architecture()}\n')
@@ -206,6 +210,10 @@ class EEFConfig:
         string_io.write(f"Python Version:  {sys.version}\n")
         string_io.write(f'Tk Version:      {tkinter.TkVersion}\n')
         string_io.write("PIP list: \n")
-        for name in sorted_package_names:
-            string_io.write(f"\t{packages[name].key} {packages[name].version}\n")
+        packages = sorted(metadata.distributions(), key=lambda d: d.metadata['Name'].lower())
+        for dist in packages:
+            name = dist.metadata['Name']
+            version = dist.version
+            string_io.write(f"\t{name}=={version}\n")
+        
         return string_io.getvalue()
