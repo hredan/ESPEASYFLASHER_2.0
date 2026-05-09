@@ -42,9 +42,9 @@ class BottomGUIElements:
 
     def set_pos_text_box(self, row_pos_frame):
         """ full initializing and positioning of output text box"""
-        self.__text_box.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
+        self.__text_box.grid(column=0, row=row_pos_frame, columnspan=2, sticky="NSEW", padx=5, pady=5)
         scrollbar = ttk.Scrollbar(self.__frame, command=self.__text_box.yview)
-        scrollbar.grid(row=row_pos_frame, column=2, sticky='nsew')
+        scrollbar.grid(row=row_pos_frame, column=2, sticky='NS')
         self.__text_box['yscrollcommand'] = scrollbar.set
 
     def set_pos_progress_bar(self, row_pos_frame):
