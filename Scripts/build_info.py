@@ -5,7 +5,7 @@
   For help use:
   python ./build_info.py -h
 
-  Copyright (C) 2022  André Herrmann
+  Copyright (C) 2026  André Herrmann
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,11 @@ import sys
 import platform
 import getopt
 import tkinter
-from pkg_resources import working_set
+try:
+    from importlib import metadata
+except ImportError:
+    # For Python < 3.8, install importlib_metadata
+    import importlib_metadata as metadata
 
 HELP = r"""Paramter:
 -s\tGITHUB_SHA
@@ -33,8 +37,6 @@ e.g. python ./build_info.py -s \$GITHUB_SHA -r \$GITHUB_REPOSITORY"""
 
 def create_info_file(repo_name, tag_name, sha):
     """ generates the build_info.txt with GitHub and system environment data """
-    packages = working_set.by_key
-    sorted_package_names = sorted(packages.keys())
 
     with open('build_info.txt', 'w', encoding="utf-8") as info_file:
         if repo_name:
@@ -50,8 +52,11 @@ def create_info_file(repo_name, tag_name, sha):
         info_file.write(f'Python Version:  {sys.version}\n')
         info_file.write(f'Tk Version:      {tkinter.TkVersion}\n')
         info_file.write('PIP list: \n')
-        for name in sorted_package_names:
-            info_file.write(f'\t{packages[name].key} {packages[name].version}\n')
+        packages = sorted(metadata.distributions(), key=lambda d: d.metadata['Name'].lower())
+        for dist in packages:
+            name = dist.metadata['Name']
+            version = dist.version
+            info_file.write(f'\t{name}=={version}\n')
 
 
 def main(argv):
