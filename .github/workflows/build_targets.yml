@@ -11,9 +11,9 @@ jobs:
     if: ${{ inputs.target == 'win64' || inputs.target == 'all' }}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python "3.12"
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with: 
         python-version: "3.12"
     - name: run PyInstaller
@@ -29,7 +29,7 @@ jobs:
         ren dist ESPEasyFlasher
         7z.exe a -tzip ESPEasyFlasher_win64.zip ESPEasyFlasher
     - name: Create Windows Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_win64
@@ -41,9 +41,9 @@ jobs:
     if: ${{ inputs.target == 'linux64' || inputs.target == 'all' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python "3.12"
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: "3.12"
     - name: run PyInstaller
@@ -52,7 +52,7 @@ jobs:
         ./Scripts/build_linux.sh
         tar -czf ./ESPEasyFlasher_linux_x64.tar.gz -C ./dist .
     - name: Create Linux Artefact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_linux_x64
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - # Add support for more platforms with QEMU (optional)
       # https://github.com/docker/setup-qemu-action
       name: Set up QEMU
@@ -76,7 +76,7 @@ jobs:
         cp -r ./dist ./ESPEasyFlasher
         tar -czf ./ESPEasyFlasher_linux_arm64.tar.gz ./ESPEasyFlasher
     - name: Create LinuxArm64 Artefact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_linux_arm64
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - # Add support for more platforms with QEMU (optional)
       # https://github.com/docker/setup-qemu-action
       name: Set up QEMU
@@ -100,7 +100,7 @@ jobs:
         cp -r ./dist ./ESPEasyFlasher
         tar -czf ./ESPEasyFlasher_linux_armv7.tar.gz ./ESPEasyFlasher
     - name: Create LinuxArmv7 Artefact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_linux_armv7
@@ -111,9 +111,9 @@ jobs:
     if: ${{ inputs.target == 'macos_intel' || inputs.target == 'all' }}
     runs-on: macos-15-intel
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python "3.12"
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: "3.12"
     - name: run PyInstaller
@@ -123,7 +123,7 @@ jobs:
         ./Scripts/build_macOS.sh
         tar -czf ./dist/ESPEasyFlasher_macOS_intel.tar.gz -C ./dist ./ESPEasyFlasher.app
     - name: Create macOS Artefact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_macOS_intel
@@ -135,9 +135,9 @@ jobs:
     if: ${{ inputs.target == 'macos_arm64' || inputs.target == 'all' }}
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python "3.12"
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: "3.12"
     - name: run PyInstaller
@@ -148,7 +148,7 @@ jobs:
         tar -czf ./dist/ESPEasyFlasher_macOS_arm64.tar.gz -C ./dist ./ESPEasyFlasher.app
 
     - name: Create macOS Artefact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Artifact name
         name: ESPEasyFlasher_macOS_arm64
