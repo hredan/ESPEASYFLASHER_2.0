@@ -54,6 +54,17 @@ class SerialMonitorFrame(tk.Frame):
         if self.__status_serial_monitor:
             self.__serial_monitor_switch()
 
+    def send_serial_command(self, command):
+        """send command to serial port if serial monitor is active"""
+        if not self.__status_serial_monitor:
+            print("### Serial monitor is off, turn it on to send commands ###")
+            return False
+
+        if not command:
+            return False
+
+        return self.__serial_monitor_thread.send_text(command)
+
     def __esp_reset(self):
         """ trigger esp reset via RTS pins"""
         if self.__status_serial_monitor and self.__serial_monitor_thread:

@@ -32,12 +32,22 @@ class BottomGUIElements:
         self.__frame = frame
         self.__progress_bar = ttk.Progressbar(frame, orient="horizontal", length=200, mode="determinate")
         self.__text_box = tk.Text(frame, wrap='word', height=11, width=80)
+        self.__serial_send_frame = ttk.Frame(frame)
+        self.__label_serial_command = ttk.Label(self.__serial_send_frame, text="Serial Command:")
+        self.__entry_serial_command = ttk.Entry(self.__serial_send_frame)
+        self.__serial_send_button = ttk.Button(self.__serial_send_frame, text="Send",
+                                               command=self.__send_serial_command)
+        self.__serial_command_history = []
+        self.__serial_history_index = None
+        self.__serial_history_unsent_text = ""
         self.__root_dir = None
         self.__frame_serial_monitor = SerialMonitorFrame(frame, self.__text_box)
+        self.__show_serial_send_controls = True
         self.stdout_redirection = None
 
-    def set_pos_serial_monitor_frame(self, row_pos_frame, get_com_port):
+    def set_pos_serial_monitor_frame(self, row_pos_frame, get_com_port, show_send_controls=True):
         """ full initializing and positioning of serial monitor frame parts"""
+        self.__show_serial_send_controls = show_send_controls
         self.__frame_serial_monitor.set_positioning(row_pos_frame, get_com_port)
 
     def set_pos_text_box(self, row_pos_frame):
@@ -50,6 +60,21 @@ class BottomGUIElements:
     def set_pos_progress_bar(self, row_pos_frame):
         """ full initializing and positioning of progress bar """
         self.__progress_bar.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
+
+    def set_pos_serial_send_controls(self, row_pos_frame):
+        """show command input and send button for serial monitor"""
+        if not self.__show_serial_send_controls:
+            return
+
+        self.__serial_send_frame.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=(0, 5))
+        self.__serial_send_frame.columnconfigure(1, weight=1)
+
+        self.__label_serial_command.grid(column=0, row=0, sticky="W", padx=(0, 3))
+        self.__entry_serial_command.grid(column=1, row=0, sticky="EW", padx=3)
+        self.__serial_send_button.grid(column=2, row=0, sticky="EW", padx=(3, 0))
+        self.__entry_serial_command.bind("<Return>", self.__send_serial_command)
+        self.__entry_serial_command.bind("<Up>", self.__show_previous_serial_command)
+        self.__entry_serial_command.bind("<Down>", self.__show_next_serial_command)
 
     def append_text(self, text):
         """ append text at the end of output text box """
@@ -82,3 +107,48 @@ class BottomGUIElements:
         disable serial monitor, if active
         """
         self.__frame_serial_monitor.disable_serial_monitor()
+
+    def __send_serial_command(self, event=None):
+        """send command from GUI entry field to serial interface"""
+        del event
+        command = self.__entry_serial_command.get().strip()
+        if self.__frame_serial_monitor.send_serial_command(command):
+            if command:
+                self.__serial_command_history.append(command)
+            self.__serial_history_index = None
+            self.__serial_history_unsent_text = ""
+            self.__entry_serial_command.delete(0, tk.END)
+
+    def __show_previous_serial_command(self, event=None):
+        """show previous command from history in entry field"""
+        del event
+        if not self.__serial_command_history:
+            return "break"
+
+        if self.__serial_history_index is None:
+            self.__serial_history_unsent_text = self.__entry_serial_command.get()
+            self.__serial_history_index = len(self.__serial_command_history) - 1
+        elif self.__serial_history_index > 0:
+            self.__serial_history_index -= 1
+
+        self.__set_serial_command_entry(self.__serial_command_history[self.__serial_history_index])
+        return "break"
+
+    def __show_next_serial_command(self, event=None):
+        """show next command from history in entry field"""
+        del event
+        if self.__serial_history_index is None:
+            return "break"
+
+        if self.__serial_history_index < len(self.__serial_command_history) - 1:
+            self.__serial_history_index += 1
+            self.__set_serial_command_entry(self.__serial_command_history[self.__serial_history_index])
+        else:
+            self.__serial_history_index = None
+            self.__set_serial_command_entry(self.__serial_history_unsent_text)
+        return "break"
+
+    def __set_serial_command_entry(self, text):
+        """replace full serial command entry content"""
+        self.__entry_serial_command.delete(0, tk.END)
+        self.__entry_serial_command.insert(0, text)

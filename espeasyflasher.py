@@ -111,12 +111,19 @@ class EspEasyFlasher:
         # Serial Monitor
         if eef_config.with_serial_monitor():
             row_pos_frame += 1
-            bottom_gui_elements.set_pos_serial_monitor_frame(row_pos_frame, label_frames.get_com_port)
+            bottom_gui_elements.set_pos_serial_monitor_frame(
+                row_pos_frame,
+                label_frames.get_com_port,
+                eef_config.with_serial_monitor_send())
 
         # Textbox Logging
         row_pos_frame += 1
         bottom_gui_elements.set_pos_text_box(row_pos_frame)
         text_box_row = row_pos_frame
+
+        # Serial Monitor command input and send button below output textbox
+        row_pos_frame += 1
+        bottom_gui_elements.set_pos_serial_send_controls(row_pos_frame)
 
         # Progressbar
         row_pos_frame += 1

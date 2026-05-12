@@ -40,6 +40,7 @@ class EEFConfigTests(unittest.TestCase):
         self.assertEqual(eef_config.with_logo(), True)
         self.assertEqual(eef_config.with_developer_mode(), True)
         self.assertEqual(eef_config.with_serial_monitor(), True)
+        self.assertEqual(eef_config.with_serial_monitor_send(), True)
         self.assertEqual(eef_config.with_esp_info(), True)
 
         self.assertEqual(eef_config.get_logo_file_path(), logo_path)
@@ -58,6 +59,7 @@ class EEFConfigTests(unittest.TestCase):
         self.assertEqual(eef_config.with_logo(), False)
         self.assertEqual(eef_config.with_developer_mode(), False)
         self.assertEqual(eef_config.with_serial_monitor(), False)
+        self.assertEqual(eef_config.with_serial_monitor_send(), False)
         self.assertEqual(eef_config.with_esp_info(), False)
 
         self.assertEqual(esp.baud_rate, '460801')

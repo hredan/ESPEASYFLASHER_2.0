@@ -2,6 +2,7 @@
     "logo": false,
     "devMode": false,
     "serialMonitor" : false,
+    "serialMonitorSend" : false,
     "espInfo" : false,
     "baudRate": "460801",
     "readStart": "0x00001",

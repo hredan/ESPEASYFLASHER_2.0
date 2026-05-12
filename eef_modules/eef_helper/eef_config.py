@@ -39,6 +39,7 @@ class GUISettings:
         self.logo = True
         self.dev_mode = True
         self.serial_monitor = True
+        self.serial_monitor_send = True
         self.esp_info = True
 
 class EEFConfig:
@@ -105,6 +106,10 @@ class EEFConfig:
         """Config flag to show the serial monitor control panel in the GUI"""
         return self.__gui_settings.serial_monitor
 
+    def with_serial_monitor_send(self):
+        """Config flag to show serial monitor send controls in the GUI"""
+        return self.__gui_settings.serial_monitor_send
+
     def with_esp_info(self):
         """Config flag to show the esp info button in the GUI"""
         return self.__gui_settings.esp_info
@@ -130,6 +135,8 @@ class EEFConfig:
                     self.__gui_settings.logo = data["logo"]
                     self.__gui_settings.dev_mode = data["devMode"]
                     self.__gui_settings.serial_monitor = data["serialMonitor"]
+                    self.__gui_settings.serial_monitor_send = data.get(
+                        "serialMonitorSend", self.__gui_settings.serial_monitor_send)
                     self.__gui_settings.esp_info = data["espInfo"]
 
                     # set esp config values
