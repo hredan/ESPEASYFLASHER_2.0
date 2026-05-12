@@ -19,6 +19,9 @@ import tkinter as tk
 import re
 
 
+ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
+
+
 class IORedirection:
     """A general class for redirecting I/O to this Text widget."""
     def __init__(self, text_area, progress_bar):
@@ -55,6 +58,7 @@ class StdoutRedirection(IORedirection):
         super().__init__(text_area, progress_bar)
         self.esp_type = None
         self.esp_flash_size = None
+        self.stdout_progress_buffer = ""
 
     def normal_output(self, text_area_output):
         """
@@ -73,11 +77,20 @@ class StdoutRedirection(IORedirection):
         Parameters:
         stdout_text_input (str): raw stdout input
         """
-        read_match = re.match(r"^(\d+ \(\d+ %\)).*", stdout_text_input)
-        write_match = re.match(r"^(Writing .+\((\d+) %\)).*", stdout_text_input)
+        clean_stdout_text = ANSI_ESCAPE_RE.sub("", stdout_text_input)
+        clean_stdout_text = clean_stdout_text.replace("\r", "")
+        clean_stdout_text = re.sub(r"^\[K", "", clean_stdout_text)
 
-        esp_type_match = re.match(r".*(ESP\d+).*", stdout_text_input)
-        flash_size_match = re.match(r".*(\d+MB).*", stdout_text_input)
+        # Keep a rolling buffer so progress can still be detected when esptool output
+        # arrives in partial chunks.
+        self.stdout_progress_buffer += clean_stdout_text
+        self.stdout_progress_buffer = self.stdout_progress_buffer[-2048:]
+
+        read_match = re.search(r"(\d+ \(\d+ %\))", clean_stdout_text)
+        write_match_new = re.search(r"(Writing .*?(\d+(?:\.\d+)?)%).*", clean_stdout_text)
+
+        esp_type_match = re.match(r".*(ESP\d+).*", clean_stdout_text)
+        flash_size_match = re.match(r".*(\d+MB).*", clean_stdout_text)
 
         if read_match:
             read_in_progress = re.match(r"^\d+ \((\d+) %\)", read_match.group(1))
@@ -93,25 +106,47 @@ class StdoutRedirection(IORedirection):
                 tk.END, f"{read_match.group(1)}\n", "tag_read_procent")
 
             self.text_area.see(tk.END)
-        elif write_match:
-            flashing_in_progress = write_match.group(2)
-            text = write_match.group(1)
+        elif write_match_new:
+            flashing_in_progress = int(float(write_match_new.group(2)))
+            text = write_match_new.group(1)
 
-            self.progress_bar["value"] = int(flashing_in_progress)
+            if not text.endswith("\n"):
+                text += "\n"
+
+            self.progress_bar["value"] = flashing_in_progress
 
             last_insert = self.text_area.tag_ranges("tag_write_procent")
             if len(last_insert) > 1:
                 self.text_area.delete(last_insert[0], last_insert[1])
-                self.text_area.delete("end-1c", tk.END)
+
+            if self.text_area.index("end-1c") != "1.0":
+                last_char = self.text_area.get("end-2c", "end-1c")
+                if last_char != "\n":
+                    self.text_area.insert(tk.END, "\n")
 
             self.text_area.insert(tk.END, text, "tag_write_procent")
             self.text_area.see(tk.END)
-        elif esp_type_match:
-            # input contains only part of string e.g. ' ESP32' or 'ESP32-D0WDQ6 (revision 1)'
-            self.esp_type = esp_type_match.group(1)
-            self.normal_output(stdout_text_input)
-        elif flash_size_match:
-            self.esp_flash_size = flash_size_match.group(1)
-            self.normal_output(stdout_text_input)
         else:
-            self.normal_output(stdout_text_input)
+            write_progress = None
+
+            # New format: Writing at ... 16.1% 32768/203648 bytes...
+            for new_match in re.finditer(
+                    r"Writing .*?(\d+(?:\.\d+)?)%\s+\d+/\d+\s+bytes", self.stdout_progress_buffer):
+                write_progress = int(float(new_match.group(1)))
+
+            # Some esptool runs only print the final summary line.
+            if write_progress is None and re.search(r"Wrote \d+ bytes .* in .* seconds", clean_stdout_text):
+                write_progress = 100
+
+            if write_progress is not None:
+                self.progress_bar["value"] = write_progress
+
+            if esp_type_match:
+            # input contains only part of string e.g. ' ESP32' or 'ESP32-D0WDQ6 (revision 1)'
+                self.esp_type = esp_type_match.group(1)
+                self.normal_output(clean_stdout_text)
+            elif flash_size_match:
+                self.esp_flash_size = flash_size_match.group(1)
+                self.normal_output(clean_stdout_text)
+            else:
+                self.normal_output(clean_stdout_text)
