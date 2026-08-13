@@ -135,7 +135,7 @@ class StdoutRedirection(IORedirection):
         return write_progress
 
     def _handle_device_info_output(self, clean_stdout_text):
-        esp_type_match = re.match(r".*(ESP\d+).*", clean_stdout_text)
+        esp_type_match = re.match(r"Connected to (ESP[\d\-\w]+) on.*", clean_stdout_text)
         flash_size_match = re.match(r".*(\d+MB).*", clean_stdout_text)
 
         if esp_type_match:
