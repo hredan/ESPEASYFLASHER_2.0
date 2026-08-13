@@ -68,7 +68,7 @@ jobs:
     - # Add support for more platforms with QEMU (optional)
       # https://github.com/docker/setup-qemu-action
       name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
     - name: run PyInstaller in docker
       run: |
         docker build --platform linux/arm64 -t python_eef:arm64 -f ./Dockerfile_arm .
@@ -92,7 +92,7 @@ jobs:
     - # Add support for more platforms with QEMU (optional)
       # https://github.com/docker/setup-qemu-action
       name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
     - name: run PyInstaller in docker
       run: |
         docker build --platform linux/arm/v7 -t python_eef:armv7 -f ./Dockerfile_arm .
