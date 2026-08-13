@@ -43,12 +43,27 @@ class SerialMonitorFrame(tk.Frame):
         self.__serial_monitor_btn_on_off.grid(column=1, row=0, sticky="EW", padx=3, pady=3)
         self.__esp_reset_btn.grid(column=2, row=0, sticky="EW", padx=3, pady=3)
 
+        tk.Grid.columnconfigure(self, 0, weight=1)
+        tk.Grid.columnconfigure(self, 1, weight=1)
+        tk.Grid.columnconfigure(self, 2, weight=1)
+
     def disable_serial_monitor(self):
         """
         if serial monitor is running, stops the serial monitor thread
         """
         if self.__status_serial_monitor:
             self.__serial_monitor_switch()
+
+    def send_serial_command(self, command):
+        """send command to serial port if serial monitor is active"""
+        if not self.__status_serial_monitor:
+            print("### Serial monitor is off, turn it on to send commands ###")
+            return False
+
+        if not command:
+            return False
+
+        return self.__serial_monitor_thread.send_text(command)
 
     def __esp_reset(self):
         """ trigger esp reset via RTS pins"""

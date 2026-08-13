@@ -79,10 +79,14 @@ class EspEasyFlasher:
     def __init_gui_frame(self, eef_config, esp_com, str_io):
         """ creates the GUI ESPEasyFlasher2.0 """
         self.master.title("ESPEasyFlasher2.0")
-        self.master.resizable(0, 0)
+        self.master.resizable(True, True)
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
 
         frame = ttk.Frame(self.master)
-        frame.pack()
+        frame.grid(column=0, row=0, sticky="NSEW")
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_columnconfigure(1, weight=1)
 
         label_frames = LabelFrameHandler(frame, eef_config)
         bottom_gui_elements = BottomGUIElements(frame)
@@ -107,11 +111,19 @@ class EspEasyFlasher:
         # Serial Monitor
         if eef_config.with_serial_monitor():
             row_pos_frame += 1
-            bottom_gui_elements.set_pos_serial_monitor_frame(row_pos_frame, label_frames.get_com_port)
+            bottom_gui_elements.set_pos_serial_monitor_frame(
+                row_pos_frame,
+                label_frames.get_com_port,
+                eef_config.with_serial_monitor_send())
 
         # Textbox Logging
         row_pos_frame += 1
         bottom_gui_elements.set_pos_text_box(row_pos_frame)
+        text_box_row = row_pos_frame
+
+        # Serial Monitor command input and send button below output textbox
+        row_pos_frame += 1
+        bottom_gui_elements.set_pos_serial_send_controls(row_pos_frame)
 
         # Progressbar
         row_pos_frame += 1
@@ -125,6 +137,13 @@ class EspEasyFlasher:
 
         # scan com ports
         label_frames.com_port_scan()
+
+        # Let only the textbox row expand vertically during window resize.
+        frame.grid_rowconfigure(text_box_row, weight=1)
+
+        # Keep current startup size as minimum while allowing user resizing.
+        self.master.update_idletasks()
+        self.master.minsize(self.master.winfo_width(), self.master.winfo_height())
 
     def get_info(self):
         """show EEF build info in dialog"""

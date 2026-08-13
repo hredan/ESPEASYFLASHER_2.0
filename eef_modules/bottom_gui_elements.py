@@ -19,6 +19,7 @@
 import sys
 import tkinter as tk
 from tkinter import ttk
+from eef_modules.serial_send_controls import SerialSendControls
 from eef_modules.serial_monitor.frame_serial_monitor import SerialMonitorFrame
 from eef_modules.eef_helper.io_redirection import StderrRedirection
 from eef_modules.eef_helper.io_redirection import StdoutRedirection
@@ -29,27 +30,32 @@ class BottomGUIElements:
     BottomGUIElements handles the SerialMonitorFrame, Output Textbox with scrollbar and the progress bar
     """
     def __init__(self, frame) -> None:
-        self.__frame = frame
         self.__progress_bar = ttk.Progressbar(frame, orient="horizontal", length=200, mode="determinate")
         self.__text_box = tk.Text(frame, wrap='word', height=11, width=80)
         self.__root_dir = None
         self.__frame_serial_monitor = SerialMonitorFrame(frame, self.__text_box)
+        self.__serial_send_controls = SerialSendControls(frame, self.__frame_serial_monitor.send_serial_command)
         self.stdout_redirection = None
 
-    def set_pos_serial_monitor_frame(self, row_pos_frame, get_com_port):
+    def set_pos_serial_monitor_frame(self, row_pos_frame, get_com_port, show_send_controls=True):
         """ full initializing and positioning of serial monitor frame parts"""
+        self.__serial_send_controls.set_visible(show_send_controls)
         self.__frame_serial_monitor.set_positioning(row_pos_frame, get_com_port)
 
     def set_pos_text_box(self, row_pos_frame):
         """ full initializing and positioning of output text box"""
-        self.__text_box.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
-        scrollbar = ttk.Scrollbar(self.__frame, command=self.__text_box.yview)
-        scrollbar.grid(row=row_pos_frame, column=2, sticky='nsew')
+        self.__text_box.grid(column=0, row=row_pos_frame, columnspan=2, sticky="NSEW", padx=5, pady=5)
+        scrollbar = ttk.Scrollbar(self.__text_box.master, command=self.__text_box.yview)
+        scrollbar.grid(row=row_pos_frame, column=2, sticky='NS')
         self.__text_box['yscrollcommand'] = scrollbar.set
 
     def set_pos_progress_bar(self, row_pos_frame):
         """ full initializing and positioning of progress bar """
         self.__progress_bar.grid(column=0, row=row_pos_frame, columnspan=2, sticky="EW", padx=5, pady=5)
+
+    def set_pos_serial_send_controls(self, row_pos_frame):
+        """show command input and send button for serial monitor"""
+        self.__serial_send_controls.set_position(row_pos_frame)
 
     def append_text(self, text):
         """ append text at the end of output text box """

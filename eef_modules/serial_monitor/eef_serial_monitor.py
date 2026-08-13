@@ -95,6 +95,25 @@ class SerialMonitor:
             self.serial.close()
             self.write_text("### close serial connection ###\n")
 
+    def send_text(self, text):
+        """Send text to opened serial connection and append configured newline."""
+        if not self.serial.is_open:
+            self.write_text("### Serial monitor is not connected ###\n")
+            return False
+
+        newline_map = {
+            NEWLINE_CR: b"\r",
+            NEWLINE_LF: b"\n",
+            NEWLINE_CRLF: b"\r\n"
+        }
+        payload = text.encode("utf-8") + newline_map.get(self.newline, b"\r\n")
+        try:
+            self.serial.write(payload)
+            return True
+        except serial.SerialException as exception:
+            self.write_text(f"Error writing to serial connection: {exception}\n")
+            return False
+
     def com_port_thread(self):
         """\
         Thread that handles the incoming traffic. Does the basic input
