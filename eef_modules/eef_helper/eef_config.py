@@ -32,8 +32,11 @@ except ImportError:
 EEF_INFO = "./build_info.txt"
 
 # pylint: disable=too-few-public-methods
+
+
 class GUISettings:
     """ GUISettings contains attributes to disable/enable GUI elements like logo, devMode and so on. """
+
     def __init__(self):
         # set default config values
         self.logo = True
@@ -42,12 +45,14 @@ class GUISettings:
         self.serial_monitor_send = True
         self.esp_info = True
 
+
 class EEFConfig:
     """
     EEFConfig managed the configuration of ESPEasyFlasher
     """
     # for the config more than 7 instance-attributes are acceptable
     # pylint: disable=too-many-instance-attributes
+
     def __init__(self, config_file, logo_file, str_io, esp) -> None:
         self.__str_io = str_io
         self.__esp = esp
@@ -126,7 +131,8 @@ class EEFConfig:
         """
         self.__str_io.write("### Read Config ###\n")
         if not exists(config_file):
-            self.__str_io.write(f"Error could not find: {config_file}, default config values will be used\n")
+            self.__str_io.write(
+                f"Error could not find: {config_file}, default config values will be used\n")
         else:
             try:
                 with open(config_file, encoding="utf-8") as json_file:
@@ -140,17 +146,25 @@ class EEFConfig:
                     self.__gui_settings.esp_info = data["espInfo"]
 
                     # set esp config values
-                    self.__esp.baud_rate = data['baudRate']
-                    self.__str_io.write(f"set baud rate to: {data['baudRate']}\n")
+                    self.__esp.baud_rate = data.get(
+                        "baudRate", self.__esp.baud_rate)
+                    self.__str_io.write(
+                        f"set baud rate to: {self.__esp.baud_rate}\n")
 
-                    self.__esp.read_start = data['readStart']
-                    self.__str_io.write(f"set read start to: {data['readStart']}\n")
+                    self.__esp.read_start = data.get(
+                        "readStart", self.__esp.read_start)
+                    self.__str_io.write(
+                        f"set read start to: {self.__esp.read_start}\n")
 
-                    self.__esp.read_size = data['readSize']
-                    self.__str_io.write(f"set read size to: {data['readSize']}\n")
+                    self.__esp.read_size = data.get(
+                        "readSize", self.__esp.read_size)
+                    self.__str_io.write(
+                        f"set read size to: {self.__esp.read_size}\n")
 
-                    self.__esp.write_start = data['writeStart']
-                    self.__str_io.write(f"set write start to: {data['writeStart']}\n")
+                    self.__esp.write_start = data.get(
+                        "writeStart", self.__esp.write_start)
+                    self.__str_io.write(
+                        f"set write start to: {self.__esp.write_start}\n")
 
             except EnvironmentError as err:
                 self.__str_io.writelines(
@@ -204,6 +218,7 @@ class EEFConfig:
                 f"Warning: Could not find '{info_path}'\n")
 
         return return_value
+
     @staticmethod
     def create_system_env_info():
         """"create base system env info string"""
@@ -211,13 +226,15 @@ class EEFConfig:
         # packages = working_set.by_key
         # sorted_package_names = sorted(packages.keys())
 
-        string_io.write(f"OS:              {platform.system()}{platform.release()}\n")
+        string_io.write(
+            f"OS:              {platform.system()}{platform.release()}\n")
         string_io.write(f'Architecture:    {platform.architecture()}\n')
         string_io.write(f'Processor:       {platform.processor()}\n')
         string_io.write(f"Python Version:  {sys.version}\n")
         string_io.write(f'Tk Version:      {tkinter.TkVersion}\n')
         string_io.write("PIP list: \n")
-        packages = sorted(metadata.distributions(), key=lambda d: d.metadata['Name'].lower())
+        packages = sorted(metadata.distributions(),
+                          key=lambda d: d.metadata['Name'].lower())
         for dist in packages:
             name = dist.metadata['Name']
             version = dist.version
