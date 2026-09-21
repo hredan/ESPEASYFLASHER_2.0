@@ -36,7 +36,7 @@ jobs:
           echo "TAG: ${TAG}"
           echo "PRE: ${PRERELEASE}"
     - name: download all artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: ./release
         merge-multiple: true
